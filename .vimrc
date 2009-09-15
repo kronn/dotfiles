@@ -62,6 +62,15 @@ if has( 'gui' )
 	if has('win32')
 		set guifont=Lucida_Console:h10
 	endif
+
+	if has('windows')
+		set showtabline=2
+	endif
+
+	if has('gui_macvim')
+		set transparency=8
+		set fuoptions=maxhorz,maxvert
+	endif
 end
 
 imap {} {}<ESC>i
@@ -69,5 +78,8 @@ imap [] []<ESC>i
 imap () ()<ESC>i
 imap '' ''<ESC>i
 imap "" ""<ESC>i
+
+" Key-mappings for plugins
+
+" rails.vim
 map <F5> <ESC>:w:Rake
-" imap jj <ESC>
