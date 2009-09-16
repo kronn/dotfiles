@@ -1,6 +1,8 @@
 # PATH=$PATH:/usr/lib/ruby/gems/1.8:$HOME/.gem/ruby/1.8:$HOME/.gem/ruby/1.8/bin:$HOME/.cabal/bin
 # export PATH
 
+export EDITOR=vim
+
 RAILS_ENV=development
 export RAILS_ENV
 
