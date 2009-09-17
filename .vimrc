@@ -63,15 +63,15 @@ if has( 'gui' )
 		set guifont=Lucida_Console:h10
 	endif
 
-	if has('windows')
-		set showtabline=2
-	endif
-
 	if has('gui_macvim')
+		set fuoptions=maxhorz,maxvert  " Let Fullscreen be really fullscreen
 		set transparency=8
-		set fuoptions=maxhorz,maxvert
 	endif
 end
+
+if has('windows')
+	set showtabline=2
+endif
 
 imap {} {}<ESC>i
 imap [] []<ESC>i
