@@ -88,3 +88,6 @@ imap "" ""<ESC>i
 
 " rails.vim
 map <F5> <ESC>:w:Rake
+
+" NERDtree
+map <leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
