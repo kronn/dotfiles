@@ -24,6 +24,11 @@ set encoding=utf-8
 set list " show line-endings, tabs and trailing spaces
 set lcs=trail:·,tab:\ \   " trailing spaces are shown, tabs and eol not
 
+" STFU
+set noerrorbells
+set visualbell
+set t_vb=" "
+
 set foldmethod=syntax
 
 " Backups & Files
