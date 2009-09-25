@@ -5,3 +5,4 @@
 	ci = commit
 	co = checkout
 	br = branch -a
+  ch = diff --staged
