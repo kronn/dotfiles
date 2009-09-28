@@ -51,6 +51,11 @@ let php_folding=1
 " Setting for extended %-Matching
 let loaded_matchit = 1
 
+" Settings for NERDTree
+let NERDChristmasTree=1
+let NERDTreeChDirMode=2
+let NERDTreeHijackNetrw=1
+
 " The OSX-keyboardlayout sucks when you have \ as Leader...
 " and this doesn't hurt on other OS either
 let mapleader = ","
@@ -91,3 +96,4 @@ map <F5> <ESC>:w:Rake
 
 " NERDtree
 map <leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
+
