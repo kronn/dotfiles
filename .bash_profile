@@ -7,3 +7,4 @@ function update_externals_to() {
 	echo "New Value:"
 	echo "`svn pg svn:externals .`"
 }
+alias td="tail -n 0 -f log/development.log"
