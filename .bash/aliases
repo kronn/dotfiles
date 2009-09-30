@@ -1,0 +1,22 @@
+alias ll="ls -l"
+alias la="ls -a"
+alias lla="ll -a"
+alias td="tail -n 0 -f log/development.log"
+alias tt="tail -n 0 -f log/test.log"
+alias changes="svnst"
+
+function svndiff() {
+	# svn diff $@ | colordiff | less -R;
+	svn diff -x --ignore-all-space --no-diff-deleted --notice-ancestry $@ | colordiff | more;
+}
+
+function svnst() {
+	svn st --ignore-externals -q $@;
+}
+
+function update_externals_to() {
+	svn ps svn:externals "`svn pg svn:externals . | sed -E s/-r\([0-9]\+\)/-r$1/`" .
+	echo "New Value:"
+	echo "`svn pg svn:externals .`"
+}
+
