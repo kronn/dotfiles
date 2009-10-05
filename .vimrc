@@ -24,11 +24,19 @@ set encoding=utf-8
 set list " show line-endings, tabs and trailing spaces
 set lcs=trail:·,tab:\ \   " trailing spaces are shown, tabs and eol not
 
+" Diffing
+if &diff
+	set diffopt=iwhite
+	set wrap
+else
+endif
+
 " STFU
 set noerrorbells
 set visualbell
 set t_vb=" "
 
+" Folding
 set foldmethod=syntax
 
 " Backups & Files
@@ -65,6 +73,7 @@ let maplocalleader = ","
 syntax on
 filetype plugin indent on
 
+" Vim should look good.
 colo torte
 if has( 'gui' )
 	colo railscasts
