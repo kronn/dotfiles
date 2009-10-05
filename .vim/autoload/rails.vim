@@ -847,16 +847,6 @@ endfunction
 
 call s:add_methods('app', ['ruby_shell_command','execute_ruby_command','background_ruby_command','lightweight_ruby_eval','eval'])
 
-function! RailsEval(ruby,...) abort
-  if !exists("b:rails_root")
-    return a:0 ? a:1 : ""
-  elseif a:0
-    return rails#app().eval(a:ruby,a:1)
-  else
-    return rails#app().eval(a:ruby)
-  endif
-endfunction
-
 " }}}1
 " Commands {{{1
 
@@ -1025,7 +1015,7 @@ endfunction
 call s:add_methods('app',['tags_command'])
 
 function! s:Refresh(bang)
-  if exists("g:rubycomplete_rails") && g:rubycomplete_rails && has("ruby")
+  if exists("g:rubycomplete_rails") && g:rubycomplete_rails && has("ruby") && exists('g:rubycomplete_completions')
     silent! ruby ActiveRecord::Base.reset_subclasses if defined?(ActiveRecord)
     silent! ruby if defined?(ActiveSupport::Dependencies); ActiveSupport::Dependencies.clear; elsif defined?(Dependencies); Dependencies.clear; end
     if a:bang
@@ -1331,12 +1321,12 @@ endfunction
 function! s:readable_preview_urls(lnum) dict abort
   let urls = []
   let start = self.last_method_line(a:lnum) - 1
-  while start > 0 && self.getline(start) =~ '^\s*\%(\%(-\|<%\)#.*\)\=$'
+  while start > 0 && self.getline(start) =~ '^\s*\%(\%(-\=\|<%\)#.*\)\=$'
     let urls = s:scanlineforuris(self.getline(start)) + urls
     let start -= 1
   endwhile
   let start = 1
-  while start < self.line_count() && self.getline(start) =~ '^\s*\%(#.*\)\=$'
+  while start < self.line_count() && self.getline(start) =~ '^\s*\%(\%(-\=\|<%\)#.*\)\=$'
     let urls += s:scanlineforuris(self.getline(start))
     let start += 1
   endwhile
@@ -1871,7 +1861,7 @@ function! s:RailsFind()
   if res != ""|return res."\n".s:findview(res)|endif
   let res = s:findamethod('render\s*:\%(template\|action\)\s\+=>\s*','\1.'.format.'\n\1')
   if res != ""|return res|endif
-  let res = s:sub(s:findamethod('render','\1'),'^/','')
+  let res = s:sub(s:findfromview('render','\1'),'^/','')
   if RailsFileType() =~ '^view\>' | let res = s:sub(res,'[^/]+$','_&') | endif
   if res != ""|return res."\n".s:findview(res)|endif
   let res = s:findamethod('redirect_to\s*(\=\s*:action\s\+=>\s*','\1')
@@ -2372,7 +2362,7 @@ endfunction
 
 function! s:app_migration(file) dict
   let arg = a:file
-  if arg =~ '^0\+$\|^0*[#:]'
+  if arg =~ '^0$\|^0\=[#:]'
     let suffix = s:sub(arg,'^0*','')
     if self.has_file('db/schema.rb')
       return 'db/schema.rb'.suffix
@@ -2723,6 +2713,7 @@ function! s:libEdit(cmd,...)
     call s:EditSimpleRb(a:cmd,"lib",a:0? a:1 : "",extra."lib/",".rb")
   else
     call s:EditSimpleRb(a:cmd,"lib","routes","config/",".rb")
+    call s:warn('Warning: :Rlib with no argument has been deprecated in favor of :Rinitializer')
   endif
 endfunction
 
@@ -3901,15 +3892,9 @@ function! s:app_dbext_settings(environment) dict
   if !has_key(cache,a:environment)
     let dict = {}
     if self.has_file("config/database.yml")
-      let out = ""
-      if has("ruby")
-        ruby require 'yaml'; VIM::command('let out = %s' % File.open(VIM::evaluate("self.path()")+"/config/database.yml") {|f| y = YAML::load(f); e = y[VIM::evaluate("a:environment")]; i=0; e=y[e] while e.respond_to?(:to_str) && (i+=1)<16; e.map {|k,v| "#{k}=#{v}\n" if v}.compact.join }.inspect) rescue nil
-      endif
-      if out == ""
-        let cmdb = 'require %{yaml}; File.open(%q{'.self.path().'/config/database.yml}) {|f| y = YAML::load(f); e = y[%{'
-        let cmde = '}]; i=0; e=y[e] while e.respond_to?(:to_str) && (i+=1)<16; e.each{|k,v|puts k.to_s+%{=}+v.to_s}}'
-        let out = self.lightweight_ruby_eval(cmdb.a:environment.cmde)
-      endif
+      let cmdb = 'require %{yaml}; File.open(%q{'.self.path().'/config/database.yml}) {|f| y = YAML::load(f); e = y[%{'
+      let cmde = '}]; i=0; e=y[e] while e.respond_to?(:to_str) && (i+=1)<16; e.each{|k,v|puts k.to_s+%{=}+v.to_s}}'
+      let out = self.lightweight_ruby_eval(cmdb.a:environment.cmde)
       let adapter = s:extractdbvar(out,'adapter')
       let adapter = get({'postgresql': 'pgsql', 'sqlite3': 'sqlite', 'sqlserver': 'sqlsrv', 'sybase': 'asa', 'oci': 'ora'},adapter,adapter)
       let dict['type'] = toupper(adapter)
