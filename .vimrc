@@ -58,11 +58,11 @@ set grepprg=grep\ -nH\ $*
 let php_folding=1
 
 " Setting for extended %-Matching
-let loaded_matchit = 1
+"let loaded_matchit=1
 
 " Settings for NERDTree
-let NERDChristmasTree=1
-let NERDTreeChDirMode=2
+let NERDChristmasTree=1   " Colorful output!!1!
+let NERDTreeChDirMode=2   " Always cd to the rootdir of the NERDTree
 let NERDTreeHijackNetrw=1
 
 " The OSX-keyboardlayout sucks when you have \ as Leader...
