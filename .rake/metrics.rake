@@ -8,7 +8,10 @@ end
 if defined? MetricFu
 	MetricFu::Configuration.run do |config|
 		#define which metrics you want to use
-		config.metrics  = [:churn, :saikuro, :stats, :flog, :flay, :reek, :roodi, :rcov]
+		# config.metrics  = [:churn, :saikuro, :stats, :flog, :flay, :reek, :roodi, :rcov]
+		config.metrics  = [:churn, :saikuro, :flog, :flay, :reek, :roodi]
+		# config.graphs   = ( defined? RMagick ) ? [:flog, :flay, :reek, :roodi, :rcov] : []
+		config.graphs   = ( defined? RMagick ) ? [:flog, :flay, :reek, :roodi] : []
 		config.flay     = { :dirs_to_flay => ['app', 'lib']  }
 		config.flog     = { :dirs_to_flog => ['app', 'lib']  }
 		config.reek     = { :dirs_to_reek => ['app', 'lib']  }
