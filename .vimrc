@@ -1,4 +1,5 @@
-set nocompatible
+set nocompatible  " Surprise, I actually want Vim :-)
+
 set backspace=indent,eol,start
 
 set history=50    " keep 50 lines of command line history
@@ -16,13 +17,14 @@ set lbr           " long lines are wrapped on word boundaries
 " Time to wait after ESC (default causes an annoying delay)
 set timeout timeoutlen=1000 ttimeoutlen=100
 
+" Spaces not Tabs.
 set tabstop=2
 set shiftwidth=2
 set expandtab
 
-set encoding=utf-8
+set encoding=utf-8   " Unicode is a beast, but...
 
-set list " show line-endings, tabs and trailing spaces
+set list                  " show line-endings, tabs and trailing spaces
 set lcs=trail:·,tab:\ \   " trailing spaces are shown, tabs and eol not
 
 " Diffing
@@ -54,18 +56,15 @@ endif
 " Setting for Latexsuite
 set grepprg=grep\ -nH\ $*
 
-" Setting for folding of php-files
+" Setting for folding of php-files ( hopefully for historical reasons ;-) )
 let php_folding=1
-
-" Setting for extended %-Matching
-"let loaded_matchit=1
 
 " Settings for NERDTree
 let NERDChristmasTree=1   " Colorful output!!1!
 let NERDTreeChDirMode=2   " Always cd to the rootdir of the NERDTree
 let NERDTreeHijackNetrw=1
 
-" The OSX-keyboardlayout sucks when you have \ as Leader...
+" The OSX-keyboardlayout sucks, especially when you have \ as Leader...
 " and this doesn't hurt on other OS either
 let mapleader = ","
 let maplocalleader = ","
@@ -75,9 +74,18 @@ syntax on
 filetype plugin indent on
 
 " Vim should look good.
+" so, at least use some dark theme
 colo torte
-if has( 'gui' )
-	colo railscasts
+
+" this translates to: TERM=xterm-256color (or mvim/gvim)
+" or: use the more colorful colorscheme if possible
+if &t_Co >= 256 || has('gui')
+  colo railscasts
+endif
+
+" Tweak the GUI
+if has('gui')
+  set guioptions-=T                " no menu
 
 	if has('win32')
 		set guifont=Lucida_Console:h10
@@ -85,14 +93,16 @@ if has( 'gui' )
 
 	if has('gui_macvim')
 		set fuoptions=maxhorz,maxvert  " Let Fullscreen be really fullscreen
-		set transparency=8
+		set transparency=8             " Mac selling point #1? transparent windows! :-)
 	endif
-end
+endif
 
+" Always show the Tabline
 if has('windows')
 	set showtabline=2
 endif
 
+" common Key-mappings (parantheses et al.)
 imap {} {}<ESC>i
 imap [] []<ESC>i
 imap () ()<ESC>i
@@ -106,4 +116,3 @@ map <F5> <ESC>:w:Rake
 
 " NERDtree
 map <leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
-
