@@ -3,7 +3,10 @@ alias la="ls -a"
 alias lla="ll -a"
 alias td="tail -n 0 -f log/development.log"
 alias tt="tail -n 0 -f log/test.log"
-alias changes="svnst"
+
+alias ss="script/server"
+alias sc="script/console"
+alias sd="script/dbconsole"
 
 function svndiff() {
 	# svn diff $@ | colordiff | less -R;
@@ -20,3 +23,10 @@ function update_externals_to() {
 	echo "`svn pg svn:externals .`"
 }
 
+function pgrep() {
+  ps aux | head -n 1
+  ps aux | grep $1 | grep -v 'grep'
+}
+function pidgrep() {
+  pgrep $1 | sed 's/[- a-zA-Z]* *\([0-9]*\).*/\1/'
+}
