@@ -1,5 +1,11 @@
 begin
 	require 'metric_fu'
+  begin
+    require 'RMagick'
+  rescue LoadError
+    puts "LoadError while requiring RMagick."
+    puts $!.message
+  end
 rescue LoadError
 	puts "LoadError while requiring MetricFu."
 	puts $!.message
@@ -11,7 +17,7 @@ if defined? MetricFu
 		# config.metrics  = [:churn, :saikuro, :stats, :flog, :flay, :reek, :roodi, :rcov]
 		config.metrics  = [:churn, :saikuro, :flog, :flay, :roodi]
 		# config.graphs   = ( defined? RMagick ) ? [:flog, :flay, :reek, :roodi, :rcov] : []
-		config.graphs   = ( defined? RMagick ) ? [:flog, :flay, :roodi] : []
+		config.graphs   = ( defined? Magick ) ? [:flog, :flay, :roodi] : []
 		config.flay     = { :dirs_to_flay => ['app', 'lib']  }
 		config.flog     = { :dirs_to_flog => ['app', 'lib']  }
 		config.reek     = { :dirs_to_reek => ['app', 'lib']  }
