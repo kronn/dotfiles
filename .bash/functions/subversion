@@ -4,7 +4,8 @@
 # Subversion Functions
 function svndiff() {
 	# svn diff $@ | colordiff | less -R;
-	svn diff -x --ignore-all-space --no-diff-deleted --notice-ancestry $@ | colordiff | more;
+	# svn diff -x --ignore-all-space --no-diff-deleted --notice-ancestry $@ | colordiff | more;
+	svn diff -x --ignore-all-space --no-diff-deleted --notice-ancestry $@ | colordiff;
 }
 
 function svnst() {
