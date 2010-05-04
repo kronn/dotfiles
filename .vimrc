@@ -24,8 +24,12 @@ set expandtab
 
 set encoding=utf-8   " Unicode is a beast, but...
 
+" what to show
 set list                  " show line-endings, tabs and trailing spaces
 set lcs=trail:·,tab:\ \   " trailing spaces are shown, tabs and eol not
+
+set number         " show line-numbers
+set wildmenu       " use funky wildmenu to display alternate findings
 
 " Diffing
 if &diff
