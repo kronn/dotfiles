@@ -1,8 +1,16 @@
 #!/bin/bash
 # vim:ft=sh
 
+# useful aliases
+alias reload='. ~/.bash_profile'
+
+# grep colors
+alias grep='grep --color=auto'
+
 # ls
+alias ls="ls -G"
 alias ll="ls -l"
+alias l="ll -h"
 alias la="ls -a"
 alias lla="ll -a"
 
@@ -13,3 +21,6 @@ alias tt="tail -n 0 -f log/test.log"
 alias ss="script/server"
 alias sc="script/console"
 alias sd="script/dbconsole"
+
+# ruby
+alias gake='rake -rubygems -r rakegrowl'
