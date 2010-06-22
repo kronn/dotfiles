@@ -19,6 +19,7 @@ set timeout timeoutlen=1000 ttimeoutlen=100
 
 " Spaces not Tabs.
 set tabstop=2
+set softtabstop=2
 set shiftwidth=2
 set expandtab
 
@@ -26,15 +27,15 @@ set encoding=utf-8   " Unicode is a beast, but...
 
 " what to show
 set list                  " show line-endings, tabs and trailing spaces
-set lcs=trail:·,tab:\ \   " trailing spaces are shown, tabs and eol not
+set lcs=trail:·,tab:»·    " trailing spaces and tabs are shown and eol not
 
 set number         " show line-numbers
 set wildmenu       " use funky wildmenu to display alternate findings
 
 " Diffing
 if &diff
-	set diffopt=iwhite
-	set wrap
+  set diffopt=iwhite
+  set wrap
 else
 endif
 
@@ -49,16 +50,27 @@ set foldmethod=syntax
 " Backups & Files
 set backup                   " Enable creation of backup file.
 if has('unix')
-	set backupdir=~/.vim/backups " Where backups will go.
-	set directory=~/.vim/tmp     " Where temporary files will go."
+  set backupdir=~/.vim/backups " Where backups will go.
+  set directory=~/.vim/tmp     " Where temporary files will go."
 endif
 if has('win32')
-	set backupdir=~/vimfiles/backups " Where backups will go.
-	set directory=~/vimfiles/tmp     " Where temporary files will go."
+  set backupdir=~/vimfiles/backups " Where backups will go.
+  set directory=~/vimfiles/tmp     " Where temporary files will go."
 endif
 
 " Setting for Latexsuite
 set grepprg=grep\ -nH\ $*
+
+" use ack instead of grep? might need to custimize the grepprg for
+" tex-files...
+"
+" install ack: (given you have perl)
+" curl http://betterthangrep.com/ack-standalone > ~/bin/ack && chmod 0755 !#:3
+"
+" use ack if available (credit: hukl)
+" if executable("ack")
+"   set grepprg=ack\ -H\ --nogroup\ --nocolor
+" endif
 
 " Setting for folding of php-files ( hopefully for historical reasons ;-) )
 let php_folding=1
@@ -91,19 +103,39 @@ endif
 if has('gui')
   set guioptions-=T                " no menu
 
-	if has('win32')
-		set guifont=Lucida_Console:h10
-	endif
+  if has('win32')
+    set guifont=Lucida_Console:h10
+  endif
 
-	if has('gui_macvim')
-		set fuoptions=maxhorz,maxvert  " Let Fullscreen be really fullscreen
-		set transparency=8             " Mac selling point #1? transparent windows! :-)
-	endif
+  if has('gui_macvim')
+    set fuoptions=maxhorz,maxvert  " Let Fullscreen be really fullscreen
+    set transparency=8             " Mac selling point #1? transparent windows! :-)
+  endif
 endif
 
 " Always show the Tabline
 if has('windows')
-	set showtabline=2
+  set showtabline=2
+endif
+
+
+" Functions
+function! <SID>StripTrailingWhitespaces()
+    " Preparation: save last search, and cursor position.
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    " Do the business:
+    %s/\s\+$//e
+    " Clean up: restore previous search history, and cursor position
+    let @/=_s
+    call cursor(l, c)
+endfunction
+
+
+" autocommands
+if has('autocmd')
+  autocmd BufWritePre *.erb,*.rb,*.js :call <SID>StripTrailingWhitespaces()
 endif
 
 " common Key-mappings (parantheses et al.)
