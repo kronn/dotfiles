@@ -1,0 +1,8 @@
+#!/bin/bash
+
+function remove_cache_files() {
+  for FILE in {public/index.html,public/javascripts/all.js,public/stylesheets/all.css}; do
+    touch $FILE;
+    rm $FILE;
+  done;
+}

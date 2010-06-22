@@ -1,0 +1,27 @@
+#!/bin/bash
+
+function advatests() {
+  if [ "a${1}" = "a" ]; then
+    echo "running ALL tests"
+  else
+    echo "running tests for ${1}"
+  fi
+
+  CMD="vendor/adva/script/test vendor/adva/engines/$1"
+  echo "$CMD"
+  touch ${TMPLOGFILE:="/tmp/testoutput.log"}
+  $CMD | tee $TMPLOGFILE
+  growlnotify -m "Tests fertig ${1:-'(alle Engines)'}`tail -n2 $TMPLOGFILE`" DONE
+  rm $TMPLOGFILE
+}
+
+function advatests_all_engines_separately() {
+  echo "running tests for all engines"
+  for ENG in `ls vendor/adva/engines/`; do
+    echo "$ENG: `advatests $ENG | tail -n 1`"
+  done
+}
+
+function advatests_not_so_verbose() {
+  DO_NOT_REPORT_ASAP=true advatests $1
+}

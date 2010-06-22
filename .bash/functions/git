@@ -1,0 +1,5 @@
+#!/bin/bash
+
+function delete_merged_branch() {
+  git co -t origin/$1 && git co master && git branch -d $1 && git push origin :$1
+}
