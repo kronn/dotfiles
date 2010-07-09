@@ -1,8 +1,13 @@
 [color]
-	ui = auto
+  ui = auto
 [alias]
-	st = status
-	ci = commit
-	co = checkout
-	br = branch -a
+  st = status
+  ci = commit
+  co = checkout
+  br = branch -a
   ch = diff --staged
+  praise = blame
+[core]
+  excludesfile = /path/to/.gitignore
+[svn]
+  rmdir = true
