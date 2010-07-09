@@ -136,6 +136,8 @@ endfunction
 " autocommands
 if has('autocmd')
   autocmd BufWritePre *.erb,*.rb,*.js :call <SID>StripTrailingWhitespaces()
+  autocmd BufRead *.feature :setlocal fdm=indent fdl=1
+  autocmd BufRead *.md :setlocal noet
 endif
 
 " common Key-mappings (parantheses et al.)
