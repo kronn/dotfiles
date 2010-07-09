@@ -25,3 +25,17 @@ function advatests_all_engines_separately() {
 function advatests_not_so_verbose() {
   DO_NOT_REPORT_ASAP=true advatests $1
 }
+
+function with_adva_master() {
+  (
+    cd vendor/adva;
+    git tag previous `git log --format=oneline -1 | sed 's/^\([a-z0-9]*\) .*/\1/'`;
+    git checkout master;
+  )
+  $@
+  (
+    cd vendor/adva;
+    git checkout previous;
+    git tag -d previous
+  )
+}

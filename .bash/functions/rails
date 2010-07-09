@@ -6,3 +6,11 @@ function remove_cache_files() {
     rm $FILE;
   done;
 }
+
+function clean_migration_files() {
+  rm db/migrate/*.rb ; git co db/migrate/*.rb
+}
+
+function run_unittests() {
+  ruby -rubygems -r 'test/unit' -e "require 'redgreen'; %w($@).each { |file| require %Q(test/unit/#{file}_test.rb) }"
+}
