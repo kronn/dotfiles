@@ -1,3 +1,4 @@
 *.gemspec
 public/sites/site-1/assets/
 .rvmrc
+.livereload
