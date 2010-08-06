@@ -77,7 +77,7 @@ let php_folding=1
 
 " Settings for NERDTree
 let NERDChristmasTree=1   " Colorful output!!1!
-let NERDTreeChDirMode=2   " Always cd to the rootdir of the NERDTree
+" let NERDTreeChDirMode=2   " Always cd to the rootdir of the NERDTree
 let NERDTreeHijackNetrw=1
 
 " The OSX-keyboardlayout sucks, especially when you have \ as Leader...
@@ -135,17 +135,18 @@ endfunction
 
 " autocommands
 if has('autocmd')
-  autocmd BufWritePre *.erb,*.rb,*.js :call <SID>StripTrailingWhitespaces()
+  autocmd BufWritePre *.feature,*.erb,*.rb,*.js :call <SID>StripTrailingWhitespaces()
   autocmd BufRead *.feature :setlocal fdm=indent fdl=1
+  autocmd BufRead *.scss :setlocal fdm=indent
   autocmd BufRead *.md :setlocal noet
 endif
 
-" common Key-mappings (parantheses et al.)
-imap {} {}<ESC>i
-imap [] []<ESC>i
-imap () ()<ESC>i
-imap '' ''<ESC>i
-imap "" ""<ESC>i
+" " common Key-mappings (parantheses et al.)
+" imap {} {}<ESC>i
+" imap [] []<ESC>i
+" imap () ()<ESC>i
+" imap '' ''<ESC>i
+" imap "" ""<ESC>i
 
 " Key-mappings for plugins
 
