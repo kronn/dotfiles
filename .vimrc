@@ -1,6 +1,7 @@
 set nocompatible  " Surprise, I actually want Vim :-)
 
 set backspace=indent,eol,start
+set scrolloff=5   " have always 5 lines of context around the cursor
 
 set history=50    " keep 50 lines of command line history
 set ruler         " show the cursor position all the time
@@ -109,7 +110,8 @@ if has('gui')
 
   if has('gui_macvim')
     set fuoptions=maxhorz,maxvert  " Let Fullscreen be really fullscreen
-    set transparency=8             " Mac selling point #1? transparent windows! :-)
+    " set transparency=8             " Mac selling point #1? transparent windows! :-)
+    set guifont=Menlo\ Regular:h12
   endif
 endif
 
@@ -139,6 +141,7 @@ if has('autocmd')
   autocmd BufRead *.feature :setlocal fdm=indent fdl=1
   autocmd BufRead *.scss :setlocal fdm=indent
   autocmd BufRead *.md :setlocal noet
+  autocmd BufRead .vimperatorrc :setlocal ft=vimperator
 endif
 
 " " common Key-mappings (parantheses et al.)

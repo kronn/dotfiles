@@ -1,2 +1,3 @@
 tComment.vba: call delete('/Users/kronn/.vim/doc/tComment.txt')|call delete('/Users/kronn/.vim/plugin/tComment.vim')|call delete('/Users/kronn/.vim/autoload/tcomment.vim')
 delimitMate-2.4DEV.vba: call delete('/Users/matthias/.vim/plugin/delimitMate.vim')|call delete('/Users/matthias/.vim/autoload/delimitMate.vim')|call delete('/Users/matthias/.vim/doc/delimitMate.txt')
+Align.vba: call delete('/Users/matthias/.vim/plugin/AlignPlugin.vim')|call delete('/Users/matthias/.vim/plugin/AlignMapsPlugin.vim')|call delete('/Users/matthias/.vim/plugin/cecutil.vim')|call delete('/Users/matthias/.vim/doc/Align.txt')|call delete('/Users/matthias/.vim/autoload/Align.vim')|call delete('/Users/matthias/.vim/autoload/AlignMaps.vim')
