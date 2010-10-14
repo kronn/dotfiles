@@ -11,6 +11,16 @@ IRB.conf[:PROMPT_MODE] = :SIMPLE
   begin
     require gem
   rescue LoadError
+    puts "#{gem} is not installed and therefore not loaded."
+  end
+end
+
+def colorize
+  if defined?(Wirble)
+    Wirble.init
+    Wirble.colorize
+  else
+    'Wirble is not loaded.'
   end
 end
 
