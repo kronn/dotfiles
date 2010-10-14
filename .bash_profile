@@ -1,5 +1,6 @@
 source ~/.profile
 source ~/.bash/git-completion.bash
+source ~/.bash/git-promptstatus.bash
 source ~/.bash/aliases
 
 for FILE in `ls ~/.bash/functions/*`; do
@@ -11,7 +12,7 @@ shopt -s checkwinsize
 
 # Tweak History handling
 export HISTCONTROL=erasedups
-export HISTSIZE=10000
+export HISTSIZE=100000
 shopt -s histappend
 
 # rvm-install added line:
