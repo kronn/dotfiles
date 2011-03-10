@@ -4,8 +4,8 @@ require 'erb'
 desc "install the dot files into user's home directory"
 task :install do
   replace_all = false
-  Dir['*'].each do |file|
-    next if %w[Rakefile README.rdoc LICENSE].include? file
+  Dir.glob('*', File::FNM_DOTMATCH).each do |file|
+    next if %w[. .. .DS_Store Rakefile README LICENSE].include? file
 
     if File.exist?(File.join(ENV['HOME'], "#{file.sub('.erb', '')}"))
       if File.identical? file, File.join(ENV['HOME'], "#{file.sub('.erb', '')}")
@@ -40,7 +40,7 @@ end
 def link_file(file)
   if file =~ /.erb$/
     puts "generating ~/#{file.sub('.erb', '')}"
-    File.open(File.join(ENV['HOME'], ".#{file.sub('.erb', '')}"), 'w') do |new_file|
+    File.open(File.join(ENV['HOME'], "#{file.sub('.erb', '')}"), 'w') do |new_file|
       new_file.write ERB.new(File.read(file)).result(binding)
     end
   else
