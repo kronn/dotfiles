@@ -1,6 +1,8 @@
 " Needed on some linux distros.
 " see http://www.adamlowe.me/2009/12/vim-destroys-all-other-rails-editors.html
 filetype off
+call pathogen#helptags()
+call pathogen#runtime_append_all_bundles()
 
 set nocompatible  " Surprise, I actually want Vim :-)
 
@@ -138,27 +140,37 @@ function! <SID>StripTrailingWhitespaces()
     call cursor(l, c)
 endfunction
 
+function! s:align()
+  let p = '^\s*|\s.*\s|\s*$'
+  if exists(':Tabularize') && getline('.') =~# '^\s*|' && (getline(line('.')-1) =~# p || getline(line('.')+1) =~# p)
+    let column = strlen(substitute(getline('.')[0:col('.')],'[^|]','','g'))
+    let position = strlen(matchstr(getline('.')[0:col('.')],'.*|\s*\zs.*'))
+    Tabularize/|/l1
+    normal! 0
+    call search(repeat('[^|]*|',column).'\s\{-\}'.repeat('.',position),'ce',line('.'))
+  endif
+endfunction
 
 " autocommands
 if has('autocmd')
-  autocmd BufWritePre *.feature,*.erb,*.rb,*.js :call <SID>StripTrailingWhitespaces()
+  autocmd BufWritePre *.feature,*.erb,*.rb,*.js,*.pde :call <SID>StripTrailingWhitespaces()
   autocmd BufRead *.feature :setlocal fdm=indent fdl=1
   autocmd BufRead *.scss :setlocal fdm=indent
   autocmd BufRead *.md :setlocal noet
   autocmd BufRead .vimperatorrc :setlocal ft=vimperator
+  autocmd BufNewFile,BufRead *.feature inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
 endif
 
-" " common Key-mappings (parantheses et al.)
-" imap {} {}<ESC>i
-" imap [] []<ESC>i
-" imap () ()<ESC>i
-" imap '' ''<ESC>i
-" imap "" ""<ESC>i
-
 " Key-mappings for plugins
+if exists(":Tabularize")
+  nmap <Leader>t= :Tabularize /=<CR>
+  vmap <Leader>t= :Tabularize /=<CR>
+  nmap <Leader>t: :Tabularize /:\zs<CR>
+  vmap <Leader>t: :Tabularize /:\zs<CR>
+endif
 
 " rails.vim
-map <F5> <ESC>:w:Rake
+" map <F5> <ESC>:w:Rake
 
 " NERDtree
 map <leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
