@@ -15,6 +15,7 @@ git_bundles = [
   "git://github.com/Raimondi/delimitMate.git",
   "git://github.com/ajf/puppet-vim.git",
   "git://github.com/godlygeek/tabular.git",
+  "git://github.com/tpope/vim-ragtag.git",
 
   # "git://github.com/.git",
 ]
