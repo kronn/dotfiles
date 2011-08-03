@@ -1,5 +1,12 @@
 #!/bin/bash
 
-function delete_merged_branch() {
-  git co -t origin/$1 && git co master && git branch -d $1 && git push origin :$1
+function finish() {
+  PREFIX=`git config gitflow.prefix.feature`
+  BRANCH=`git branch | grep '^*' | sed -e 's/\*\ //'`
+  FLOW_BRANCH=`echo $BRANCH | sed "s/$PREFIX//"`
+
+  if [ -n `echo $BRANCH | grep $PREFIX` ]; then
+    echo "finishing $FLOW_BRANCH"
+    git flow feature finish $FLOW_BRANCH
+  fi
 }
