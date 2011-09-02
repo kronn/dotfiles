@@ -60,6 +60,7 @@ set t_vb=" "
 
 " Folding
 set foldmethod=syntax
+set foldlevelstart=1
 
 " Backups & Files
 set backup                   " Enable creation of backup file.
