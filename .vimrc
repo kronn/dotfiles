@@ -162,21 +162,26 @@ endfunction
 
 " autocommands
 if has('autocmd')
-  autocmd BufWritePre *.feature,*.erb,*.rb,*.js,*.pde :call <SID>StripTrailingWhitespaces()
+  " pde => arduino-files
+  autocmd BufWritePre *.feature,*.erb,*.rb,*.js,*.pde,*.yml :call <SID>StripTrailingWhitespaces()
   autocmd BufRead *.feature :setlocal fdm=indent fdl=1
   autocmd BufRead *.scss :setlocal fdm=indent
   autocmd BufRead *.md :setlocal noet
   autocmd BufRead .vimperatorrc :setlocal ft=vimperator
-  autocmd BufNewFile,BufRead *.feature inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
+  autocmd BufRead *.yml :setlocal fdm=indent fdl=2 ai
+  autocmd BufNewFile,BufRead *.feature inoremap <silent> <Bar>   <Bar><ESC>:call <SID>align()<CR>a
   autocmd WinEnter * wincmd _
   " don't clutter the bufferspace with fugitive-buffers
   autocmd BufReadPost fugitive://* set bufhidden=delete
 endif
 
+" Key-mappings
+set pastetoggle=<F2>
+
 " Key-mappings for plugins
 if exists(":Tabularize")
-  nmap <Leader>t= :Tabularize /=<CR>
-  vmap <Leader>t= :Tabularize /=<CR>
+  nmap <Leader>t= :Tabularize /=>\?<CR>
+  vmap <Leader>t= :Tabularize /=>\?<CR>
   nmap <Leader>t: :Tabularize /:\zs<CR>
   vmap <Leader>t: :Tabularize /:\zs<CR>
 endif
