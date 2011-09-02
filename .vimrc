@@ -131,6 +131,10 @@ if has('windows')
   set showtabline=1
 endif
 
+" show git-branch in statusline if possible
+if exists('*fugitive#statusline()')
+  set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+endif
 
 " Functions
 function! <SID>StripTrailingWhitespaces()
@@ -165,6 +169,8 @@ if has('autocmd')
   autocmd BufRead .vimperatorrc :setlocal ft=vimperator
   autocmd BufNewFile,BufRead *.feature inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
   autocmd WinEnter * wincmd _
+  " don't clutter the bufferspace with fugitive-buffers
+  autocmd BufReadPost fugitive://* set bufhidden=delete
 endif
 
 " Key-mappings for plugins
