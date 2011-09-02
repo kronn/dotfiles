@@ -74,18 +74,12 @@ if has('win32')
 endif
 
 " Setting for Latexsuite
-set grepprg=grep\ -nH\ $*
-
-" use ack instead of grep? might need to custimize the grepprg for
-" tex-files...
-"
-" install ack: (given you have perl)
-" curl http://betterthangrep.com/ack-standalone > ~/bin/ack && chmod 0755 !#:3
-"
 " use ack if available (credit: hukl)
-" if executable("ack")
-"   set grepprg=ack\ -H\ --nogroup\ --nocolor
-" endif
+if executable("ack")
+  set grepprg=ack\ -H\ --nogroup\ --nocolor
+else
+  set grepprg=grep\ -nH\ $*
+endif
 
 " Setting for folding of php-files ( hopefully for historical reasons ;-) )
 let php_folding=1
