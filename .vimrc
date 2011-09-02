@@ -123,9 +123,12 @@ if has('gui')
   endif
 endif
 
-" Always show the Tabline
 if has('windows')
-  set showtabline=2
+  " Always show the Tabline
+  " set showtabline=2
+
+  " Only show the Tabline if needed
+  set showtabline=1
 endif
 
 
