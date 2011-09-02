@@ -21,6 +21,9 @@ set smartcase    " Ignore case when searching lowercase
 
 set lbr          " long lines are wrapped on word boundaries
 
+" modelines for tweaking behaviour on file-level
+set modeline
+set modelines=5  " this is the default, but i really want it that way
 
 " Time to wait after ESC (default causes an annoying delay)
 set timeout timeoutlen=1000 ttimeoutlen=100
