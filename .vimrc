@@ -1,25 +1,26 @@
 " Needed on some linux distros.
 " see http://www.adamlowe.me/2009/12/vim-destroys-all-other-rails-editors.html
 filetype off
-call pathogen#helptags()
 call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
 
 set nocompatible  " Surprise, I actually want Vim :-)
 
 set backspace=indent,eol,start
-set scrolloff=5   " have always 5 lines of context around the cursor
+set scrolloff=5  " have always 5 lines of context around the cursor
 
-set history=50    " keep 50 lines of command line history
-set ruler         " show the cursor position all the time
-set laststatus=2  " always show status bar
-set showcmd       " display incomplete commands
+set history=50   " keep 50 lines of command line history
+set ruler        " show the cursor position all the time
+set laststatus=2 " always show status bar
+set showcmd      " display incomplete commands
 
-set incsearch     " do incremental searching
-set hlsearch      " show my search results
-set ignorecase    " Ignore case when searching
-set smartcase     " Ignore case when searching lowercase
+set incsearch    " do incremental searching
+set hlsearch     " show my search results
+set ignorecase   " Ignore case when searching
+set smartcase    " Ignore case when searching lowercase
 
-set lbr           " long lines are wrapped on word boundaries
+set lbr          " long lines are wrapped on word boundaries
+
 
 " Time to wait after ESC (default causes an annoying delay)
 set timeout timeoutlen=1000 ttimeoutlen=100
