@@ -43,6 +43,9 @@ set lcs=trail:·,tab:»·    " trailing spaces and tabs are shown and eol not
 set number         " show line-numbers
 set wildmenu       " use funky wildmenu to display alternate findings
 
+" windows, buffers, splits, ...
+set winminheight=0
+
 " Diffing
 if &diff
   set diffopt=iwhite
@@ -163,6 +166,7 @@ if has('autocmd')
   autocmd BufRead *.md :setlocal noet
   autocmd BufRead .vimperatorrc :setlocal ft=vimperator
   autocmd BufNewFile,BufRead *.feature inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
+  autocmd WinEnter * wincmd _
 endif
 
 " Key-mappings for plugins
@@ -177,4 +181,7 @@ endif
 " map <F5> <ESC>:w:Rake
 
 " NERDtree
-map <leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
+map <Leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
+
+nmap <Tab> <C-W>w
+nmap <S-Tab> <C-W>W
