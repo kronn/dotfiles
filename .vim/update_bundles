@@ -17,6 +17,15 @@ git_bundles = [
   "git://github.com/godlygeek/tabular.git",
   "git://github.com/tpope/vim-ragtag.git",
 
+  "git://github.com/tpope/vim-rake.git",
+  "git://github.com/tobiassvn/vim-gemfile.git",
+  # "git://github.com/leshill/vim-json.git",
+  "git://github.com/vim-ruby/vim-ruby.git",
+  "git://github.com/vim-scripts/nginx.vim.git",
+
+  "git://github.com/tpope/vim-fugitive.git",
+  "git://github.com/mileszs/ack.vim.git",
+
   # "git://github.com/.git",
 ]
 
