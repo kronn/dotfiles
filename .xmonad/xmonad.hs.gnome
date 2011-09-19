@@ -1,0 +1,23 @@
+import XMonad
+import XMonad.Config.Gnome
+import XMonad.Hooks.ManageDocks
+-- import XMonad.Hooks.DynamicLog
+-- import XMonad.Util.Run(spawnPipe)
+-- import XMonad.Util.EZConfig(additionalKeys)
+-- import System.IO
+
+myManageHook = composeAll [
+          className =? "Do" --> doFloat,
+          manageDocks
+    ]
+
+main = do
+    xmonad $ gnomeConfig {
+        modMask = mod4Mask,            -- Rebind Mod to the Windows key
+        terminal = "gnome-terminal",   -- far from ideal, but nicely integrated
+        manageHook = myManageHook <+> manageHook gnomeConfig,
+        -- layoutHook = avoidStruts  $  layoutHook gnomeConfig,
+        borderWidth = 2,
+        normalBorderColor = "#333333",
+        focusedBorderColor = "#ff3333"
+    }
