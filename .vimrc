@@ -135,9 +135,9 @@ if has('windows')
 endif
 
 " show git-branch in statusline if possible
-if exists('*fugitive#statusline()')
+" if exists('*fugitive#statusline()')
   set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
-endif
+" endif
 
 " Functions
 function! <SID>StripTrailingWhitespaces()
