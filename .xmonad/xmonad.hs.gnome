@@ -6,18 +6,30 @@ import XMonad.Hooks.ManageDocks
 -- import XMonad.Util.EZConfig(additionalKeys)
 -- import System.IO
 
-myManageHook = composeAll [
-          className =? "Do" --> doFloat,
-          manageDocks
-    ]
+-- basic Settings which may be needed more than once
+theModifierKey = mod4Mask      -- Rebind Mod to the Windows key
+theTerminal = "gnome-terminal" -- far from ideal, but nicely integrated
 
 main = do
     xmonad $ gnomeConfig {
-        modMask = mod4Mask,            -- Rebind Mod to the Windows key
-        terminal = "gnome-terminal",   -- far from ideal, but nicely integrated
-        manageHook = myManageHook <+> manageHook gnomeConfig,
+        modMask = theModifierKey,
+        terminal = theTerminal,
+        manageHook = theManageHook <+> manageHook gnomeConfig,
         -- layoutHook = avoidStruts  $  layoutHook gnomeConfig,
+        workspaces = theWorkspaces,
         borderWidth = 2,
         normalBorderColor = "#333333",
         focusedBorderColor = "#ff3333"
     }
+
+-- Workspaces
+theWorkspaces = ["web", "primary", "secondary" , "tertiary", "mail", "music" , "irc", "twitter", "chat"]
+
+-- special Window handling
+theManageHook = composeAll [
+          className =? "Xmessage" --> doFloat, -- hmm... not really sure...
+          className =? "Do" --> doFloat, -- float GnomeDO (like you expect it)
+          -- className =? "Nautilus" <&&> stringProperty "_NET_WM_WINDOW_TYPE" =? "_NET_WM_WINDOW_TYPE_DIALOG" --> doFloat,
+          manageDocks
+    ]
+
