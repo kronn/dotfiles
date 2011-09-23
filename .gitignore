@@ -93,3 +93,11 @@ Ubuntu One/
 .xinput.d/
 .xsession-errors
 .xsession-errors.old
+.xmonad/xmonad-*
+.xmonad/xmonad.errors
+.xmonad/xmonad.hi
+.xmonad/xmonad.o
+.VirtualBox/
+VirtualBox VMs/
+.adobe/
+.bzr.log
