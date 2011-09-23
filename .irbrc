@@ -7,23 +7,6 @@ IRB.conf[:HISTORY_FILE] = "#{ENV['HOME']}/.irb_history"
 
 IRB.conf[:PROMPT_MODE] = :SIMPLE
 
-%w[rubygems looksee/shortcuts wirble].each do |gem|
-  begin
-    require gem
-  rescue LoadError
-    puts "#{gem} is not installed and therefore not loaded."
-  end
-end
-
-def colorize
-  if defined?(Wirble)
-    Wirble.init
-    Wirble.colorize
-  else
-    'Wirble is not loaded.'
-  end
-end
-
 class Object
   # list methods which aren't in superclass
   def local_methods(obj = self)
@@ -43,14 +26,6 @@ class Object
     end
     puts `ri '#{method}'`
   end
-end
-
-def copy(str)
-  IO.popen('pbcopy', 'w') { |f| f << str.to_s }
-end
-
-def paste
-  `pbpaste`
 end
 
 load File.dirname(__FILE__) + '/.railsrc' if ($0 == 'irb' || $0 == 'script/rails') && ENV['RAILS_ENV']
