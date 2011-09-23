@@ -1,28 +1,43 @@
 #!/bin/bash
 # vim:ft=sh
 
-# useful aliases
-alias reload='. ~/.bash_profile'
+# enable color support
+case `uname` in
+  'Darwin')
+    alias ls='ls -G'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+    ;;
 
-# grep colors
-alias grep='grep --color=auto'
+  'Linux')
+    if [ -x /usr/bin/dircolors ]; then
+      test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+      alias ls='ls --color=auto'
+
+      # grep colors
+      alias grep='grep --color=auto'
+      alias fgrep='fgrep --color=auto'
+      alias egrep='egrep --color=auto'
+    fi
+    ;;
+esac
 
 # ls
-alias ls="ls -G"
+alias la='ls -a'
 alias ll="ls -l"
 alias l="ll -h"
-alias la="ls -a"
-alias lla="ll -a"
 
 # rails
 alias td="tail -n 0 -f log/development.log"
 alias tt="tail -n 0 -f log/test.log"
 alias tp="tail -n 0 -f log/production.log"
 
+# rails 2 (rails 3 is good enough)
 alias ss="script/server"
 alias sc="script/console"
 alias sd="script/dbconsole"
 alias sg="script/generate"
 
-# ruby
-alias gake='rake -rubygems -r rakegrowl'
+# git convinience
+alias homegit="GIT_DIR=~/Code/projects/dotfiles/.git GIT_WORK_TREE=~/ git"
