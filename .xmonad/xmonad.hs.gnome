@@ -10,6 +10,9 @@ import XMonad.Actions.CycleWS
 
 import qualified Data.Map as M
 
+-- TODO add IM Layout for tiling Empathy or Pidgin nicely
+-- TODO pipe loghook into a gnome-panel (think "window titles")
+
 -- basic Settings which may be needed more than once
 theModifierKey = mod4Mask      -- Rebind Mod to the Windows key
 theTerminal = "gnome-terminal" -- far from ideal, but nicely integrated
