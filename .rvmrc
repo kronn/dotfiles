@@ -1,1 +1,4 @@
+export rvm_path="$HOME/.rvm"
+
 rvm_project_rvmrc_default=1
+rvm_gemset_create_on_use_flag=1
