@@ -1,11 +1,13 @@
-# rtomayko's inputrc
 # do not bell on tab-completion
 set bell-style bell
 
-set expand-tilde off
 set input-meta off
-set convert-meta on
-set output-meta off
+
+# enable ümlauts
+set convert-meta off
+set output-meta on
+
+set expand-tilde off
 set horizontal-scroll-mode off
 set history-preserve-point on
 set mark-directories on
