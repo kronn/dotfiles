@@ -31,7 +31,7 @@ main = do
     }
 
 -- named Workspaces
-theWorkspaces = ["web", "primary", "secondary" , "tertiary", "mail", "music" , "irc", "twitter", "chat"]
+theWorkspaces = ["web", "primary", "secondary" , "tertiary", "mail", "music" , "twitter", "irc", "chat"]
 
 -- special Window handling
 theManageHook = composeAll [
