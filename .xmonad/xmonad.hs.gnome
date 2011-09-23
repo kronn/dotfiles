@@ -1,10 +1,14 @@
 import XMonad
 import XMonad.Config.Gnome
 import XMonad.Hooks.ManageDocks
+import XMonad.Actions.CycleWS
+
+-- import XMonad.Util.EZConfig
 -- import XMonad.Hooks.DynamicLog
 -- import XMonad.Util.Run(spawnPipe)
--- import XMonad.Util.EZConfig(additionalKeys)
 -- import System.IO
+
+import qualified Data.Map as M
 
 -- basic Settings which may be needed more than once
 theModifierKey = mod4Mask      -- Rebind Mod to the Windows key
@@ -17,6 +21,7 @@ main = do
         manageHook = theManageHook <+> manageHook gnomeConfig,
         -- layoutHook = avoidStruts  $  layoutHook gnomeConfig,
         workspaces = theWorkspaces,
+        keys = \c -> theKeys c `M.union` keys gnomeConfig c,
         borderWidth = 2,
         normalBorderColor = "#333333",
         focusedBorderColor = "#ff3333"
@@ -33,3 +38,10 @@ theManageHook = composeAll [
           manageDocks
     ]
 
+-- custom keybindings
+theKeys (XConfig {modMask = modm}) = M.fromList $ [
+          -- moving to next/previous Workspace with Mod-Right/Mod-Left
+          -- this needs XMonad.Actions.CycleWS
+          ((modm , xK_Right), nextWS),
+          ((modm , xK_Left), prevWS)
+    ]
