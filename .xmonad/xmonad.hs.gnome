@@ -27,16 +27,27 @@ main = do
         focusedBorderColor = "#ff3333"
     }
 
--- Workspaces
+-- named Workspaces
 theWorkspaces = ["web", "primary", "secondary" , "tertiary", "mail", "music" , "irc", "twitter", "chat"]
 
 -- special Window handling
 theManageHook = composeAll [
-          className =? "Xmessage" --> doFloat, -- hmm... not really sure...
+          className =? "Xmessage" --> doFloat,
           className =? "Do" --> doFloat, -- float GnomeDO (like you expect it)
           -- className =? "Nautilus" <&&> stringProperty "_NET_WM_WINDOW_TYPE" =? "_NET_WM_WINDOW_TYPE_DIALOG" --> doFloat,
+
+          -- send applications to the right workspace
+          className =? "Empathy" --> doShift "chat",
+          className =? "Google-chrome" --> doShift "web",
+          className =? "Thunderbird" --> doShift "mail",
+          className =? "Rythmbox" --> doShift "music",
+          className =? "banshee" --> doShift "music", -- oh the joy of cosistent WM_CLASS-names ...
+
           manageDocks
     ]
+
+-- associate :: WorkspaceId -> String -> ManageHook
+-- associate area wmClass = className =? wmClass --> doShift area
 
 -- custom keybindings
 theKeys (XConfig {modMask = modm}) = M.fromList $ [
