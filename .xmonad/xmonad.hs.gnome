@@ -39,6 +39,7 @@ theWorkspaces = ["web", "primary", "secondary" , "tertiary", "mail", "music" , "
 theManageHook = composeAll [
           className =? "Xmessage" --> doFloat,
           className =? "Do" --> doFloat, -- float GnomeDO (like you expect it)
+          className =? "Nm-applet" --> doFloat, -- float pin-entry for surfstick
           -- className =? "Nautilus" <&&> stringProperty "_NET_WM_WINDOW_TYPE" =? "_NET_WM_WINDOW_TYPE_DIALOG" --> doFloat,
 
           -- send applications to the right workspace
