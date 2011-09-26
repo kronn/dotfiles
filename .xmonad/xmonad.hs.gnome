@@ -2,15 +2,17 @@ import XMonad
 import XMonad.Config.Gnome
 import XMonad.Hooks.ManageDocks
 import XMonad.Actions.CycleWS
+import XMonad.Layout.IM
+import XMonad.Layout.PerWorkspace
 
 -- import XMonad.Util.EZConfig
 -- import XMonad.Hooks.DynamicLog
 -- import XMonad.Util.Run(spawnPipe)
 -- import System.IO
 
+import Data.Ratio ((%))
 import qualified Data.Map as M
 
--- TODO add IM Layout for tiling Empathy or Pidgin nicely
 -- TODO maybe disable "focus follows mouse"
 -- TODO add everything needed to integrate Xmonad with Gnome http://haskell.org/haskellwiki/Xmonad/Using_xmonad_in_Gnome
 -- TODO pipe loghook into a gnome-panel (think "window titles")
@@ -55,6 +57,16 @@ theManageHook = composeAll [
 
 -- associate :: WorkspaceId -> String -> ManageHook
 -- associate area wmClass = className =? wmClass --> doShift area
+
+-- special layouts
+imLayout = IM (1%6) (Or (Role "contact_list") (Role "buddy_list"))
+  -- (And (ClassName "Pidgin")  (Role "buddy_list"))
+  -- (And (ClassName "Empathy") (Role "contact_list"))
+  -- (And (ClassName "Skype")   (And (Role "") (Not (Title "Options"))))
+
+-- TODO codeLayout
+
+theLayouts = onWorkspaces ["chat"] imLayout
 
 -- custom keybindings
 theKeys (XConfig {modMask = modm}) = M.fromList $ [
