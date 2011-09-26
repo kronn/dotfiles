@@ -21,18 +21,10 @@ import qualified Data.Map as M
 theModifierKey = mod4Mask      -- Rebind Mod to the Windows key
 theTerminal = "gnome-terminal" -- far from ideal, but nicely integrated
 
-main = do
-    xmonad $ gnomeConfig {
-        modMask = theModifierKey,
-        terminal = theTerminal,
-        manageHook = theManageHook <+> manageHook gnomeConfig,
-        -- layoutHook = avoidStruts  $  layoutHook gnomeConfig,
-        workspaces = theWorkspaces,
-        keys = \c -> theKeys c `M.union` keys gnomeConfig c,
-        borderWidth = 2,
-        normalBorderColor = "#333333",
-        focusedBorderColor = "#ff3333"
-    }
+-- display settings
+theBorderWidth = 2
+theNormalBorderColor = "#202030"
+theFocusedBorderColor = "#A0A0D0"
 
 -- named Workspaces
 theWorkspaces = ["web", "primary", "secondary" , "tertiary", "mail", "music" , "twitter", "irc", "chat"]
@@ -75,3 +67,17 @@ theKeys (XConfig {modMask = modm}) = M.fromList $ [
           ((modm , xK_Right), nextWS),
           ((modm , xK_Left), prevWS)
     ]
+
+-- wire everything up and together
+main = do
+    xmonad $ gnomeConfig {
+        modMask = theModifierKey,
+        terminal = theTerminal,
+        manageHook = theManageHook <+> manageHook gnomeConfig,
+        layoutHook = avoidStruts $ theLayouts $ layoutHook gnomeConfig,
+        workspaces = theWorkspaces,
+        keys = \c -> theKeys c `M.union` keys gnomeConfig c,
+        borderWidth = theBorderWidth,
+        normalBorderColor = theNormalBorderColor,
+        focusedBorderColor = theFocusedBorderColor
+    }
