@@ -41,3 +41,6 @@ alias sg="script/generate"
 
 # git convinience
 alias homegit="GIT_DIR=~/Code/projects/dotfiles/.git GIT_WORK_TREE=~/ git"
+
+# ssh
+alias ssh="TERM=xterm ssh"
