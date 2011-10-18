@@ -1,0 +1,17 @@
+#!/usr/bin/env rake
+require 'pathname'
+
+namespace :xmonad do
+  desc "Install XMonad Session Files"
+  task :install do
+    source_path     = Pathname.new("#{ENV['HOME']}/.xmonad/gnome3-integration/")
+    gnome_target    = Pathname.new("/usr/share/gnome-session/sessions/xmonad-integrated.session")
+    xsession_target = Pathname.new("/usr/share/xsessions/xmonad-integrated.desktop")
+
+    gnome_target.dirname.mkpath
+    cp source_path.join("gnome-sessions/#{gnome_target.basename}"), gnome_target
+
+    xsession_target.dirname.mkpath
+    cp source_path.join("xsessions/#{xsession_target.basename}"), xsession_target
+  end
+end

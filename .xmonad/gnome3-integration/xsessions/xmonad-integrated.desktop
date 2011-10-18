@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Xmonad Integrated
+Comment=Lightweight tiling window manager + Gnome
+Exec=gnome-session --session=xmonad-integrated
+TryExec=/usr/bin/gnome-session
+Type=XSession
+
