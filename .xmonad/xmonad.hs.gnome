@@ -42,7 +42,7 @@ theManageHook = composeAll [
           className =? "Google-chrome" --> doShift "web",
           className =? "Thunderbird" --> doShift "mail",
           className =? "Rythmbox" --> doShift "music",
-          className =? "banshee" --> doShift "music", -- oh the joy of cosistent WM_CLASS-names ...
+          className =? "banshee" --> doShift "music", -- oh the joy of consistent WM_CLASS-names ...
 
           manageDocks
     ]
