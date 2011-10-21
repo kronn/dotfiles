@@ -1,5 +1,5 @@
 [GNOME Session]
-Name=Xmonad Integrated
-RequiredComponents=gnome-settings-daemon;
-RequiredProviders=windowmanager;
+Name=Xmonad session
+RequiredComponents=gnome-panel;gnome-settings-daemon;
+RequiredProviders=windowmanager
 DefaultProvider-windowmanager=xmonad
