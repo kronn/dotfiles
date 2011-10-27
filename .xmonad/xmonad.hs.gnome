@@ -1,3 +1,4 @@
+--  vim:ft=haskell
 import XMonad
 import XMonad.Config.Gnome
 import XMonad.Hooks.ManageDocks
