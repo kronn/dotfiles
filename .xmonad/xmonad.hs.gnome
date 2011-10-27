@@ -65,6 +65,8 @@ theLayouts = onWorkspaces ["chat"] imLayout
 theKeys (XConfig {modMask = modm}) = M.fromList $ [
           -- moving to next/previous Workspace with Mod-Right/Mod-Left
           -- this needs XMonad.Actions.CycleWS
+          ((shiftMask .|. modm , xK_Left),  shiftToPrev),
+          ((shiftMask .|. modm , xK_Right), shiftToNext),
           ((modm , xK_Right), nextWS),
           ((modm , xK_Left), prevWS)
     ]
