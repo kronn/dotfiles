@@ -26,7 +26,5 @@ shopt -s histappend
 # manage prompt and terminal title with git-prompt
 [[ $- == *i* ]] && source "$HOME/Code/opensource/git-prompt/git-prompt.sh"
 
-# rvm-install added line:
-if [[ -s ~/.rvm/scripts/rvm ]] && [[ $rvm_loaded_flag != 1 ]]; then
-  source ~/.rvm/scripts/rvm
-fi
+# Load RVM into a shell session *as a function*
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
