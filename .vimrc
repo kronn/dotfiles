@@ -73,6 +73,9 @@ if has('win32')
   set directory=~/vimfiles/tmp     " Where temporary files will go."
 endif
 
+" activate bundled matchit.vim
+runtime macros/matchit.vim
+
 " Setting for Latexsuite
 " use ack if available (credit: hukl)
 if executable("ack")

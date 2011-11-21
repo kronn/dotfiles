@@ -25,10 +25,15 @@ git_bundles = [
   "git://github.com/tpope/vim-fugitive.git",
   "git://github.com/mileszs/ack.vim.git",
 
-  "git://github.com/garbas/vim-snipmate.git",
-  "git://github.com/tomtom/tlib_vim.git",
-  "git://github.com/MarcWeber/vim-addon-mw-utils.git",
+  "git://github.com/nelstrom/vim-textobj-rubyblock.git",
+    "git://github.com/kana/vim-textobj-user.git",
+
   "git://github.com/honza/snipmate-snippets.git",
+    "git://github.com/garbas/vim-snipmate.git",
+      "git://github.com/tomtom/tlib_vim.git",
+      "git://github.com/MarcWeber/vim-addon-mw-utils.git",
+
+  "git://github.com/gerw/vim-latex-suite.git",
 
   # "git://github.com/.git",
 ]
