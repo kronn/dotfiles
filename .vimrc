@@ -193,8 +193,8 @@ endif
 
 " Tabularize
 if has('autocmd')
-  autocmd Vimenter AddTabularPattern colon  /:\zs/
-  autocmd Vimenter AddTabularPattern rocket /=>\?/
+  autocmd VimEnter AddTabularPattern colon  /:\zs/
+  autocmd VimEnter AddTabularPattern rocket /=>\?/
 endif
 map <Leader>t= :Tabularize rocket<CR>
 map <Leader>t: :Tabularize colon<CR>
