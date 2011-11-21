@@ -184,16 +184,17 @@ endif
 " Key-mappings
 set pastetoggle=<F2>
 
-" Key-mappings for plugins
-if exists(":Tabularize")
-  nmap <Leader>t= :Tabularize /=>\?<CR>
-  vmap <Leader>t= :Tabularize /=>\?<CR>
-  nmap <Leader>t: :Tabularize /:\zs<CR>
-  vmap <Leader>t: :Tabularize /:\zs<CR>
-endif
+" Key-mappings and extensions for plugins
 
 " rails.vim
 " map <F5> <ESC>:w:Rake
+" Tabularize
+if has('autocmd')
+  autocmd Vimenter AddTabularPattern colon  /:\zs/
+  autocmd Vimenter AddTabularPattern rocket /=>\?/
+endif
+map <Leader>t= :Tabularize rocket<CR>
+map <Leader>t: :Tabularize colon<CR>
 
 " NERDtree
 map <Leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
