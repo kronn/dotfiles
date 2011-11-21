@@ -16,10 +16,11 @@ done
 shopt -s checkwinsize
 
 # Tweak History handling
-export HISTCONTROL=erasedups:ignoredups
+export HISTCONTROL=erasedups:ignoredups:ignorespace
 export HISTSIZE=100000
 export HISTFILESIZE=200000
 shopt -s histappend
+
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
