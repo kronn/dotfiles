@@ -187,7 +187,10 @@ set pastetoggle=<F2>
 " Key-mappings and extensions for plugins
 
 " rails.vim
-" map <F5> <ESC>:w:Rake
+if has("autocmd")
+  autocmd User Rails Rnavcommand feature features/ -glob=**/* -suffix=.feature
+endif
+
 " Tabularize
 if has('autocmd')
   autocmd Vimenter AddTabularPattern colon  /:\zs/
