@@ -2,6 +2,7 @@
 Applications/
 .aptitude/
 Audiobooks/
+.autotest
 .bash_history
 bin/
 .bitcoin/
@@ -9,12 +10,14 @@ bin/
 .cache/
 .CFUserTextEncoding
 .cheat/
+.claws-mail/
 Code/
 .cola
 .compiz/
 .compiz-1/
 .config/
 .cups/
+.dbshell
 .dbus/
 .dbvis/
 DbVisualizer-8.0.4/
@@ -62,16 +65,20 @@ Library/
 .libreoffice/
 .local/
 .macromedia/
+Mail/
 .mission-control/
 Movies/
 .mozilla/
 .mplayer/
+.msmtp.log
 Music/
+.mutt/*
 .mysql/
 .mysqlgui/
 .mysql_history
 .NERDTreeBookmarks
 .nvidia-settings-rc
+.offlineimap/
 .passenger/
 .pentadactyl/
 .pgadmin3
@@ -85,6 +92,7 @@ Pictures/
 Public/
 .pulse/
 .pulse-cookie
+.puppet/
 .purple/
 .putty/
 .rdebug_hist
@@ -113,6 +121,7 @@ Videos/
 .vim/tmp/*
 .VirtualBox/
 VirtualBox VMs/
+.w3m/
 .Xauthority
 .xine/
 .xinput.d/
