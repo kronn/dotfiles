@@ -193,12 +193,9 @@ if has("autocmd")
 endif
 
 " Tabularize
-if has('autocmd')
-  autocmd VimEnter AddTabularPattern colon  /:\zs/
-  autocmd VimEnter AddTabularPattern rocket /=>\?/
-endif
-map <Leader>t= :Tabularize rocket<CR>
-map <Leader>t: :Tabularize colon<CR>
+map <Leader>t= :Tabularize /=>\?/<CR>
+map <Leader>t: :Tabularize /:\zs/<CR>
+map <Leader>t, :Tabularize /,\zs/<CR>
 
 " NERDtree
 map <Leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
