@@ -1,12 +1,20 @@
 #!/bin/bash
 
 function finish() {
-  PREFIX=`git config gitflow.prefix.feature`
-  BRANCH=`git branch | grep '^*' | sed -e 's/\*\ //'`
-  FLOW_BRANCH=`echo $BRANCH | sed "s/$PREFIX//"`
+  PREFIX=`git config gitflow.prefix.feature | sed 's!\/!\\\/!'`
+  BRANCH=`git branch | grep '^*' | sed 's!\*\ !!'`
+  FLOW_BRANCH=`echo $BRANCH | sed "s!$PREFIX!!"`
 
   if [ -n `echo $BRANCH | grep $PREFIX` ]; then
     echo "finishing $FLOW_BRANCH"
     git flow feature finish $FLOW_BRANCH
   fi
+}
+
+function review() {
+  for COMMIT in `git log --reverse --format=format:%H ${1:-'develop'}...${2}`; do
+    clear
+    git show $COMMIT
+    read
+  done
 }
