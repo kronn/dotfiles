@@ -35,6 +35,8 @@ git_bundles = [
 
   "git://github.com/gerw/vim-latex-suite.git",
 
+  # "git://github.com/wincent/Command-T.git",
+
   # "git://github.com/.git",
 ]
 
