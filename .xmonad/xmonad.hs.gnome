@@ -40,6 +40,7 @@ theManageHook = composeAll [
 
           -- send applications to the right workspace
           className =? "Empathy" --> doShift "chat",
+          className =? "Pidgin" --> doShift "chat",
           className =? "Google-chrome" --> doShift "web",
           className =? "Thunderbird" --> doShift "mail",
           className =? "Rythmbox" --> doShift "music",
