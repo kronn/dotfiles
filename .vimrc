@@ -174,6 +174,7 @@ if has('autocmd')
   autocmd BufRead *.scss :setlocal fdm=indent
   autocmd BufRead *.md :setlocal noet
   autocmd BufRead .vimperatorrc :setlocal ft=vimperator
+  autocmd BufNewFile,BufRead *.mobile.erb :setlocal ft=eruby.html
   autocmd BufRead *.yml :setlocal fdm=indent fdl=2 ai
   autocmd BufNewFile,BufRead *.feature inoremap <silent> <Bar>   <Bar><ESC>:call <SID>align()<CR>a
   autocmd WinEnter * wincmd _
