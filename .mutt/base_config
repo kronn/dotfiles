@@ -33,3 +33,6 @@ source ~/.mutt/offlineimaps
 
 # smtp and sending-related stuff
 source ~/.mutt/local_config
+
+# load address-book/alias file
+source $alias_file
