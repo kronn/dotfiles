@@ -1,0 +1,73 @@
+[general]
+# accounts = small_hoster, big_webmailer, gmail
+accounts = small_hoster, big_webmailer
+
+# this setting needs to be >= the number of accounts
+maxsyncaccounts = 3
+
+ui = Blinkenlights
+
+# disable fsync to reduce write cycles on the SSD
+fsync = false
+
+[Account small_hoster]
+localrepository =  SmallLocal
+remoterepository = SmallRemote
+
+[Account big_webmailer]
+localrepository =  BigLocal
+remoterepository = BigRemote
+
+[Account gmail]
+localrepository =  GmailLocal
+remoterepository = GmailRemote
+
+
+[Repository BigLocal]
+type = Maildir
+localfolders = ~/Mail/big
+sep = /
+
+[Repository BigRemote]
+type = IMAP
+remotehost = 
+remoteuser = 
+ssl = yes
+remotepassfile = 
+# subscribedonly = yes
+
+
+[Repository SmallLocal]
+type = Maildir
+localfolders = ~/Mail/small
+sep = /
+
+[Repository SmallRemote]
+type = IMAP
+remotehost = 
+remoteuser =
+ssl = yes
+subscribedonly = yes
+remotepassfile = 
+
+
+[Repository GmailLocal]
+type = Maildir
+localfolders = ~/Mail/gmail
+
+[Repository GmailRemote]
+type = Gmail
+remoteuser = 
+remotepassfile = 
+# google "offers" translated folders/tags
+trashfolder = [Google Mail]/Papierkorb
+spamfolder = [Google Mail]/Spam
+
+
+[mbnames]
+enabled = yes
+filename = ~/.mutt/offlineimaps
+header = "mailboxes "
+peritem = "+%(accountname)s/%(foldername)s"
+sep = " "
+footer = "\n"

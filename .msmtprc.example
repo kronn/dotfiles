@@ -1,0 +1,35 @@
+# Set default values for all following accounts.
+defaults
+tls on
+logfile ~/.msmtp.log
+
+
+# this account only has a valid self-signed certificate
+account small_hoster
+
+host 
+port 587
+from 
+user 
+passwordeval # some command which returns the password
+
+auth on
+tls_starttls on
+tls_fingerprint # run 'msmtp --serverinfo --tls-certcheck=off' and copy the SHA1
+
+
+# this account has a mainstream certificate
+account big_webmailer
+
+host 
+from 
+user 
+passwordeval 
+
+auth on
+tls_starttls on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+
+
+# Set a default account
+account default : small_hoster
