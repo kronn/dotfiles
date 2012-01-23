@@ -116,7 +116,8 @@ if has('gui')
   set guioptions-=T               " no toolbar
   set guioptions-=m               " no menu
 
-  set guifont=Monospace\ 9
+  " set guifont=Monospace\ 9
+  set guifont=Inconsolata\ 9
 
   if has('win32')
     set guifont=Lucida_Console:h10
