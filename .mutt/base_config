@@ -28,6 +28,10 @@ color status     brightwhite   blue
 color tilde      magenta       default
 color tree       brightyellow  default
 
+# composing
+
+set edit_headers = yes # default: no
+
 # mailboxes
 source ~/.mutt/offlineimaps
 
