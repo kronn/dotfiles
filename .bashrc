@@ -3,9 +3,10 @@ source ~/.profile
 # source git completion if none is defined
 complete -p git 1>/dev/null 2>&1 || source ~/.bash/git-completion.bash
 
-source ~/.bash/capistrano-completion.bash
-source ~/.bash/rake-completion.bash
-source ~/.bash/git-flow-completion.bash
+for FILE in {capistrano,rake,git-flow,ssh}; do
+  source ~/.bash/$FILE-completion.bash
+done
+
 source ~/.bash/aliases
 
 for FILE in `ls ~/.bash/functions/*`; do
