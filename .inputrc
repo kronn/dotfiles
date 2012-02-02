@@ -20,7 +20,7 @@ set completion-query-items 2000
 set completion-ignore-case off
 set show-all-if-ambiguous on
 set show-all-if-unmodified on
-set completion-prefix-display-length 10
+set completion-prefix-display-length 2
 set print-completions-horizontally off
 
 set editing-mode emacs
