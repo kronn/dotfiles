@@ -4,9 +4,14 @@
   st = status
   ci = commit
   co = checkout
-  br = branch -a
+  br = branch -avv
   ch = diff --staged
+  mt = mergetool
+  man = help
   praise = blame
+  graph = log --oneline --graph --decorate
+  whitespace = commit -m 'change whitespace, indentation or line-breaks'
+  doc = commit -m 'extend documentation'
 [core]
   excludesfile = /path/to/.gitignore
 [svn]
