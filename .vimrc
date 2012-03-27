@@ -1,10 +1,64 @@
-" Needed on some linux distros.
-" see http://www.adamlowe.me/2009/12/vim-destroys-all-other-rails-editors.html
-filetype off
-call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
-
 set nocompatible  " Surprise, I actually want Vim :-)
+
+" " Needed on some linux distros.
+" " see http://www.adamlowe.me/2009/12/vim-destroys-all-other-rails-editors.html
+" filetype off
+" call pathogen#runtime_append_all_bundles()
+" call pathogen#helptags()
+
+filetype off                   " required!
+
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" let Vundle manage Vundle
+" required!
+Bundle 'gmarik/vundle'
+
+" maybe remove and learn netrw
+Bundle 'scrooloose/nerdtree'
+
+Bundle 'tpope/vim-rails'
+Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-repeat'
+Bundle 'tpope/vim-cucumber'
+Bundle 'tsaleh/vim-supertab'
+Bundle 'tpope/vim-commentary'
+Bundle 'tpope/vim-endwise'
+Bundle 'kronn/vim-colorschemes'
+Bundle 'Raimondi/delimitMate'
+Bundle 'godlygeek/tabular'
+Bundle 'tpope/vim-ragtag'
+
+Bundle 'ajf/puppet-vim'
+Bundle 'tpope/vim-rake'
+Bundle 'tobiassvn/vim-gemfile'
+Bundle 'vim-ruby/vim-ruby'
+Bundle 'timcharper/textile.vim'
+
+Bundle 'tpope/vim-fugitive'
+Bundle 'mileszs/ack.vim'
+
+Bundle 'tpope/vim-eunuch'
+
+Bundle 'edsono/vim-dbext'
+
+" Bundle 'Lokaltog/vim-powerline'
+" Bundle 'leshill/vim-json'
+" Bundle 'vim-scripts/nginx.vim'
+" Bundle 'gerw/vim-latex-suite'
+
+" have a ruby-block text-object ( r )
+Bundle 'nelstrom/vim-textobj-rubyblock'
+Bundle 'kana/vim-textobj-user'
+
+" maybe change to ultisnips or so
+Bundle 'honza/snipmate-snippets'
+Bundle 'garbas/vim-snipmate'
+Bundle 'tomtom/tlib_vim'
+Bundle 'MarcWeber/vim-addon-mw-utils'
+
+
 
 set backspace=indent,eol,start
 set scrolloff=5  " have always 5 lines of context around the cursor
