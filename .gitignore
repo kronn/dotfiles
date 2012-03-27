@@ -160,3 +160,5 @@ VirtualBox VMs/
 .xmonad/xmonad.o
 .xsession-errors
 .xsession-errors.old
+.vim/pathogen/
+.lftp/
