@@ -5,13 +5,16 @@ begin
   require 'capistrano_colors'
 
   capistrano_color_matchers = [
-    { :match => /executing command/,      :color => :blue,      :prio => 10, :attribute => :underscore },
-    { :match => /^transaction: commit$/,  :color => :magenta,   :prio => 10, :attribute => :blink },
-    # { :match => /git/,                    :color => :white,     :prio => 20, :attribute => :reverse },
-    { :match => /git/,                    :color => :white,     :prio => 20 },
-    { :match => /ext-con-sk-01/,          :color => :blue,      :prio => 10 },
-    { :match => /ext-con-sk-02/,          :color => :green,     :prio => 11 },
-    { :match => /ext-con-sk-test/,        :color => :blue,      :prio => 10 },
+    { :match => /executing command/,    :color => :blue,      :prio => 10, :attribute => :underscore },
+    { :match => /transaction: commit/,  :color => :magenta,   :prio => 10, :attribute => :blink },
+    # { :match => /git/,                  :color => :white,     :prio => 20, :attribute => :reverse },
+    { :match => /git/,                  :color => :white,     :prio => 20 },
+    { :match => /ext-con-sk-01/,        :color => :blue,      :prio => 10 },
+    { :match => /ext-con-sk-02/,        :color => :green,     :prio => 11 },
+    { :match => /ext-con-sk-test/,      :color => :blue,      :prio => 10 },
+    { :match => /62\.75\.181\.29/,        :color => :blue,      :prio => 10 },
+    { :match => /Warning/i,             :color => :red,       :prio => 9 },
+    { :match => /failed/i,              :color => :red,       :prio => 5 }
   ]
 
   colorize( capistrano_color_matchers )
