@@ -12,9 +12,13 @@ function finish() {
 }
 
 function review() {
-  for COMMIT in `git log --reverse --format=format:%H ${1:-'develop'}...${2}`; do
+  for COMMIT in `git log --reverse --format=format:%H ${1:-'develop...'}`; do
     clear
     git show $COMMIT
     read
   done
+}
+
+function changed_since() {
+  git graph ${1}... --name-only | grep -v -e "^*" | sort -u
 }
