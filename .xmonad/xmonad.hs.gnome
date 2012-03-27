@@ -3,8 +3,13 @@ import XMonad
 import XMonad.Config.Gnome
 import XMonad.Hooks.ManageDocks
 import XMonad.Actions.CycleWS
+import XMonad.Actions.DynamicWorkspaces
 import XMonad.Layout.IM
 import XMonad.Layout.PerWorkspace
+import XMonad.Layout.Reflect
+import XMonad.Layout.Tabbed
+import XMonad.Layout.ComboP
+import XMonad.Layout.TwoPane
 
 -- import XMonad.Util.EZConfig
 -- import XMonad.Hooks.DynamicLog
@@ -13,6 +18,11 @@ import XMonad.Layout.PerWorkspace
 
 import Data.Ratio ((%))
 import qualified Data.Map as M
+
+import qualified XMonad.StackSet as W
+import XMonad.Hooks.ManageHelpers
+import XMonad.Hooks.Place
+
 
 -- TODO maybe disable "focus follows mouse"
 -- TODO add everything needed to integrate Xmonad with Gnome http://haskell.org/haskellwiki/Xmonad/Using_xmonad_in_Gnome
@@ -28,39 +38,64 @@ theNormalBorderColor = "#202030"
 theFocusedBorderColor = "#A0A0D0"
 
 -- named Workspaces
-theWorkspaces = ["web", "primary", "secondary" , "tertiary", "mail", "music" , "twitter", "irc", "chat"]
+theWorkspaces = ["web", "primary", "secondary" , "tertiary", "mail", "music" , "gimp", "irc", "chat"]
+
+-- -- dymanic Workspaces
+-- doNewWS tg = (liftX $ addUniqueHiddenWS tg) >> doShift tg
+-- addUniqueHiddenWS tg = withWindowSet $ s -> if null (filter ( (== tg) . W.tag) (W.workspaces s))
+--                                               then addHiddenWorkspace tg 
+--                                             else return()
 
 -- special Window handling
 theManageHook = composeAll [
-          className =? "Xmessage" --> doFloat,
-          className =? "Do" --> doFloat, -- float GnomeDO (like you expect it)
-          className =? "Nm-applet" --> doFloat, -- float pin-entry for surfstick
-          className =? "Thunderbird" <&&> appName =? "Dialog" --> doFloat, -- float the PGP Pin-Entry
-          -- className =? "Nautilus" <&&> stringProperty "_NET_WM_WINDOW_TYPE" =? "_NET_WM_WINDOW_TYPE_DIALOG" --> doFloat,
+        className =? "Xmessage" --> doFloat,
+        className =? "Do" --> doFloat, -- float GnomeDO (like you expect it)
+        className =? "Nm-applet" --> doFloat, -- float pin-entry for surfstick
+        className =? "Thunderbird" <&&> appName =? "Dialog" --> doFloat, -- float the PGP Pin-Entry
+        -- className =? "Nautilus" <&&> stringProperty "_NET_WM_WINDOW_TYPE" =? "_NET_WM_WINDOW_TYPE_DIALOG" --> doFloat,
+        -- className =? "Screenkey" --> placeHook fixed(1,0) <+> doFloat <+> doF W.focusDown,
+        className =? "Screenkey" --> doFloat <+> doF W.focusDown,
 
-          -- send applications to the right workspace
-          className =? "Empathy" --> doShift "chat",
-          className =? "Pidgin" --> doShift "chat",
-          className =? "Google-chrome" --> doShift "web",
-          className =? "Thunderbird" --> doShift "mail",
-          className =? "Rythmbox" --> doShift "music",
-          className =? "banshee" --> doShift "music", -- oh the joy of consistent WM_CLASS-names ...
+        -- send applications to the right workspace
+        className =? "Empathy" --> doShift "chat",
+        className =? "Pidgin" --> doShift "chat",
+        -- className =? "Google-chrome" --> doShift "web",
+        className =? "Thunderbird" --> doShift "mail",
+        className =? "Rythmbox" --> doShift "music",
+        className =? "banshee" --> doShift "music", -- oh the joy of consistent WM_CLASS-names ...
 
-          manageDocks
+        className =? "Gtimelog" --> doShift "gimp", -- not exactly gimp, but thats more a tool-space
+        className =? "Gimp-2.6" --> doShift "gimp",
+
+        manageDocks
     ]
 
 -- associate :: WorkspaceId -> String -> ManageHook
 -- associate area wmClass = className =? wmClass --> doShift area
 
 -- special layouts
-imLayout = IM (1%6) (Or (Role "contact_list") (Role "buddy_list"))
-  -- (And (ClassName "Pidgin")  (Role "buddy_list"))
-  -- (And (ClassName "Empathy") (Role "contact_list"))
-  -- (And (ClassName "Skype")   (And (Role "") (Not (Title "Options"))))
+imLayout = IM (1%6) (Or
+                      (Or (Role "contact_list") (Role "buddy_list"))
+                      (And (ClassName "Skype")   (And (Role "") (Not (Title "Options"))))
+                    )
+-- (And (ClassName "Pidgin")  (Role "buddy_list"))
+-- (And (ClassName "Empathy") (Role "contact_list"))
+-- (Title "der_kronn - Skype™ (Beta)")
+-- (And (ClassName "Skype")   (And (Role "") (Not (Title "Options"))))
+
+tabbedLayout = tabbedBottomAlways shrinkText defaultTheme
+
+-- gimpLayout = IM (1%6) (Role "gimp-toolbox") $ reflectHoriz $ IM (1%5) (Role "gimp-dock")
+-- gimpLayout = tabbedLayout ****||* Full
+-- gimpLayout = Full *||**** tabbedLayout
+-- gimpLayout = combineTwoP (TwoPane 0.04 0.82) (tabbedLayout) (Full) (Not (Role "gimp-toolbox"))
+gimpLayout = combineTwoP (TwoPane 0.04 0.82) (tabbedLayout) (Full) (Not (Or (Role "gimp-dock") (Role "gimp-toolbox")))
 
 -- TODO codeLayout
 
+-- theLayouts = onWorkspaces ["gimp"] gimpLayout
 theLayouts = onWorkspaces ["chat"] imLayout
+-- theLayouts = onWorkspace "chat" imLayout $ onWorkspace "gimp" gimpLayout
 
 -- custom keybindings
 theKeys (XConfig {modMask = modm}) = M.fromList $ [
