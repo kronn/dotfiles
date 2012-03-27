@@ -170,6 +170,13 @@ endif
 if has('gui')
   set guioptions-=T               " no toolbar
   set guioptions-=m               " no menu
+  " no scrollbars: not left, not right nor bottom. just none.
+  set guioptions-=L
+  set guioptions-=l
+  set guioptions-=R
+  set guioptions-=r
+  set guioptions-=B
+  set guioptions-=b
 
   " set guifont=Monospace\ 9
   set guifont=Inconsolata\ 9
@@ -238,8 +245,20 @@ if has('autocmd')
   autocmd BufReadPost fugitive://* set bufhidden=delete
 endif
 
+" 9,$v/^> \[/d
+
 " Key-mappings
 set pastetoggle=<F2>
+map <Leader>n :nohlsearch<CR>
+
+" quickly toggle between current and previous buffer
+" nnoremap <Leader><Leader> <dunno dude>
+
+" go to next window with tab
+nmap <Tab> <C-w><C-w>
+" go to previous window with shift-tab
+nmap <S-Tab> <C-w>W
+
 
 " Key-mappings and extensions for plugins
 
@@ -255,6 +274,3 @@ map <Leader>t, :Tabularize /,\zs/<CR>
 
 " NERDtree
 map <Leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
-
-nmap <Tab> <C-W>w
-nmap <S-Tab> <C-W>W
