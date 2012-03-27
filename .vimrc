@@ -265,6 +265,7 @@ nmap <S-Tab> <C-w>W
 " rails.vim
 if has("autocmd")
   autocmd User Rails Rnavcommand feature features/ -glob=**/* -suffix=.feature
+  autocmd User Rails Rnavcommand steps features/step_definitions/ -glob=**/* -suffix=.rb
 endif
 
 " Tabularize
