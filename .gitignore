@@ -162,3 +162,5 @@ VirtualBox VMs/
 .xsession-errors.old
 .vim/pathogen/
 .lftp/
+.navicat/
+.muttrc
