@@ -254,6 +254,7 @@ endif
 " 9,$v/^> \[/d
 
 " Key-mappings
+map <F2> :set invpaste<CR>
 set pastetoggle=<F2>
 map <Leader>n :nohlsearch<CR>
 
