@@ -44,7 +44,7 @@ Bundle 'tpope/vim-eunuch'
 
 Bundle 'edsono/vim-dbext'
 
-" Bundle 'Lokaltog/vim-powerline'
+Bundle 'Lokaltog/vim-powerline'
 " Bundle 'leshill/vim-json'
 " Bundle 'vim-scripts/nginx.vim'
 " Bundle 'gerw/vim-latex-suite'
