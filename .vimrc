@@ -17,6 +17,7 @@ Bundle 'gmarik/vundle'
 
 " maybe remove and learn netrw
 Bundle 'scrooloose/nerdtree'
+Bundle 'kien/ctrlp.vim'
 
 Bundle 'tpope/vim-rails'
 Bundle 'tpope/vim-surround'
@@ -145,6 +146,11 @@ let php_folding=1
 let NERDChristmasTree=1   " Colorful output!!1!
 " let NERDTreeChDirMode=2   " Always cd to the rootdir of the NERDTree
 let NERDTreeHijackNetrw=1
+
+" Setting for ctrl_p
+" 'file': '\.exe$\|\.so$\|\.dll$',
+" 'link': 'SOME_BAD_SYMBOLIC_LINKS',
+let g:ctrlp_custom_ignore = { 'dir': '\.git$\|\.hg$\|\.svn$' }
 
 " The OSX-keyboardlayout sucks, especially when you have \ as Leader on a
 " German keyboard...
