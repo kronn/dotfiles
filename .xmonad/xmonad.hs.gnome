@@ -53,13 +53,13 @@ theManageHook = composeAll [
         className =? "Nm-applet" --> doFloat, -- float pin-entry for surfstick
         className =? "Thunderbird" <&&> appName =? "Dialog" --> doFloat, -- float the PGP Pin-Entry
         -- className =? "Nautilus" <&&> stringProperty "_NET_WM_WINDOW_TYPE" =? "_NET_WM_WINDOW_TYPE_DIALOG" --> doFloat,
-        -- className =? "Screenkey" --> placeHook fixed(1,0) <+> doFloat <+> doF W.focusDown,
-        className =? "Screenkey" --> doFloat <+> doF W.focusDown,
+        className =? "Screenkey" --> placeHook( fixed(0,1) ) <+> doFloat <+> doF W.focusDown,
+        -- className =? "Screenkey" --> doFloat <+> doF W.focusDown,
 
         -- send applications to the right workspace
         className =? "Empathy" --> doShift "chat",
         className =? "Pidgin" --> doShift "chat",
-        -- className =? "Google-chrome" --> doShift "web",
+        className =? "Google-chrome" --> doShift "web",
         className =? "Thunderbird" --> doShift "mail",
         className =? "Rythmbox" --> doShift "music",
         className =? "banshee" --> doShift "music", -- oh the joy of consistent WM_CLASS-names ...
@@ -72,6 +72,14 @@ theManageHook = composeAll [
 
 -- associate :: WorkspaceId -> String -> ManageHook
 -- associate area wmClass = className =? wmClass --> doShift area
+
+-- standard layout
+defaultLayout = tiledLayout ||| Mirror tiledLayout ||| Full
+tiledLayout = Tall nmaster delta ratio
+  where
+    nmaster = 1     -- The default number of windows in the master pane
+    delta   = 3/100 -- Percent of screen to increment by when resizing panes
+    ratio   = 1/2   -- Default proportion of screen occupied by master pane
 
 -- special layouts
 imLayout = IM (1%6) (Or
@@ -93,9 +101,17 @@ gimpLayout = combineTwoP (TwoPane 0.04 0.82) (tabbedLayout) (Full) (Not (Or (Rol
 
 -- TODO codeLayout
 
--- theLayouts = onWorkspaces ["gimp"] gimpLayout
-theLayouts = onWorkspaces ["chat"] imLayout
--- theLayouts = onWorkspace "chat" imLayout $ onWorkspace "gimp" gimpLayout
+-- TODO optimize so that the screenkey-window is not overlaying anything
+-- presenterLayout = Mirror (Tall 1 (5%100) (4/5))
+presenterLayout = combineTwoP (Mirror (TwoPane 0.04 0.82)) (Full) (Full) (Not (Or (Role "gimp-dock") (Role "gimp-toolbox")))
+
+ircLayout = Full ||| tiledLayout ||| Mirror tiledLayout
+
+theLayouts = onWorkspace "chat" imLayout
+              .  onWorkspace "irc" ircLayout
+              -- .  onWorkspace "gimp" gimpLayout
+              -- .  onWorkspace "codedemo" presenterLayout
+
 
 -- custom keybindings
 theKeys (XConfig {modMask = modm}) = M.fromList $ [
