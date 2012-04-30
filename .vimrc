@@ -43,6 +43,7 @@ Bundle 'mileszs/ack.vim'
 Bundle 'tpope/vim-eunuch'
 
 Bundle 'edsono/vim-dbext'
+Bundle 'TailMinusF'
 
 Bundle 'Lokaltog/vim-powerline'
 " Bundle 'leshill/vim-json'
