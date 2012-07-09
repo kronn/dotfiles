@@ -33,9 +33,15 @@ theModifierKey = mod4Mask      -- Rebind Mod to the Windows key
 theTerminal = "gnome-terminal" -- far from ideal, but nicely integrated
 
 -- display settings
-theBorderWidth = 2
+theBorderWidth = 1
+-- theBorderWidth = 0
 theNormalBorderColor = "#202030"
-theFocusedBorderColor = "#A0A0D0"
+theFocusedBorderColor = "#cc9933"
+-- 9999cc
+-- 7ca67c
+-- 3d4c42
+-- e53535
+-- bfccb8
 
 -- named Workspaces
 theWorkspaces = ["web", "primary", "secondary" , "tertiary", "mail", "music" , "gimp", "irc", "chat"]
