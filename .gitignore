@@ -165,3 +165,4 @@ VirtualBox VMs/
 .xmonad/xmonad.o
 .xsession-errors
 .xsession-errors.old
+.chromedriver-helper/
