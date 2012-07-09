@@ -166,3 +166,4 @@ VirtualBox VMs/
 .xsession-errors
 .xsession-errors.old
 .chromedriver-helper/
+.clipboard
