@@ -168,3 +168,4 @@ VirtualBox VMs/
 .chromedriver-helper/
 .clipboard
 .dia
+.pam_environment
