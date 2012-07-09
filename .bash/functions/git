@@ -22,3 +22,7 @@ function review() {
 function changed_since() {
   git graph ${1}... --name-only | grep -v -e "^*" | sort -u
 }
+
+function changelog() {
+  git log --oneline master..develop | grep Merge | grep -v -e "Merge branch '\(develop\|master\)' of github"
+}
