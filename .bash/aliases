@@ -50,4 +50,5 @@ alias ssh="TERM=xterm ssh"
 
 # various stuff
 alias mmta="milkmaid task add"
-alias cuke="truncate --size 0 log/*.log; clear; KOPFLOS=no CAPYBARA_CHROME=yes bundle exec cucumber --drb -r features/"
+# alias cuke="truncate --size 0 log/*.log; clear; KOPFLOS=no CAPYBARA_CHROME=yes bundle exec cucumber --drb -r features/"
+alias cuke="truncate --size 0 log/*.log; clear; KOPFLOS=no CAPYBARA_CHROME=yes bundle exec cucumber -s -r features/"
