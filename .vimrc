@@ -295,6 +295,7 @@ endif
 map <Leader>t= :Tabularize /=>\?/<CR>
 map <Leader>t: :Tabularize /:\zs/<CR>
 map <Leader>t, :Tabularize /,\zs/<CR>
+" map <Leader>tt :Tabularize /|\(_.\)\?/<CR>
 
 " NERDtree
 map <Leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
