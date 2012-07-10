@@ -170,7 +170,7 @@ let g:ctrlp_custom_ignore = { 'dir': '\.git$\|\.hg$\|\.svn$' }
 
 " settings for powerline
 " let g:Powerline_symbols = "unicode"
-" let g:Powerline_symbols = "fancy"
+let g:Powerline_symbols = "fancy"
 " }}}
 
 " user interface {{{
@@ -197,7 +197,8 @@ if has('gui')
   set guioptions-=b
 
   " set guifont=Monospace\ 9
-  set guifont=Inconsolata\ 9
+  " set guifont=Inconsolata\ 9
+  set guifont=Inconsolata-dz\ for\ Powerline\ Medium\ 8
 
   if has('win32')
     set guifont=Lucida_Console:h10
