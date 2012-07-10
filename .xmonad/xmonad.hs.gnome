@@ -79,18 +79,29 @@ theManageHook = composeAll [
 -- associate :: WorkspaceId -> String -> ManageHook
 -- associate area wmClass = className =? wmClass --> doShift area
 
--- standard layout
-defaultLayout = tiledLayout ||| Mirror tiledLayout ||| Full
+-- building blocks for Layouts
 tiledLayout = Tall nmaster delta ratio
   where
     nmaster = 1     -- The default number of windows in the master pane
     delta   = 3/100 -- Percent of screen to increment by when resizing panes
     ratio   = 1/2   -- Default proportion of screen occupied by master pane
 
+biggerMasterLayout = Tall nmaster delta ratio
+  where
+    nmaster = 1
+    delta   = 3/100
+    ratio   = 2/3
+
+-- standard layout
+defaultLayout = tiledLayout ||| Mirror tiledLayout ||| Full
+
+-- defaultLayout with a different starting Point
+fullFirstLayout = Full ||| tiledLayout ||| Mirror tiledLayout
+
 -- special layouts
 imLayout = IM (1%6) (Or
                       (Or (Role "contact_list") (Role "buddy_list"))
-                      (And (ClassName "Skype")   (And (Role "") (Not (Title "Options"))))
+                      (And (ClassName "Skype") (Title "der_kronn - Skype™ (Beta)"))
                     )
 -- (And (ClassName "Pidgin")  (Role "buddy_list"))
 -- (And (ClassName "Empathy") (Role "contact_list"))
@@ -105,19 +116,24 @@ tabbedLayout = tabbedBottomAlways shrinkText defaultTheme
 -- gimpLayout = combineTwoP (TwoPane 0.04 0.82) (tabbedLayout) (Full) (Not (Role "gimp-toolbox"))
 gimpLayout = combineTwoP (TwoPane 0.04 0.82) (tabbedLayout) (Full) (Not (Or (Role "gimp-dock") (Role "gimp-toolbox")))
 
--- TODO codeLayout
+codeLayout = biggerMasterLayout ||| Mirror biggerMasterLayout
 
 -- TODO optimize so that the screenkey-window is not overlaying anything
 -- presenterLayout = Mirror (Tall 1 (5%100) (4/5))
-presenterLayout = combineTwoP (Mirror (TwoPane 0.04 0.82)) (Full) (Full) (Not (Or (Role "gimp-dock") (Role "gimp-toolbox")))
+-- presenterLayout = combineTwoP (Mirror (TwoPane 0.04 0.82)) (Full) (Full) (Not (Role "something-that-does-not-exist"))
+-- presenterLayout = (Mirror (TwoPane 0.1 0.9))
+presenterLayout = Mirror (Tall 1 (5%100) (90%100))
 
 ircLayout = Full ||| tiledLayout ||| Mirror tiledLayout
 
 theLayouts = onWorkspace "chat" imLayout
+              .  onWorkspace "web" fullFirstLayout
               .  onWorkspace "irc" ircLayout
+              .  onWorkspace "primary" codeLayout
+              .  onWorkspace "secondary" codeLayout
+              .  onWorkspace "tertiary" codeLayout
+              -- .  onWorkspace "tertiary" presenterLayout
               -- .  onWorkspace "gimp" gimpLayout
-              -- .  onWorkspace "codedemo" presenterLayout
-
 
 -- custom keybindings
 theKeys (XConfig {modMask = modm}) = M.fromList $ [
