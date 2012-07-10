@@ -1,19 +1,19 @@
+" vim:foldmethod=marker:foldlevel=0
 set nocompatible  " Surprise, I actually want Vim :-)
 
-" " Needed on some linux distros.
-" " see http://www.adamlowe.me/2009/12/vim-destroys-all-other-rails-editors.html
-" filetype off
-" call pathogen#runtime_append_all_bundles()
-" call pathogen#helptags()
+" plugins {{{
+  " setup vundle {{{
+  filetype off                   " required!
+  set rtp+=~/.vim/bundle/vundle/
+  call vundle#rc()
 
-filetype off                   " required!
+  " let Vundle manage Vundle
+  " required!
+  Bundle 'gmarik/vundle'
+  " }}}
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-
-" let Vundle manage Vundle
-" required!
-Bundle 'gmarik/vundle'
+" activate bundled matchit.vim
+runtime macros/matchit.vim
 
 " maybe remove and learn netrw
 Bundle 'scrooloose/nerdtree'
@@ -26,10 +26,10 @@ Bundle 'tpope/vim-cucumber'
 Bundle 'tsaleh/vim-supertab'
 Bundle 'tpope/vim-commentary'
 Bundle 'tpope/vim-endwise'
-Bundle 'kronn/vim-colorschemes'
 Bundle 'Raimondi/delimitMate'
 Bundle 'godlygeek/tabular'
 Bundle 'tpope/vim-ragtag'
+" Bundle 'tpope/vim-afterimage'
 
 Bundle 'ajf/puppet-vim'
 Bundle 'tpope/vim-rake'
@@ -42,7 +42,7 @@ Bundle 'mileszs/ack.vim'
 
 Bundle 'tpope/vim-eunuch'
 
-Bundle 'edsono/vim-dbext'
+" Bundle 'edsono/vim-dbext'
 Bundle 'TailMinusF'
 
 Bundle 'Lokaltog/vim-powerline'
@@ -60,8 +60,13 @@ Bundle 'garbas/vim-snipmate'
 Bundle 'tomtom/tlib_vim'
 Bundle 'MarcWeber/vim-addon-mw-utils'
 
+" colorschemes
+Bundle 'kronn/vim-colorschemes'
+" Bundle 'altercation/vim-colors-solarized'
 
+" }}}
 
+" settings {{{
 set backspace=indent,eol,start
 set scrolloff=5  " have always 5 lines of context around the cursor
 
@@ -129,8 +134,18 @@ if has('win32')
   set directory=~/vimfiles/tmp     " Where temporary files will go."
 endif
 
-" activate bundled matchit.vim
-runtime macros/matchit.vim
+" The OSX-keyboardlayout sucks, especially when you have \ as Leader on a
+" German keyboard...
+" and this doesn't hurt on other OS either
+let mapleader = ","
+let maplocalleader = ","
+
+" I want to *use* Vim, actually...
+syntax on
+filetype plugin indent on
+" }}}
+
+" settings for plugins {{{
 
 " Setting for Latexsuite
 " use ack if available (credit: hukl)
@@ -153,16 +168,12 @@ let NERDTreeHijackNetrw=1
 " 'link': 'SOME_BAD_SYMBOLIC_LINKS',
 let g:ctrlp_custom_ignore = { 'dir': '\.git$\|\.hg$\|\.svn$' }
 
-" The OSX-keyboardlayout sucks, especially when you have \ as Leader on a
-" German keyboard...
-" and this doesn't hurt on other OS either
-let mapleader = ","
-let maplocalleader = ","
+" settings for powerline
+" let g:Powerline_symbols = "unicode"
+" let g:Powerline_symbols = "fancy"
+" }}}
 
-" I want to *use* Vim, actually...
-syntax on
-filetype plugin indent on
-
+" user interface {{{
 " Vim should look good.
 " so, at least use some dark theme
 colo torte
@@ -212,7 +223,9 @@ endif
   set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 " endif
 
-" Functions
+" }}}
+
+" functions {{{
 function! <SID>StripTrailingWhitespaces()
     " Preparation: save last search, and cursor position.
     let _s=@/
@@ -235,8 +248,9 @@ function! s:align()
     call search(repeat('[^|]*|',column).'\s\{-\}'.repeat('.',position),'ce',line('.'))
   endif
 endfunction
+" }}}
 
-" autocommands
+" autocommands {{{
 if has('autocmd')
   " pde => arduino-files
   autocmd BufWritePre *.feature,*.erb,*.rb,*.js,*.pde,*.yml,*.sh,*.php,*.sql :call <SID>StripTrailingWhitespaces()
@@ -251,10 +265,9 @@ if has('autocmd')
   " don't clutter the bufferspace with fugitive-buffers
   autocmd BufReadPost fugitive://* set bufhidden=delete
 endif
+" }}}
 
-" 9,$v/^> \[/d
-
-" Key-mappings
+" key-mappings {{{
 map <F2> :set invpaste<CR>
 set pastetoggle=<F2>
 map <Leader>n :nohlsearch<CR>
@@ -268,7 +281,7 @@ nmap <Tab> <C-w><C-w>
 nmap <S-Tab> <C-w>W
 
 
-" Key-mappings and extensions for plugins
+" Key-mappings and extensions for plugins {{{
 
 " rails.vim
 if has("autocmd")
@@ -284,3 +297,6 @@ map <Leader>t, :Tabularize /,\zs/<CR>
 
 " NERDtree
 map <Leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
+
+" }}}
+" }}}
