@@ -254,7 +254,7 @@ endfunction
 " autocommands {{{
 if has('autocmd')
   " pde => arduino-files
-  autocmd BufWritePre *.feature,*.erb,*.rb,*.js,*.pde,*.yml,*.sh,*.php,*.sql :call <SID>StripTrailingWhitespaces()
+  autocmd BufWritePre *.feature,*.erb,*.rb,*.js,*.pde,*.yml,*.sh,*.php,*.sql,*.haml :call <SID>StripTrailingWhitespaces()
   autocmd BufRead *.feature :setlocal fdm=indent fdl=1
   autocmd BufRead *.scss :setlocal fdm=indent
   autocmd BufRead *.md :setlocal noet
