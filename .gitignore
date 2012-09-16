@@ -1,4 +1,5 @@
 .adobe/
+.android/
 Applications/
 .aptitude/
 Audiobooks/
@@ -11,7 +12,10 @@ bin/
 .cache/
 .CFUserTextEncoding
 .cheat/
+.chromedriver-helper/
+chromedriver.log
 .claws-mail/
+.clipboard
 Code/
 .cola
 .compiz/
@@ -23,7 +27,9 @@ dbext_sql_history.txt
 .dbus/
 .dbvis/
 DbVisualizer-8.0.4/
+.dbwrench2/
 Desktop/
+.dia
 .dmrc
 Documents/
 Downloads/
@@ -34,6 +40,9 @@ Dropbox/
 .dvdcss
 dwhelper/
 .easytag
+.eclipse/
+.ecryptfs/
+.erlang.cookie
 .esd_auth
 examples.desktop
 .filezilla/
@@ -59,6 +68,10 @@ examples.desktop
 .gnucash/
 .gnupg/
 .goobook_cache
+.goutputstream-0J6KJW
+.goutputstream-GFAFKW
+.goutputstream-TYZXIW
+.goutputstream-VKOJIW
 .gstreamer-0.10/
 .gtimelog/
 .gtk-bookmarks
@@ -68,6 +81,7 @@ examples.desktop
 homebrew/
 .hplip/
 .htoprc
+HttpDump.log
 .ICEauthority
 .icedtea/
 .install4j
@@ -79,6 +93,7 @@ homebrew/
 .lftp/
 Library/
 .libreoffice/
+.linkchecker/
 .local/
 .macromedia/
 Mail/
@@ -94,25 +109,31 @@ Music/
 .mutt/*
 .muttrc
 .mysql/
+mysqlaccess.log
 .mysqlgui/
 .mysql_history
 .namecoin/
 .navicat/
 .NERDTreeBookmarks
+.netbeans/
 .netrc
 .nvidia-settings-rc
 .offlineimap/
 .offlineimaprc
+.pam_environment
 .passenger/
 .pentadactyl/
 .perb/
 .pgadmin3
+.pgadmin_histoqueries
 pgadmin.log
 .pgpass
 .php_history
 Pictures/
 .pip
 .pki/
+.Private/
+Private/
 .profile
 .pry_history
 .psql_history
@@ -122,9 +143,14 @@ Public/
 .puppet/
 .purple/
 .putty/
+.pws
+.qt/
 .quodlibet/
+.rbx/
 .rdebug_hist
 .ri
+.rnd
+.rubinius_last_error
 .rvm/
 Sites/
 .Skype/
@@ -141,6 +167,7 @@ Sites/
 .tora.tse
 .Trash/
 .tsclient/
+.twinkle/
 Ubuntu One/
 .vagrant.d/
 Videos/
@@ -151,6 +178,7 @@ Videos/
 .viminfo
 .vim/.netrwhist
 .vim/pathogen/
+.vimperator/
 .vim/tmp/*
 .VirtualBox/
 VirtualBox VMs/
@@ -165,9 +193,3 @@ VirtualBox VMs/
 .xmonad/xmonad.o
 .xsession-errors
 .xsession-errors.old
-.chromedriver-helper/
-.clipboard
-.dia
-.pam_environment
-.pgadmin_histoqueries
-.rbx/
