@@ -286,6 +286,10 @@ nmap <S-Tab> <C-w>W
 map <down> gj
 map <up> gk
 
+" shorten the commands for quickfix-lists
+map <C-Right> :cn<CR>
+map <C-Left> :cp<CR>
+
 " Key-mappings and extensions for plugins {{{
 
 " rails.vim
