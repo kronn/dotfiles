@@ -35,6 +35,7 @@ Bundle 'ajf/puppet-vim'
 Bundle 'tpope/vim-rake'
 Bundle 'tobiassvn/vim-gemfile'
 Bundle 'vim-ruby/vim-ruby'
+" Bundle "korin/ri.vim"
 Bundle 'timcharper/textile.vim'
 
 Bundle 'tpope/vim-fugitive'
