@@ -270,12 +270,12 @@ endif
 " }}}
 
 " key-mappings {{{
+" pasting
 map <F2> :set invpaste<CR>
 set pastetoggle=<F2>
-map <Leader>n :nohlsearch<CR>
 
-" quickly toggle between current and previous buffer
-" nnoremap <Leader><Leader> <dunno dude>
+" quickly un-highlight search results
+map <Leader>n :nohlsearch<CR>
 
 " go to next window with tab
 nmap <Tab> <C-w><C-w>
