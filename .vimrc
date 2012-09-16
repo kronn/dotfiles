@@ -63,7 +63,7 @@ Bundle 'MarcWeber/vim-addon-mw-utils'
 
 " colorschemes
 Bundle 'kronn/vim-colorschemes'
-" Bundle 'altercation/vim-colors-solarized'
+Bundle 'altercation/vim-colors-solarized'
 
 " }}}
 
