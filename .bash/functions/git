@@ -20,7 +20,10 @@ function review() {
 }
 
 function changed_since() {
-  git graph ${1}... --name-only | grep -v -e "^*" | sort -u
+  git log ${1}... --name-status --oneline | grep -e "^[ACMR]" | sed "s/^[ACMR]\s\+//" | sort -u
+}
+function deleted_since() {
+  git log ${1}... --name-status --oneline | grep -e "^[RD]" | sed "s/^[RD]\s\+//" | sort -u
 }
 
 function changelog() {
