@@ -33,3 +33,6 @@ shopt -s histappend
 
 # Add RVM to PATH for scripting
 PATH=$PATH:$HOME/.rvm/bin
+
+# source purely local additions
+[[ -e "$HOME/.bash/local" ]] && source "$HOME/.bash/local"
