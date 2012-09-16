@@ -282,6 +282,9 @@ nmap <Tab> <C-w><C-w>
 " go to previous window with shift-tab
 nmap <S-Tab> <C-w>W
 
+" arrow keys are a more visual movement
+map <down> gj
+map <up> gk
 
 " Key-mappings and extensions for plugins {{{
 
