@@ -96,6 +96,8 @@ set softtabstop=2
 set shiftwidth=2
 set expandtab
 
+set hidden
+
 set encoding=utf-8   " Unicode is a beast, but...
 
 " what to show
