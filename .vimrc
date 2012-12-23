@@ -29,13 +29,14 @@ Bundle 'tpope/vim-endwise'
 Bundle 'Raimondi/delimitMate'
 Bundle 'godlygeek/tabular'
 Bundle 'tpope/vim-ragtag'
-" Bundle 'tpope/vim-afterimage'
+Bundle 'tpope/vim-afterimage'
+Bundle 'AndrewRadev/splitjoin.vim'
 
 Bundle 'ajf/puppet-vim'
 Bundle 'tpope/vim-rake'
 Bundle 'tobiassvn/vim-gemfile'
 Bundle 'vim-ruby/vim-ruby'
-" Bundle "korin/ri.vim"
+Bundle 'korin/ri.vim'
 Bundle 'timcharper/textile.vim'
 
 Bundle 'tpope/vim-fugitive'
@@ -47,9 +48,13 @@ Bundle 'tpope/vim-eunuch'
 Bundle 'TailMinusF'
 
 Bundle 'Lokaltog/vim-powerline'
+Bundle 'gerw/vim-latex-suite'
 " Bundle 'leshill/vim-json'
 " Bundle 'vim-scripts/nginx.vim'
-" Bundle 'gerw/vim-latex-suite'
+Bundle 'pangloss/vim-javascript'
+
+" not proud, just using
+" Bundle 'php.vim-for-php5'
 
 " have a ruby-block text-object ( r )
 Bundle 'nelstrom/vim-textobj-rubyblock'
@@ -64,6 +69,10 @@ Bundle 'MarcWeber/vim-addon-mw-utils'
 " colorschemes
 Bundle 'kronn/vim-colorschemes'
 Bundle 'altercation/vim-colors-solarized'
+
+" Bufferize
+Bundle 'git://gist.github.com/1102968.git'
+runtime! bundle/1102968/bufferize.vim
 
 " }}}
 
@@ -109,6 +118,7 @@ set wildmenu       " use funky wildmenu to display alternate findings
 
 " windows, buffers, splits, ...
 set winminheight=0
+set hidden         " don't warn on unsaved changes when changing buffers
 
 " Diffing
 if &diff
@@ -150,21 +160,33 @@ filetype plugin indent on
 
 " settings for plugins {{{
 
-" Setting for Latexsuite
+" Latexsuite {{{
 " use ack if available (credit: hukl)
-if executable("ack")
-  set grepprg=ack\ -H\ --nogroup\ --nocolor
+if executable("ack-grep")
+  set grepprg=ack-grep\ -H\ --nogroup\ --nocolor
 else
   set grepprg=grep\ -nH\ $*
 endif
 
+" Run latex, then dvipdf, then refresh the xpdf window.
+let g:Tex_FormatDependency_pdf = 'dvi,pdf'
+let g:Tex_CompileRule_pdf = 'dvipdf $*.dvi'
+" let g:Tex_CompileRule_pdf = 'dvipdf $*.dvi; xpdf -remote 127.0.0.1 -reload -raise'
+" let g:Tex_ViewRule_pdf = 'xpdf -remote 127.0.0.1'
+let g:Tex_DefaultTargetFormat = 'pdf' " Set the target format to pdf.
+" }}}
+
+" on Ubuntu, ack is called ack-grep
+let g:ackprg="ack-grep -H --nocolor --nogroup --column"
+
 " Setting for folding of php-files ( hopefully for historical reasons ;-) )
 let php_folding=1
 
-" Settings for NERDTree
+" NERDTree {{{
 let NERDChristmasTree=1   " Colorful output!!1!
 " let NERDTreeChDirMode=2   " Always cd to the rootdir of the NERDTree
 let NERDTreeHijackNetrw=1
+" }}}
 
 " Setting for ctrl_p
 " 'file': '\.exe$\|\.so$\|\.dll$',
@@ -174,11 +196,13 @@ let g:ctrlp_custom_ignore = { 'dir': '\.git$\|\.hg$\|\.svn$' }
 " settings for powerline
 " let g:Powerline_symbols = "unicode"
 let g:Powerline_symbols = "fancy"
+
 " }}}
 
 " user interface {{{
 " Vim should look good.
 " so, at least use some dark theme
+" hopefully, we can override this later
 colo torte
 
 " this translates to: TERM=xterm-256color (or mvim/gvim)
@@ -252,6 +276,22 @@ function! s:align()
     call search(repeat('[^|]*|',column).'\s\{-\}'.repeat('.',position),'ce',line('.'))
   endif
 endfunction
+
+function! OpenPhpFunction (keyword)
+  let proc_keyword = substitute(a:keyword , '_', '-', 'g')
+  exe '5 split'
+  exe 'enew'
+  exe 'set buftype=nofile'
+  exe 'silent r!links -dump http://www.php.net/manual/en/print/function.'.proc_keyword.'.php'
+  exe 'norm gg'
+  exe 'call search ("Description")'
+  exe 'norm jdgg'
+  exe 'call search("User Contributed Notes")'
+  exe 'norm dGgg'
+  exe 'norm V'
+endfunction
+
+command! -complete=file -nargs=1 Rpdf :r !pdftotext -nopgbrk <q-args> - |fmt -csw78
 " }}}
 
 " autocommands {{{
@@ -260,14 +300,24 @@ if has('autocmd')
   autocmd BufWritePre *.feature,*.erb,*.rb,*.js,*.pde,*.yml,*.sh,*.php,*.sql,*.haml :call <SID>StripTrailingWhitespaces()
   autocmd BufRead *.feature :setlocal fdm=indent fdl=1
   autocmd BufRead *.scss :setlocal fdm=indent
+  autocmd BufRead *.pp :setlocal fdm=indent
   autocmd BufRead *.md :setlocal noet
-  autocmd BufRead .vimperatorrc :setlocal ft=vimperator
   autocmd BufNewFile,BufRead *.mobile.erb :setlocal ft=eruby.html
   autocmd BufRead *.yml :setlocal fdm=indent fdl=2 ai
   autocmd BufNewFile,BufRead *.feature inoremap <silent> <Bar>   <Bar><ESC>:call <SID>align()<CR>a
+
+  " maximine every window vertically upon entering
   autocmd WinEnter * wincmd _
+
   " don't clutter the bufferspace with fugitive-buffers
   autocmd BufReadPost fugitive://* set bufhidden=delete
+
+  " thanks to @lucapette for pointing the usefulness of this one out
+  autocmd BuFRead *.haml :setlocal cursorcolumn
+
+  " sigh, I wish I wouldn't need those anymore
+  autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+  autocmd FileType php noremap K :call OpenPhpFunction(expand('<cword>'))<CR>
 endif
 " }}}
 
@@ -289,8 +339,14 @@ map <down> gj
 map <up> gk
 
 " shorten the commands for quickfix-lists
-map <C-Right> :cn<CR>
-map <C-Left> :cp<CR>
+" map <C-Right> :cn<CR>
+" map <C-Left> :cp<CR>
+map Oc :cn<CR>
+map Od :cp<CR>
+
+" " presentations
+" map <C-Right> :next<CR>
+" map <C-Left> :previous<CR>
 
 " Key-mappings and extensions for plugins {{{
 

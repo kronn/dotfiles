@@ -1,36 +1,34 @@
 --  vim:ft=haskell
 import XMonad
-import XMonad.Config.Gnome
-import XMonad.Hooks.ManageDocks
 import XMonad.Actions.CycleWS
-import XMonad.Actions.DynamicWorkspaces
-import XMonad.Layout.IM
-import XMonad.Layout.PerWorkspace
-import XMonad.Layout.Reflect
-import XMonad.Layout.Tabbed
-import XMonad.Layout.ComboP
-import XMonad.Layout.TwoPane
-
--- import XMonad.Util.EZConfig
--- import XMonad.Hooks.DynamicLog
--- import XMonad.Util.Run(spawnPipe)
--- import System.IO
-
-import Data.Ratio ((%))
-import qualified Data.Map as M
-
-import qualified XMonad.StackSet as W
+import XMonad.Config.Gnome
+import XMonad.Hooks.DynamicLog         -- for enabling any loghook
+import XMonad.Hooks.FadeInactive       -- movie OS 1.0
+import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.Place
+import XMonad.Layout.Circle            -- movie OS 1.0
+import XMonad.Layout.Grid
+import XMonad.Layout.IM
+import XMonad.Layout.NoBorders
+import XMonad.Layout.OneBig
+import XMonad.Layout.PerWorkspace
+import XMonad.Layout.ThreeColumns
 
+import Data.Ratio ((%))                -- used for various layouts
+import qualified Data.Map as M         -- used for merging key-sets
+import qualified XMonad.StackSet as W  -- used for screenkey floating
+
+import qualified DBus as D
+import qualified DBus.Client as D
+import qualified Codec.Binary.UTF8.String as UTF8
 
 -- TODO maybe disable "focus follows mouse"
--- TODO add everything needed to integrate Xmonad with Gnome http://haskell.org/haskellwiki/Xmonad/Using_xmonad_in_Gnome
--- TODO pipe loghook into a gnome-panel (think "window titles")
 
 -- basic Settings which may be needed more than once
 theModifierKey = mod4Mask      -- Rebind Mod to the Windows key
-theTerminal = "gnome-terminal" -- far from ideal, but nicely integrated
+-- theTerminal = "gnome-terminal" -- far from ideal, but nicely integrated
+theTerminal = "urxvt"          -- better reflowing of text, but has learning-curve
 
 -- display settings
 theBorderWidth = 1
@@ -44,34 +42,27 @@ theFocusedBorderColor = "#cc9933"
 -- bfccb8
 
 -- named Workspaces
-theWorkspaces = ["web", "primary", "secondary" , "tertiary", "mail", "music" , "gimp", "irc", "chat"]
-
--- -- dymanic Workspaces
--- doNewWS tg = (liftX $ addUniqueHiddenWS tg) >> doShift tg
--- addUniqueHiddenWS tg = withWindowSet $ s -> if null (filter ( (== tg) . W.tag) (W.workspaces s))
---                                               then addHiddenWorkspace tg 
---                                             else return()
+theWorkspaces = ["1:web", "2:primary", "3:secondary" , "4:tertiary", "5:mail", "6:music" , "7:tools", "8:irc", "9:chat"]
 
 -- special Window handling
 theManageHook = composeAll [
         className =? "Xmessage" --> doFloat,
         className =? "Do" --> doFloat, -- float GnomeDO (like you expect it)
-        className =? "Nm-applet" --> doFloat, -- float pin-entry for surfstick
-        className =? "Thunderbird" <&&> appName =? "Dialog" --> doFloat, -- float the PGP Pin-Entry
-        -- className =? "Nautilus" <&&> stringProperty "_NET_WM_WINDOW_TYPE" =? "_NET_WM_WINDOW_TYPE_DIALOG" --> doFloat,
+        -- className =? "Nm-applet" --> doFloat, -- float pin-entry for surfstick
+        -- className =? "Thunderbird" <&&> appName =? "Dialog" --> doFloat, -- float the PGP Pin-Entry
+        className =? "Nautilus" <&&> stringProperty "_NET_WM_WINDOW_TYPE" =? "_NET_WM_WINDOW_TYPE_DIALOG" --> doFloat,
         className =? "Screenkey" --> placeHook( fixed(0,1) ) <+> doFloat <+> doF W.focusDown,
-        -- className =? "Screenkey" --> doFloat <+> doF W.focusDown,
 
         -- send applications to the right workspace
-        className =? "Empathy" --> doShift "chat",
-        className =? "Pidgin" --> doShift "chat",
-        className =? "Google-chrome" --> doShift "web",
-        className =? "Thunderbird" --> doShift "mail",
-        className =? "Rythmbox" --> doShift "music",
-        className =? "banshee" --> doShift "music", -- oh the joy of consistent WM_CLASS-names ...
+        className =? "Empathy" --> doShift "9:chat",
+        className =? "Pidgin" --> doShift "9:chat",
+        className =? "Google-chrome" --> doShift "1:web",
+        className =? "Thunderbird" --> doShift "5:mail",
+        className =? "Rythmbox" --> doShift "6:music",
+        className =? "banshee" --> doShift "6:music", -- oh the joy of consistent WM_CLASS-names ...
 
-        className =? "Gtimelog" --> doShift "gimp", -- not exactly gimp, but thats more a tool-space
-        className =? "Gimp-2.6" --> doShift "gimp",
+        className =? "Gtimelog" --> doShift "7:tools",
+        className =? "Gimp-2.6" --> doShift "7:tools",
 
         manageDocks
     ]
@@ -98,42 +89,52 @@ defaultLayout = tiledLayout ||| Mirror tiledLayout ||| Full
 -- defaultLayout with a different starting Point
 fullFirstLayout = Full ||| tiledLayout ||| Mirror tiledLayout
 
+-- experimental layout for one big app and some potential others
+browserLayout = Full ||| OneBig (3/4) (3/4)
+
 -- special layouts
-imLayout = IM (1%6) (Or
-                      (Or (Role "contact_list") (Role "buddy_list"))
-                      (And (ClassName "Skype") (Title "der_kronn - Skype™ (Beta)"))
-                    )
--- (And (ClassName "Pidgin")  (Role "buddy_list"))
--- (And (ClassName "Empathy") (Role "contact_list"))
--- (Title "der_kronn - Skype™ (Beta)")
--- (And (ClassName "Skype")   (And (Role "") (Not (Title "Options"))))
+imRatio = (1%6)
+imLayoutClasses = (Grid ||| Mirror(Grid) )
 
-tabbedLayout = tabbedBottomAlways shrinkText defaultTheme
+psiLayout    = withIM imRatio (And (ClassName "psi") (Resource "main")) imLayoutClasses
+pidginLayout = withIM imRatio (And (ClassName "Pidgin") (Role "buddy_list")) imLayoutClasses
+skypeLayout  = withIM imRatio (And (ClassName "Skype") (Title "der_kronn - Skype™")) imLayoutClasses
 
--- gimpLayout = IM (1%6) (Role "gimp-toolbox") $ reflectHoriz $ IM (1%5) (Role "gimp-dock")
--- gimpLayout = tabbedLayout ****||* Full
--- gimpLayout = Full *||**** tabbedLayout
--- gimpLayout = combineTwoP (TwoPane 0.04 0.82) (tabbedLayout) (Full) (Not (Role "gimp-toolbox"))
-gimpLayout = combineTwoP (TwoPane 0.04 0.82) (tabbedLayout) (Full) (Not (Or (Role "gimp-dock") (Role "gimp-toolbox")))
+imLayout = pidginLayout ||| skypeLayout
+-- imLayout = pidginLayout
+
+-- imLayout = withIM imRatio (Or
+--                           (And (ClassName "psi") (Resource "main"))
+--                           (Or (Role "contact_list") (Role "buddy_list"))
+--                         ) imLayoutClasses
+
+threeColLayout = ThreeColMid nmaster delta ratio
+  where
+    nmaster = 1
+    delta   = 3/100
+    ratio   = 2/3
 
 codeLayout = biggerMasterLayout ||| Mirror biggerMasterLayout
+-- codeLayout = biggerMasterLayout ||| Mirror biggerMasterLayout ||| OneBig (3/4) (3/4) ||| Circle
+-- codeLayout = biggerMasterLayout ||| Mirror biggerMasterLayout ||| OneBig (3/4) (3/4)
+
+circleLayout = Circle ||| tiledLayout ||| Mirror tiledLayout ||| Full
 
 -- TODO optimize so that the screenkey-window is not overlaying anything
--- presenterLayout = Mirror (Tall 1 (5%100) (4/5))
--- presenterLayout = combineTwoP (Mirror (TwoPane 0.04 0.82)) (Full) (Full) (Not (Role "something-that-does-not-exist"))
--- presenterLayout = (Mirror (TwoPane 0.1 0.9))
 presenterLayout = Mirror (Tall 1 (5%100) (90%100))
 
 ircLayout = Full ||| tiledLayout ||| Mirror tiledLayout
 
-theLayouts = onWorkspace "chat" imLayout
-              .  onWorkspace "web" fullFirstLayout
-              .  onWorkspace "irc" ircLayout
-              .  onWorkspace "primary" codeLayout
-              .  onWorkspace "secondary" codeLayout
-              .  onWorkspace "tertiary" codeLayout
-              -- .  onWorkspace "tertiary" presenterLayout
-              -- .  onWorkspace "gimp" gimpLayout
+theLayouts = onWorkspace "9:chat" imLayout
+           . onWorkspace "1:web" fullFirstLayout
+           -- . onWorkspace "1:web" browserLayout
+           . onWorkspace "8:irc" ircLayout
+           . onWorkspace "2:primary" codeLayout
+           . onWorkspace "3:secondary" codeLayout
+           . onWorkspace "4:tertiary" codeLayout
+           . onWorkspace "6:music" circleLayout
+           -- . onWorkspace "4:tertiary" presenterLayout
+           . onWorkspace "7:tools" threeColLayout
 
 -- custom keybindings
 theKeys (XConfig {modMask = modm}) = M.fromList $ [
@@ -145,16 +146,69 @@ theKeys (XConfig {modMask = modm}) = M.fromList $ [
           ((modm , xK_Left), prevWS)
     ]
 
--- wire everything up and together
-main = do
-    xmonad $ gnomeConfig {
-        modMask = theModifierKey,
-        terminal = theTerminal,
-        manageHook = theManageHook <+> manageHook gnomeConfig,
-        layoutHook = avoidStruts $ theLayouts $ layoutHook gnomeConfig,
-        workspaces = theWorkspaces,
-        keys = \c -> theKeys c `M.union` keys gnomeConfig c,
-        borderWidth = theBorderWidth,
-        normalBorderColor = theNormalBorderColor,
-        focusedBorderColor = theFocusedBorderColor
+-- custom functions
+-- mostly for dbus
+prettyPrinter :: D.Client -> PP
+prettyPrinter dbus = defaultPP
+    { ppOutput   = dbusOutput dbus
+    , ppTitle    = pangoSanitize
+    , ppCurrent  = pangoColor "green" . wrap "[" "]" . pangoSanitize
+    , ppVisible  = pangoColor "yellow" . wrap "[" "]" . pangoSanitize
+    , ppHidden   = pangoColor "#ccccff" . wrap "(" ")" . pangoSanitize
+    , ppUrgent   = pangoColor "red"
+    , ppLayout   = const ""
+    , ppSep      = " | "
     }
+
+getWellKnownName :: D.Client -> IO ()
+getWellKnownName dbus = do
+  D.requestName dbus (D.busName_ "org.xmonad.Log")
+                [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
+  return ()
+
+dbusOutput :: D.Client -> String -> IO ()
+dbusOutput dbus str = do
+    -- let signal = (D.signal "/org/xmonad/Log" "org.xmonad.Log" "Update") {
+    let signal = (D.signal (D.objectPath_ "/org/xmonad/Log") (D.interfaceName_ "org.xmonad.Log") (D.memberName_ "Update")) {
+            -- D.signalBody = [D.toVariant ("<b>" ++ (UTF8.decodeString str) ++ "</b>")]
+            D.signalBody = [D.toVariant ("<tt>" ++ (UTF8.decodeString str) ++ "</tt>")]
+        }
+    D.emit dbus signal
+
+pangoColor :: String -> String -> String
+pangoColor fg = wrap left right
+  where
+    left  = "<span foreground=\"" ++ fg ++ "\">"
+    right = "</span>"
+
+pangoSanitize :: String -> String
+pangoSanitize = foldr sanitize ""
+  where
+    sanitize '>'  xs = "&gt;" ++ xs
+    sanitize '<'  xs = "&lt;" ++ xs
+    sanitize '\"' xs = "&quot;" ++ xs
+    sanitize '&'  xs = "&amp;" ++ xs
+    sanitize x    xs = x:xs
+
+transparencyLogHook :: X ()
+transparencyLogHook = fadeInactiveLogHook fadeAmount
+  where fadeAmount = 0.9
+  -- where fadeAmount = 1.0
+
+-- wire everything up and together
+main :: IO ()
+main = do
+    dbus <- D.connectSession
+    getWellKnownName dbus
+    spawn "xcompmgr -C -F"
+    xmonad $ gnomeConfig { modMask = theModifierKey
+      , logHook = transparencyLogHook <+> dynamicLogWithPP (prettyPrinter dbus)
+      , terminal = theTerminal
+      , manageHook = theManageHook <+> manageHook gnomeConfig
+      , layoutHook = avoidStruts $ smartBorders $ theLayouts $ layoutHook gnomeConfig
+      , workspaces = theWorkspaces
+      , keys = \c -> theKeys c `M.union` keys gnomeConfig c
+      , borderWidth = theBorderWidth
+      , normalBorderColor = theNormalBorderColor
+      , focusedBorderColor = theFocusedBorderColor
+      }

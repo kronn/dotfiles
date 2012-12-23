@@ -194,3 +194,5 @@ VirtualBox VMs/
 .xsession-errors
 .xsession-errors.old
 .bash/local
+.audacity-data/
+.bashrc-dist

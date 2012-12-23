@@ -35,4 +35,12 @@ shopt -s histappend
 PATH=$PATH:$HOME/.rvm/bin
 
 # source purely local additions
-[[ -e "$HOME/.bash/local" ]] && source "$HOME/.bash/local"
+if [ -e "$HOME/.bash/local" ]; then
+  source "$HOME/.bash/local"
+fi
+
+# restore last saved path
+if [ -f ~/.last_dir ]; then
+  cd `cat ~/.last_dir`
+  rm ~/.last_dir
+fi
