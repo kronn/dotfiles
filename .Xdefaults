@@ -1,5 +1,6 @@
 # transparency - true or false (default)
 URxvt*transparent: true
+URxvt*transparent: false
 
 # tint with any color; i.e., blue, red, tomato4, olivedrab2, etc.
 #   some nice listings are at:
@@ -19,7 +20,7 @@ URxvt*foreground: White
 
 # background color (prior to tinting) (default is white)
 URxvt*background: Grey
-URxvt.perl-ext-common: default,matcher
+URxvt.perl-ext-common: default,matcher,font-size
 URxvt.urlLauncher: google-chrome
 
 Xft.hinting: true
@@ -34,6 +35,19 @@ URxvt.boldFont: xft:inconsolata for powerline:bold:pixelsize=12:antialias=true:h
 URxvt.italicFont: xft:inconsolata for powerline:italic:pixelsize=12:antialias=true:hinting=true
 URxvt.boldItalicFont: xft:inconsolata for powerline:bold:italic:pixelsize=12:antialias=true:hinting=true
 URxvt.letterSpace: -1
+
+# # Inconsolata-dz Settings
+# URxvt.font: xft:inconsolata-dz for powerline:pixelsize=12:antialias=true:hinting=true
+# URxvt.boldFont: xft:inconsolata-dz for powerline:bold:pixelsize=12:antialias=true:hinting=true
+# URxvt.italicFont: xft:inconsolata-dz for powerline:italic:pixelsize=12:antialias=true:hinting=true
+# URxvt.boldItalicFont: xft:inconsolata-dz for powerline:bold:italic:pixelsize=12:antialias=true:hinting=true
+# URxvt.letterSpace: -1
+
+# keybinding
+URxvt.keysym.C-Up:     perl:font-size:increase
+URxvt.keysym.C-Down:   perl:font-size:decrease
+URxvt.keysym.C-S-Up:   perl:font-size:incglobal
+URxvt.keysym.C-S-Down: perl:font-size:decglobal
 
 # Replace blue folder colors with a lighter shade for clarity. To
 #  set colored folders and files within urxvt, xterm, and aterm, add
@@ -62,7 +76,7 @@ URxvt.color9  : #ec2929
 URxvt.color2  : #4e9a06
 URxvt.color10 : #8ae234
 ! yellow
-URxvt.color3  : #C4a000
+URxvt.color3  : #c4a000
 URxvt.color11 : #fce94f
 ! blue
 URxvt.color4  : #3465a4
