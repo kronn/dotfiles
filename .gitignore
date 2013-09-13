@@ -196,3 +196,4 @@ VirtualBox VMs/
 .bash/local
 .audacity-data/
 .bashrc-dist
+.cabal/
