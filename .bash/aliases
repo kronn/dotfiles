@@ -31,11 +31,6 @@ alias la='ls -a'
 alias ll="ls -l"
 alias l="ll -h"
 
-# rails
-alias td="tail -n 0 -f log/development.log"
-alias tt="tail -n 0 -f log/test.log"
-alias tp="tail -n 0 -f log/production.log"
-
 # git convinience
 alias homegit="GIT_DIR=~/Code/projects/dotfiles/.git GIT_WORK_TREE=~/ git"
 
@@ -44,5 +39,8 @@ alias ssh="TERM=xterm ssh"
 
 # various stuff
 alias mmta="milkmaid task add"
-# alias cuke="truncate --size 0 log/*.log; clear; KOPFLOS=no CAPYBARA_CHROME=yes bundle exec cucumber --drb -r features/"
-alias cuke="truncate --size 0 log/*.log; clear; KOPFLOS=no CAPYBARA_CHROME=yes bundle exec cucumber -s -r features/"
+# alias cuke="truncate --size 0 log/*.log; clear; KOPFLOS=no CAPYBARA_CHROME=yes bundle exec cucumber -s -r features/"
+alias cuke="truncate --size 0 log/*.log; clear; CAPYBARA_CHROME=yes bundle exec cucumber -s -r features/"
+alias watch_git_diff="watch -c 'git diff --color=always; echo \"Unstaged ^^^^^ |||| vvvvv staged\"; git diff --cached --color=always'"
+alias b="bundle"
+alias g="bundle exec guard"
