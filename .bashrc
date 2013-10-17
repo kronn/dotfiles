@@ -1,10 +1,12 @@
 source ~/.profile
 
-# source git completion if none is defined
-complete -p git 1>/dev/null 2>&1 || source ~/.bash/git-completion.bash
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+  . /etc/bash_completion
+fi
 
-for FILE in {capistrano,rake,thor,git-flow,ssh}; do
-  source ~/.bash/$FILE-completion.bash
+# source completions if not already defined
+for FILE in {git,capistrano,rake,thor,git-flow}; do
+  complete -p $FILE 1>/dev/null 2>&1 || source ~/.bash/$FILE-completion.bash
 done
 
 source ~/.bash/aliases
