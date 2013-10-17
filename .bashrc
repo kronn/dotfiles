@@ -44,3 +44,8 @@ if [ -f ~/.last_dir ]; then
   cd `cat ~/.last_dir`
   rm ~/.last_dir
 fi
+
+# BEGIN Ruboto setup
+source ~/.rubotorc
+# END Ruboto setup
+
