@@ -232,6 +232,42 @@ let g:splitjoin_join_mapping = ''
 "
 let g:airline_powerline_fonts = 1
 
+" rails.vim {{{
+" projections - typing `:Rfactory users` will open the users factory
+let g:rails_projections = {
+      \ "test/factories/*.rb": {
+      \   "command":   "factory",
+      \   "affinity":  "collection",
+      \   "alternate": "app/models/%i.rb",
+      \   "related":   "db/schema.rb#%s",
+      \   "test":      "test/models/%i_test.rb",
+      \   "template":  "FactoryGirl.define do\n  factory :%i do\n  end\nend",
+      \   "keywords":  "factory sequence"
+      \ },
+      \ "spec/factories/*.rb": {
+      \   "command":   "factory",
+      \   "affinity":  "collection",
+      \   "alternate": "app/models/%i.rb",
+      \   "related":   "db/schema.rb#%s",
+      \   "test":      "spec/models/%i_test.rb",
+      \   "template":  "FactoryGirl.define do\n  factory :%i do\n  end\nend",
+      \   "keywords":  "factory sequence"
+      \ },
+      \ "features/*.feature": {
+      \   "command": "feature",
+      \   "affinity":  "collection"
+      \ },
+      \ "features/step_definitions/*.rb": {
+      \   "command": "steps",
+      \   "affinity":  "collection"
+      \ },
+      \ "Gemfile": {
+      \   "command": "gemfile",
+      \   "alternate": "Gemfile.lock",
+      \   "related": "Gemfile.lock"
+      \ }
+      \}
+" }}}
 
 " }}}
 
@@ -385,12 +421,6 @@ map Od :cp<CR>
 " map <C-Left> :previous<CR>
 
 " Key-mappings and extensions for plugins {{{
-
-" rails.vim
-if has("autocmd")
-  autocmd User Rails Rnavcommand feature features/ -glob=**/* -suffix=.feature
-  autocmd User Rails Rnavcommand steps features/step_definitions/ -glob=**/* -suffix=.rb
-endif
 
 " nmap <Leader>j :SplitjoinJoin<cr>
 " nmap <Leader>s :SplitjoinSplit<cr>
