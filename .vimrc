@@ -212,6 +212,8 @@ let NERDTreeHijackNetrw=1
 " 'link': 'SOME_BAD_SYMBOLIC_LINKS',
 let g:ctrlp_custom_ignore = { 'dir': '\.git$\|\.hg$\|\.svn$' }
 
+let g:rspec_command = "!rspec --drb --color -f documentation {spec}"
+
 " " settings for powerline {{{
 " " let g:Powerline_symbols = "unicode"
 " let g:Powerline_symbols = "fancy"
@@ -384,6 +386,12 @@ if has("autocmd")
   autocmd User Rails Rnavcommand feature features/ -glob=**/* -suffix=.feature
   autocmd User Rails Rnavcommand steps features/step_definitions/ -glob=**/* -suffix=.rb
 endif
+
+" Rspec.vim mappings
+map <Leader>st :call RunCurrentSpecFile()<CR>
+map <Leader>ss :call RunNearestSpec()<CR>
+map <Leader>sl :call RunLastSpec()<CR>
+map <Leader>sa :call RunAllSpecs()<CR>
 
 " Tabularize
 map <Leader>t= :Tabularize /=>\?/<CR>
