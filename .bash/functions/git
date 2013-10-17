@@ -1,0 +1,31 @@
+#!/bin/bash
+
+function finish() {
+  PREFIX=`git config gitflow.prefix.feature | sed 's!\/!\\\/!'`
+  BRANCH=`git branch | grep '^*' | sed 's!\*\ !!'`
+  FLOW_BRANCH=`echo $BRANCH | sed "s!$PREFIX!!"`
+
+  if [ -n `echo $BRANCH | grep $PREFIX` ]; then
+    echo "finishing $FLOW_BRANCH"
+    git flow feature finish $FLOW_BRANCH
+  fi
+}
+
+function review() {
+  for COMMIT in `git log --reverse --format=format:%H ${1:-'develop..'}`; do
+    clear
+    git show --patch-with-stat $COMMIT
+    read
+  done
+}
+
+function changed_since() {
+  git log ${1}... --name-status --oneline | grep -e "^[ACMR]" | sed "s/^[ACMR]\s\+//" | sort -u
+}
+function deleted_since() {
+  git log ${1}... --name-status --oneline | grep -e "^[RD]" | sed "s/^[RD]\s\+//" | sort -u
+}
+
+function changelog() {
+  git log --oneline master..develop | grep Merge | grep -v -e "Merge branch '\(develop\|master\)' of github"
+}

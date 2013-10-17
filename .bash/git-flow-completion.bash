@@ -47,7 +47,7 @@
 
 _git_flow ()
 {
-	local subcommands="init feature release hotfix help version"
+	local subcommands="init feature release hotfix support help version"
 	local subcommand="$(__git_find_on_cmdline "$subcommands")"
 	if [ -z "$subcommand" ]; then
 		__gitcomp "$subcommands"
@@ -69,6 +69,10 @@ _git_flow ()
 		;;
 	hotfix)
 		__git_flow_hotfix
+		return
+		;;
+	support)
+		__git_flow_support
 		return
 		;;
 	*)
@@ -150,7 +154,7 @@ __git_flow_release ()
 
 __git_flow_hotfix ()
 {
-	local subcommands="list start finish help"
+	local subcommands="list start finish track publish help"
 	local subcommand="$(__git_find_on_cmdline "$subcommands")"
 	if [ -z "$subcommand" ]; then
 		__gitcomp "$subcommands"
@@ -162,6 +166,30 @@ __git_flow_hotfix ()
 		__gitcomp "$(__git_flow_list_branches 'hotfix')"
 		return
 		;;
+	publish)
+		__gitcomp "$(comm -23 <(__git_flow_list_branches 'hotfix') <(__git_flow_list_remote_branches 'hotfix'))"
+		return
+		;;
+	track)
+		__gitcomp "$(comm -23 <(__git_flow_list_remote_branches 'hotfix') <(__git_flow_list_branches 'hotfix'))"
+		return
+		;;
+	*)
+		COMPREPLY=()
+		;;
+	esac
+}
+
+__git_flow_support ()
+{
+	local subcommands="list start help"
+	local subcommand="$(__git_find_on_cmdline "$subcommands")"
+	if [ -z "$subcommand" ]; then
+		__gitcomp "$subcommands"
+		return
+	fi
+
+	case "$subcommand" in
 	*)
 		COMPREPLY=()
 		;;
@@ -181,14 +209,14 @@ __git_flow_prefix ()
 __git_flow_list_branches ()
 {
 	local prefix="$(__git_flow_prefix $1)"
-	git branch 2> /dev/null | tr -d ' |*' | grep "^$prefix" | sed s,^$prefix,, | sort
+	git branch --no-color 2> /dev/null | tr -d ' |*' | grep "^$prefix" | sed s,^$prefix,, | sort
 }
 
 __git_flow_list_remote_branches ()
 {
 	local prefix="$(__git_flow_prefix $1)"
 	local origin="$(git config gitflow.origin 2> /dev/null || echo "origin")"
-	git branch -r 2> /dev/null | sed "s/^ *//g" | grep "^$origin/$prefix" | sed s,^$origin/$prefix,, | sort
+	git branch --no-color -r 2> /dev/null | sed "s/^ *//g" | grep "^$origin/$prefix" | sed s,^$origin/$prefix,, | sort
 }
 
 # alias __git_find_on_cmdline for backwards compatibility

@@ -1,0 +1,11 @@
+#!/bin/bash
+# vim:ft=sh
+
+# Process Functions
+function pgrep() {
+  ps aux | head -n 1
+  ps aux | grep $1 | grep -v 'grep'
+}
+function pidgrep() {
+  pgrep $1 | sed 's/[- _a-zA-Z]* *\([0-9]*\).*/\1/'
+}

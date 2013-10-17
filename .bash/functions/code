@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+if [ -d ~/Code ]; then
+  function cd-work() {
+    cd ~/Code/work/$1
+    store_pwd
+  }
+  complete -W "$(ls -1 --color=no ~/Code/work/)" cd-work
+
+  function cd-clients() {
+    cd ~/Code/clients/$1
+    store_pwd
+  }
+  complete -W "$(ls -1 --color=no ~/Code/clients/)" cd-clients
+
+  function cd-opensource() {
+    cd ~/Code/opensource/$1
+    store_pwd
+  }
+  complete -W "$(ls -1 --color=no ~/Code/opensource/)" cd-opensource
+
+  function cd-presentations() {
+    cd ~/Code/presentations/$1
+    store_pwd
+  }
+  complete -W "$(ls -1 --color=no ~/Code/presentations/)" cd-presentations
+
+  function cd-projects() {
+    cd ~/Code/projects/$1
+    store_pwd
+  }
+  complete -W "$(ls -1 --color=no ~/Code/projects/)" cd-projects
+
+  function cd-support() {
+    cd ~/Code/support/$1
+    store_pwd
+  }
+  complete -W "$(ls -1 --color=no ~/Code/support/)" cd-support
+fi

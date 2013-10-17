@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+fliptable() {
+  echo '（╯°□°）╯ ┻━┻'
+} 
+
+fliptwotables() {
+  echo '┻━┻ ヽ(`Д´)ﾉ ┻━┻'
+}
