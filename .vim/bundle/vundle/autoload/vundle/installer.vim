@@ -106,7 +106,10 @@ func! vundle#installer#install(bang, name) abort
 endf
 
 func! vundle#installer#docs() abort
-  call vundle#installer#helptags(g:bundles)
+  let error_count = vundle#installer#helptags(g:bundles)
+  if error_count > 0
+      return 'error'
+  endif
   return 'helptags'
 endf
 
@@ -117,11 +120,12 @@ func! vundle#installer#helptags(bundles) abort
   call s:log('')
   call s:log('Helptags:')
 
-  call map(copy(help_dirs), 's:helptags(v:val)')
+  let statuses = map(copy(help_dirs), 's:helptags(v:val)')
+  let errors = filter(statuses, 'v:val == 0')
 
   call s:log('Helptags: '.len(help_dirs).' bundles processed')
 
-  return help_dirs
+  return len(errors)
 endf
 
 func! vundle#installer#list(bang) abort
@@ -198,10 +202,12 @@ func! s:helptags(rtp) abort
   let doc_path = a:rtp.'/doc/'
   call s:log(':helptags '.doc_path)
   try
-    helptags `=doc_path`
+    execute 'helptags ' . doc_path
   catch
     call s:log("> Error running :helptags ".doc_path)
+    return 0
   endtry
+  return 1
 endf
 
 func! s:sync(bang, bundle) abort
@@ -210,15 +216,13 @@ func! s:sync(bang, bundle) abort
     if !(a:bang) | return 'todate' | endif
     let cmd = 'cd '.shellescape(a:bundle.path()).' && git pull && git submodule update --init --recursive'
 
-    if (has('win32') || has('win64'))
-      let cmd = substitute(cmd, '^cd ','cd /d ','')  " add /d switch to change drives
-      let cmd = '"'.cmd.'"'                          " enclose in quotes
-    endif
+    let cmd = g:shellesc_cd(cmd)
 
     let get_current_sha = 'cd '.shellescape(a:bundle.path()).' && git rev-parse HEAD'
+    let get_current_sha = g:shellesc_cd(get_current_sha)
     let initial_sha = s:system(get_current_sha)[0:15]
   else
-    let cmd = 'git clone --recursive '.a:bundle.uri.' '.shellescape(a:bundle.path())
+    let cmd = 'git clone --recursive '.shellescape(a:bundle.uri).' '.shellescape(a:bundle.path())
     let initial_sha = ''
   endif
 
@@ -244,6 +248,25 @@ func! s:sync(bang, bundle) abort
 
   call add(g:updated_bundles, [initial_sha, updated_sha, a:bundle])
   return 'updated'
+endf
+
+func! g:shellesc(cmd) abort
+  if (has('win32') || has('win64'))
+    if &shellxquote != '('                           " workaround for patch #445
+      return '"'.a:cmd.'"'                          " enclose in quotes so && joined cmds work
+    endif
+  endif
+  return a:cmd
+endf
+
+func! g:shellesc_cd(cmd) abort
+  if (has('win32') || has('win64'))
+    let cmd = substitute(a:cmd, '^cd ','cd /d ','')  " add /d switch to change drives
+    let cmd = g:shellesc(cmd)
+    return cmd
+  else
+    return a:cmd
+  endif
 endf
 
 func! s:system(cmd) abort
