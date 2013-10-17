@@ -214,6 +214,11 @@ let g:ctrlp_custom_ignore = { 'dir': '\.git$\|\.hg$\|\.svn$' }
 
 let g:rspec_command = "!rspec --drb --color -f documentation {spec}"
 
+" splitjoin {{{
+let g:splitjoin_split_mapping = ''
+let g:splitjoin_join_mapping = ''
+" }}}
+
 " " settings for powerline {{{
 " " let g:Powerline_symbols = "unicode"
 " let g:Powerline_symbols = "fancy"
@@ -386,6 +391,11 @@ if has("autocmd")
   autocmd User Rails Rnavcommand feature features/ -glob=**/* -suffix=.feature
   autocmd User Rails Rnavcommand steps features/step_definitions/ -glob=**/* -suffix=.rb
 endif
+
+" nmap <Leader>j :SplitjoinJoin<cr>
+" nmap <Leader>s :SplitjoinSplit<cr>
+nmap sj :SplitjoinSplit<cr>
+nmap sk :SplitjoinJoin<cr>
 
 " Rspec.vim mappings
 map <Leader>st :call RunCurrentSpecFile()<CR>
