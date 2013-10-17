@@ -1,4 +1,5 @@
---  vim:ft=haskell
+--  vim:ft=haskell:fdm=marker
+--  if DBus.Client cannot be found, then `cabal update && cabal install dbus`
 import XMonad
 import XMonad.Actions.CycleWS
 import XMonad.Config.Gnome
@@ -15,9 +16,10 @@ import XMonad.Layout.OneBig
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.ThreeColumns
 
+
 import Data.Ratio ((%))                -- used for various layouts
-import qualified Data.Map as M         -- used for merging key-sets
-import qualified XMonad.StackSet as W  -- used for screenkey floating
+import qualified Data.Map as M         -- used for merging key-sets and mouse-bindings
+import qualified XMonad.StackSet as W  -- used for screenkey floating and window-copying
 
 import qualified DBus as D
 import qualified DBus.Client as D
