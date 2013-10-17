@@ -19,60 +19,79 @@ runtime macros/matchit.vim
 Bundle 'scrooloose/nerdtree'
 Bundle 'kien/ctrlp.vim'
 
-Bundle 'tpope/vim-rails'
+" general editor extensions
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-repeat'
-Bundle 'tpope/vim-cucumber'
-Bundle 'tsaleh/vim-supertab'
+" Bundle 'tsaleh/vim-supertab'
 Bundle 'tpope/vim-commentary'
 Bundle 'tpope/vim-endwise'
 Bundle 'Raimondi/delimitMate'
 Bundle 'godlygeek/tabular'
 Bundle 'tpope/vim-ragtag'
-Bundle 'tpope/vim-afterimage'
 Bundle 'AndrewRadev/splitjoin.vim'
 
-Bundle 'ajf/puppet-vim'
+" UI candy
+" Bundle 'Lokaltog/vim-powerline'
+Bundle 'bling/vim-airline'
+
+" rails, ruby and related things
+Bundle 'tpope/vim-rails'
+Bundle 'tpope/vim-cucumber'
 Bundle 'tpope/vim-rake'
 Bundle 'tobiassvn/vim-gemfile'
 Bundle 'vim-ruby/vim-ruby'
-Bundle 'korin/ri.vim'
-Bundle 'timcharper/textile.vim'
+" Bundle 'danchoi/ri.vim'
+Bundle 'edsono/vim-dbext'
+Bundle 'TailMinusF'
+Bundle 'rking/vim-ruby-refactoring'
 
+" for emulating a neckbeard
 Bundle 'tpope/vim-fugitive'
 Bundle 'mileszs/ack.vim'
-
 Bundle 'tpope/vim-eunuch'
 
-" Bundle 'edsono/vim-dbext'
-Bundle 'TailMinusF'
-
-Bundle 'Lokaltog/vim-powerline'
+" various filetypes
+Bundle 'ajf/puppet-vim'
+" Bundle 'timcharper/textile.vim'
 Bundle 'gerw/vim-latex-suite'
 " Bundle 'leshill/vim-json'
 " Bundle 'vim-scripts/nginx.vim'
 Bundle 'pangloss/vim-javascript'
+Bundle 'kchmck/vim-coffee-script'
+" Bundle 'tpope/vim-afterimage'
+Bundle 'plasticboy/vim-markdown'
 
-" not proud, just using
+" not proud, just using sometimes
 " Bundle 'php.vim-for-php5'
 
 " have a ruby-block text-object ( r )
 Bundle 'nelstrom/vim-textobj-rubyblock'
 Bundle 'kana/vim-textobj-user'
 
-" maybe change to ultisnips or so
-Bundle 'honza/snipmate-snippets'
-Bundle 'garbas/vim-snipmate'
-Bundle 'tomtom/tlib_vim'
+" snippets
 Bundle 'MarcWeber/vim-addon-mw-utils'
+Bundle 'tomtom/tlib_vim'
+Bundle 'garbas/vim-snipmate'
+Bundle 'honza/vim-snippets'
 
 " colorschemes
-Bundle 'kronn/vim-colorschemes'
-Bundle 'altercation/vim-colors-solarized'
+" Bundle 'kronn/vim-colorschemes'
+" Bundle 'altercation/vim-colors-solarized'
+" Bundle 'rking/vim-detailed'
+Bundle 'flazz/vim-colorschemes'
+Bundle 'biskark/vim-ultimate-colorscheme-utility'
 
-" Bufferize
-Bundle 'git://gist.github.com/1102968.git'
-runtime! bundle/1102968/bufferize.vim
+" experiments
+" execute code directly from vim
+" Bundle 'nielsmadan/venom'
+" Bundle 'nielsmadan/mercury'
+
+" run rspec from vim
+Bundle 'thoughtbot/vim-rspec'
+" Bundle 'tpope/vim-dispatch'
+
+" source-code navigation w/o ctags
+Bundle 'malkomalko/projections.vim'
 
 " }}}
 
