@@ -474,5 +474,17 @@ map <Leader>t, :Tabularize /,\zs/<CR>
 " NERDtree
 map <Leader>d :execute 'NERDTreeToggle ' . getcwd()<CR>
 
+" rubyrefactoring
+let g:ruby_refactoring_map_keys=0
+nnoremap <leader>fap  :RAddParameter<cr>
+nnoremap <leader>fcpc :RConvertPostConditional<cr>
+nnoremap <leader>fel  :RExtractLet<cr>
+vnoremap <leader>fec  :RExtractConstant<cr>
+vnoremap <leader>felv :RExtractLocalVariable<cr>
+nnoremap <leader>fit  :RInlineTemp<cr>
+vnoremap <leader>frlv :RRenameLocalVariable<cr>
+vnoremap <leader>friv :RRenameInstanceVariable<cr>
+vnoremap <leader>fem  :RExtractMethod<cr>
+
 " }}}
 " }}}
