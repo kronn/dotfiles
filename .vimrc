@@ -212,9 +212,19 @@ let NERDTreeHijackNetrw=1
 " 'link': 'SOME_BAD_SYMBOLIC_LINKS',
 let g:ctrlp_custom_ignore = { 'dir': '\.git$\|\.hg$\|\.svn$' }
 
-" settings for powerline
-" let g:Powerline_symbols = "unicode"
-let g:Powerline_symbols = "fancy"
+" " settings for powerline {{{
+" " let g:Powerline_symbols = "unicode"
+" let g:Powerline_symbols = "fancy"
+" 
+" " insert trailing whitespace marker segment
+" call Pl#Theme#InsertSegment('ws_marker', 'after', 'lineinfo')
+" 
+" " insert tab indenting warning segment
+" call Pl#Theme#InsertSegment(['raw', '%{StatuslineTabWarning()}'], 'after', 'fileinfo')
+" " }}}
+"
+let g:airline_powerline_fonts = 1
+
 
 " }}}
 
