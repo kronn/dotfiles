@@ -23,7 +23,12 @@ set show-all-if-unmodified on
 set completion-prefix-display-length 2
 set print-completions-horizontally off
 
+# set editing-mode vi
 set editing-mode emacs
+
+$if mode=emacs
+  "\C-x\C-v": vi-editing-mode
+$endif
 
 # reload file
 "\C-x\C-r": re-read-init-file
