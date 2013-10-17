@@ -363,29 +363,58 @@ function! OpenPhpFunction (keyword)
   exe 'norm V'
 endfunction
 
+"return '[&et]' if &et is set wrong
+"return '[mixed-indenting]' if spaces and tabs are used to indent
+"return an empty string if everything is fine
+function! StatuslineTabWarning()
+  if !exists("b:statusline_tab_warning")
+    let tabs = search('^\t', 'nw') != 0
+    let spaces = search('^ ', 'nw') != 0
+
+    if tabs && spaces
+      let b:statusline_tab_warning = '[mixed-indenting]'
+    elseif (spaces && !&et) || (tabs && &et)
+      let b:statusline_tab_warning = '[&et]'
+    else
+      let b:statusline_tab_warning = ''
+    endif
+  endif
+  return b:statusline_tab_warning
+endfunction
+
 command! -complete=file -nargs=1 Rpdf :r !pdftotext -nopgbrk <q-args> - |fmt -csw78
 " }}}
 
 " autocommands {{{
 if has('autocmd')
   " pde => arduino-files
-  autocmd BufWritePre *.feature,*.erb,*.rb,*.js,*.pde,*.yml,*.sh,*.php,*.sql,*.haml :call <SID>StripTrailingWhitespaces()
-  autocmd BufRead *.feature :setlocal fdm=indent fdl=1
-  autocmd BufRead *.scss :setlocal fdm=indent
-  autocmd BufRead *.pp :setlocal fdm=indent
-  autocmd BufRead *.md :setlocal noet
-  autocmd BufNewFile,BufRead *.mobile.erb :setlocal ft=eruby.html
-  autocmd BufRead *.yml :setlocal fdm=indent fdl=2 ai
+  autocmd BufWritePre *.feature,*.erb,*.rb,*.js,*.pde,*.yml,*.sh,*.php,*.sql,*.haml,*.coffee,*.java :call <SID>StripTrailingWhitespaces()
+  autocmd BufWritePre *.rake,*.pp :call <SID>StripTrailingWhitespaces()
+  autocmd BufRead *.feature setlocal fdm=indent fdl=1
+  autocmd BufRead *.scss setlocal fdm=indent
+  autocmd BufRead *.pp setlocal fdm=indent
+  autocmd BufRead *.md setlocal noet
+  autocmd BufNewFile,BufRead *.mobile.erb setlocal ft=eruby.html
+  autocmd BufRead *.yml setlocal fdm=indent fdl=2 ai
   autocmd BufNewFile,BufRead *.feature inoremap <silent> <Bar>   <Bar><ESC>:call <SID>align()<CR>a
+  autocmd BufNewFile,BufReadPost *.coffee setlocal fdm=indent sw=2 ts=2 et
 
-  " maximine every window vertically upon entering
-  autocmd WinEnter * wincmd _
+  autocmd FileType gitconfig setlocal noet
+
+  if &diff
+  else
+    " maximine every window vertically upon entering
+    autocmd WinEnter * wincmd _
+  endif
 
   " don't clutter the bufferspace with fugitive-buffers
   autocmd BufReadPost fugitive://* set bufhidden=delete
 
   " thanks to @lucapette for pointing the usefulness of this one out
-  autocmd BuFRead *.haml :setlocal cursorcolumn
+  autocmd BuFRead *.haml,*.sass setlocal cursorcolumn
+
+  " recalculate the tab warning flag when idle and after writing
+  autocmd cursorhold,BufWritePost * unlet! b:statusline_tab_warning
 
   " sigh, I wish I wouldn't need those anymore
   autocmd FileType php set omnifunc=phpcomplete#CompletePHP
@@ -395,8 +424,10 @@ endif
 
 " key-mappings {{{
 " pasting
-map <F2> :set invpaste<CR>
-set pastetoggle=<F2>
+map <F3> :set invpaste<CR>
+set pastetoggle=<F3>
+
+map <F2> *:AckFromSearch<CR>
 
 " quickly un-highlight search results
 map <Leader>n :nohlsearch<CR>
@@ -413,6 +444,7 @@ map <up> gk
 " shorten the commands for quickfix-lists
 " map <C-Right> :cn<CR>
 " map <C-Left> :cp<CR>
+" a little hacky, those are my local escape-sequences...
 map Oc :cn<CR>
 map Od :cp<CR>
 
