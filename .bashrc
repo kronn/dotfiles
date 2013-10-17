@@ -48,4 +48,3 @@ fi
 # BEGIN Ruboto setup
 source ~/.rubotorc
 # END Ruboto setup
-
