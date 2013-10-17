@@ -2,6 +2,8 @@
 --  if DBus.Client cannot be found, then `cabal update && cabal install dbus`
 import XMonad
 import XMonad.Actions.CycleWS
+import XMonad.Actions.CopyWindow       -- for having the same window on multiple workspaces
+import qualified XMonad.Actions.FlexibleManipulate as Flex
 import XMonad.Config.Gnome
 import XMonad.Hooks.DynamicLog         -- for enabling any loghook
 import XMonad.Hooks.FadeInactive       -- movie OS 1.0
@@ -9,6 +11,7 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.Place
 import XMonad.Layout.Circle            -- movie OS 1.0
+import XMonad.Layout.Roledex           -- movie OS 1.1
 import XMonad.Layout.Grid
 import XMonad.Layout.IM
 import XMonad.Layout.NoBorders
@@ -60,6 +63,7 @@ theManageHook = composeAll [
         className =? "Pidgin" --> doShift "9:chat",
         className =? "Google-chrome" --> doShift "1:web",
         className =? "Thunderbird" --> doShift "5:mail",
+        className =? "Claws-mail" --> doShift "5:mail",
         className =? "Rythmbox" --> doShift "6:music",
         className =? "banshee" --> doShift "6:music", -- oh the joy of consistent WM_CLASS-names ...
 
@@ -120,7 +124,7 @@ codeLayout = biggerMasterLayout ||| Mirror biggerMasterLayout
 -- codeLayout = biggerMasterLayout ||| Mirror biggerMasterLayout ||| OneBig (3/4) (3/4) ||| Circle
 -- codeLayout = biggerMasterLayout ||| Mirror biggerMasterLayout ||| OneBig (3/4) (3/4)
 
-circleLayout = Circle ||| tiledLayout ||| Mirror tiledLayout ||| Full
+circleLayout = Circle ||| Roledex ||| tiledLayout ||| Mirror tiledLayout ||| Full
 
 -- TODO optimize so that the screenkey-window is not overlaying anything
 presenterLayout = Mirror (Tall 1 (5%100) (90%100))
@@ -139,14 +143,42 @@ theLayouts = onWorkspace "9:chat" imLayout
            . onWorkspace "7:tools" threeColLayout
 
 -- custom keybindings
+-- mod-[1..9] @@ Switch to workspace N
+-- mod-shift-[1..9] @@ Move client to workspace N
+-- mod-control-shift-[1..9] @@ Copy client to workspace N
 theKeys (XConfig {modMask = modm}) = M.fromList $ [
           -- moving to next/previous Workspace with Mod-Right/Mod-Left
           -- this needs XMonad.Actions.CycleWS
           ((shiftMask .|. modm , xK_Left),  shiftToPrev),
           ((shiftMask .|. modm , xK_Right), shiftToNext),
           ((modm , xK_Right), nextWS),
-          ((modm , xK_Left), prevWS)
-    ]
+           ((modm , xK_Left), prevWS),
+
+
+          -- tooling around copying a window to another space
+          -- this needs XMonad.Actions.CopyWindow and XMonad.StackSet as W
+          ((modm .|. shiftMask, xK_c     ), kill1), -- @@ Close the focused window
+          ((modm, xK_v ), windows copyToAll), -- @@ Make focused window always visible
+          ((modm .|. shiftMask, xK_v ),  killAllOtherCopies) -- @@ Toggle window state back
+
+    ] ++ -- (++) is needed here because the following list comprehension
+         -- is a list, not a single key binding. Simply adding it to the
+         -- list of key bindings would result in something like [ b1, b2,
+         -- [ b3, b4, b5 ] ] resulting in a type error. (Lists must
+         -- contain items all of the same type.)
+
+         -- copying window to another Workspace with Mod-Ctrl-Shift-N
+          [((m .|. modm, k), windows $ f i)
+               | (i, k) <- zip theWorkspaces [xK_1, xK_2, xK_3, xK_4, xK_5, xK_6, xK_7, xK_8, xK_9]
+               , (f, m) <- [(W.view, 0), (W.shift, shiftMask), (copy, shiftMask .|. controlMask)]]
+
+-- mouse bindings
+myMouse (XConfig {modMask = modm}) = [
+    -- move a floated window with the mouse.
+    ((modm, button1), (\w -> focus w >> Flex.mouseWindow Flex.linear w))
+  ]
+theMouse x = M.union (mouseBindings gnomeConfig x) (M.fromList (myMouse x))
+
 
 -- custom functions
 -- mostly for dbus
@@ -154,7 +186,7 @@ prettyPrinter :: D.Client -> PP
 prettyPrinter dbus = defaultPP
     { ppOutput   = dbusOutput dbus
     , ppTitle    = pangoSanitize
-    , ppCurrent  = pangoColor "green" . wrap "[" "]" . pangoSanitize
+    , ppCurrent  = pangoColor "#00ff33" . wrap "[" "]" . pangoSanitize
     , ppVisible  = pangoColor "yellow" . wrap "[" "]" . pangoSanitize
     , ppHidden   = pangoColor "#ccccff" . wrap "(" ")" . pangoSanitize
     , ppUrgent   = pangoColor "red"
@@ -194,7 +226,7 @@ pangoSanitize = foldr sanitize ""
 
 transparencyLogHook :: X ()
 transparencyLogHook = fadeInactiveLogHook fadeAmount
-  where fadeAmount = 0.9
+  where fadeAmount = 0.95
   -- where fadeAmount = 1.0
 
 -- wire everything up and together
@@ -210,6 +242,7 @@ main = do
       , layoutHook = avoidStruts $ smartBorders $ theLayouts $ layoutHook gnomeConfig
       , workspaces = theWorkspaces
       , keys = \c -> theKeys c `M.union` keys gnomeConfig c
+      , mouseBindings = theMouse
       , borderWidth = theBorderWidth
       , normalBorderColor = theNormalBorderColor
       , focusedBorderColor = theFocusedBorderColor
