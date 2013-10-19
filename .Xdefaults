@@ -22,6 +22,7 @@ URxvt*foreground: White
 URxvt*background: Grey
 URxvt.perl-ext-common: default,matcher,font-size
 URxvt.urlLauncher: google-chrome
+URxvt*cutchars: "`\"()'*<>[]{|}:="
 
 Xft.hinting: true
 Xft.hintstyle: hintslight
