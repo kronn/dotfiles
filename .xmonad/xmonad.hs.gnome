@@ -11,7 +11,6 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.Place
 import XMonad.Layout.Circle            -- movie OS 1.0
-import XMonad.Layout.Roledex           -- movie OS 1.1
 import XMonad.Layout.Grid
 import XMonad.Layout.IM
 import XMonad.Layout.NoBorders
@@ -124,7 +123,7 @@ codeLayout = biggerMasterLayout ||| Mirror biggerMasterLayout
 -- codeLayout = biggerMasterLayout ||| Mirror biggerMasterLayout ||| OneBig (3/4) (3/4) ||| Circle
 -- codeLayout = biggerMasterLayout ||| Mirror biggerMasterLayout ||| OneBig (3/4) (3/4)
 
-circleLayout = Circle ||| Roledex ||| tiledLayout ||| Mirror tiledLayout ||| Full
+circleLayout = Circle ||| tiledLayout ||| Mirror tiledLayout ||| Full
 
 -- TODO optimize so that the screenkey-window is not overlaying anything
 presenterLayout = Mirror (Tall 1 (5%100) (90%100))
