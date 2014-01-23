@@ -17,7 +17,7 @@ runtime macros/matchit.vim
 
 " maybe remove and learn netrw
 Bundle 'scrooloose/nerdtree'
-Bundle 'kien/ctrlp.vim'
+" Bundle 'kien/ctrlp.vim'
 
 " general editor extensions
 Bundle 'tpope/vim-surround'
@@ -87,11 +87,11 @@ Bundle 'biskark/vim-ultimate-colorscheme-utility'
 " Bundle 'nielsmadan/mercury'
 
 " run rspec from vim
-Bundle 'thoughtbot/vim-rspec'
+" Bundle 'thoughtbot/vim-rspec'
 " Bundle 'tpope/vim-dispatch'
 
 " source-code navigation w/o ctags
-Bundle 'malkomalko/projections.vim'
+" Bundle 'malkomalko/projections.vim'
 
 " }}}
 
