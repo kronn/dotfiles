@@ -60,6 +60,7 @@ Bundle 'pangloss/vim-javascript'
 Bundle 'kchmck/vim-coffee-script'
 " Bundle 'tpope/vim-afterimage'
 Bundle 'plasticboy/vim-markdown'
+Bundle 'Keithbsmiley/rspec.vim'
 
 " not proud, just using sometimes
 " Bundle 'php.vim-for-php5'
