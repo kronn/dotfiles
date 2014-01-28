@@ -16,13 +16,13 @@ set nocompatible  " Surprise, I actually want Vim :-)
 runtime macros/matchit.vim
 
 " maybe remove and learn netrw
+" try 'tpope/vinegar'
 Bundle 'scrooloose/nerdtree'
 " Bundle 'kien/ctrlp.vim'
 
 " general editor extensions
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-repeat'
-" Bundle 'tsaleh/vim-supertab'
 Bundle 'tpope/vim-commentary'
 Bundle 'tpope/vim-endwise'
 Bundle 'Raimondi/delimitMate'
@@ -31,7 +31,6 @@ Bundle 'tpope/vim-ragtag'
 Bundle 'AndrewRadev/splitjoin.vim'
 
 " UI candy
-" Bundle 'Lokaltog/vim-powerline'
 Bundle 'bling/vim-airline'
 
 " rails, ruby and related things
@@ -40,7 +39,6 @@ Bundle 'tpope/vim-cucumber'
 Bundle 'tpope/vim-rake'
 Bundle 'tobiassvn/vim-gemfile'
 Bundle 'vim-ruby/vim-ruby'
-" Bundle 'danchoi/ri.vim'
 Bundle 'edsono/vim-dbext'
 Bundle 'TailMinusF'
 Bundle 'rking/vim-ruby-refactoring'
@@ -51,6 +49,7 @@ Bundle 'mileszs/ack.vim'
 Bundle 'tpope/vim-eunuch'
 
 " various filetypes
+" search for 'official' puppet-plugin
 Bundle 'ajf/puppet-vim'
 " Bundle 'timcharper/textile.vim'
 Bundle 'gerw/vim-latex-suite'
@@ -100,7 +99,7 @@ Bundle 'biskark/vim-ultimate-colorscheme-utility'
 set backspace=indent,eol,start
 set scrolloff=5  " have always 5 lines of context around the cursor
 
-set history=50   " keep 50 lines of command line history
+set history=9001 " because vim-berlin said so
 set ruler        " show the cursor position all the time
 set laststatus=2 " always show status bar
 set showcmd      " display incomplete commands
@@ -125,8 +124,6 @@ set softtabstop=2
 set shiftwidth=2
 set expandtab
 
-set hidden
-
 set encoding=utf-8   " Unicode is a beast, but...
 
 " what to show
@@ -144,7 +141,6 @@ set hidden         " don't warn on unsaved changes when changing buffers
 if &diff
   set diffopt=iwhite
   set wrap
-else
 endif
 
 " STFU
@@ -208,11 +204,6 @@ let NERDChristmasTree=1   " Colorful output!!1!
 let NERDTreeHijackNetrw=1
 " }}}
 
-" Setting for ctrl_p
-" 'file': '\.exe$\|\.so$\|\.dll$',
-" 'link': 'SOME_BAD_SYMBOLIC_LINKS',
-let g:ctrlp_custom_ignore = { 'dir': '\.git$\|\.hg$\|\.svn$' }
-
 let g:rspec_command = "!rspec --drb --color -f documentation {spec}"
 
 " splitjoin {{{
@@ -220,17 +211,6 @@ let g:splitjoin_split_mapping = ''
 let g:splitjoin_join_mapping = ''
 " }}}
 
-" " settings for powerline {{{
-" " let g:Powerline_symbols = "unicode"
-" let g:Powerline_symbols = "fancy"
-" 
-" " insert trailing whitespace marker segment
-" call Pl#Theme#InsertSegment('ws_marker', 'after', 'lineinfo')
-" 
-" " insert tab indenting warning segment
-" call Pl#Theme#InsertSegment(['raw', '%{StatuslineTabWarning()}'], 'after', 'fileinfo')
-" " }}}
-"
 let g:airline_powerline_fonts = 1
 
 " rails.vim {{{
@@ -274,14 +254,13 @@ let g:rails_projections = {
 
 " user interface {{{
 " Vim should look good.
-" so, at least use some dark theme
-" hopefully, we can override this later
-colo torte
-
 " this translates to: TERM=xterm-256color (or mvim/gvim)
 " or: use the more colorful colorscheme if possible
 if &t_Co >= 256 || has('gui')
   colo railscasts
+else
+  " so, at least use some dark theme
+  colo torte
 endif
 
 " Tweak the GUI
