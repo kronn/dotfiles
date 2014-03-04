@@ -2,97 +2,102 @@
 set nocompatible  " Surprise, I actually want Vim :-)
 
 " plugins {{{
-  " setup vundle {{{
-  filetype off                   " required!
-  set rtp+=~/.vim/bundle/vundle/
-  call vundle#rc()
+  " setup neobundle {{{
+ if has('vim_starting')
+   set nocompatible               " Be iMproved
 
-  " let Vundle manage Vundle
-  " required!
-  Bundle 'gmarik/vundle'
+   " Required:
+   set runtimepath+=~/.vim/bundle/neobundle.vim/
+ endif
+
+ " Required:
+ call neobundle#rc(expand('~/.vim/bundle/'))
+
+ " Let NeoBundle manage NeoBundle
+ " Required:
+ NeoBundleFetch 'Shougo/neobundle.vim'
   " }}}
 
 " activate bundled matchit.vim
 runtime macros/matchit.vim
 
+" navigating the project
+NeoBundle 'tpope/vim-vinegar'
+NeoBundle 'tpope/vim-projectile'
 " maybe remove and learn netrw
-" try 'tpope/vinegar'
-Bundle 'scrooloose/nerdtree'
-" Bundle 'kien/ctrlp.vim'
+NeoBundle 'scrooloose/nerdtree'
 
 " general editor extensions
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-repeat'
-Bundle 'tpope/vim-commentary'
-Bundle 'tpope/vim-endwise'
-Bundle 'Raimondi/delimitMate'
-Bundle 'godlygeek/tabular'
-Bundle 'tpope/vim-ragtag'
-Bundle 'AndrewRadev/splitjoin.vim'
+NeoBundle 'tpope/vim-surround'
+NeoBundle 'tpope/vim-repeat'
+NeoBundle 'tpope/vim-commentary'
+NeoBundle 'tpope/vim-endwise'
+NeoBundle 'Raimondi/delimitMate'
+NeoBundle 'godlygeek/tabular'
+NeoBundle 'tpope/vim-ragtag'
+NeoBundle 'AndrewRadev/splitjoin.vim'
 
 " UI candy
-Bundle 'bling/vim-airline'
+NeoBundle 'bling/vim-airline'
 
 " rails, ruby and related things
-Bundle 'tpope/vim-rails'
-Bundle 'tpope/vim-cucumber'
-Bundle 'tpope/vim-rake'
-Bundle 'tobiassvn/vim-gemfile'
-Bundle 'vim-ruby/vim-ruby'
-Bundle 'edsono/vim-dbext'
-Bundle 'TailMinusF'
-Bundle 'rking/vim-ruby-refactoring'
+NeoBundle 'tpope/vim-rails'
+NeoBundle 'tpope/vim-cucumber'
+" vim-projectile makes this superfluous
+" NeoBundle 'tpope/vim-rake'
+NeoBundle 'muz/vim-gemfile'
+NeoBundle 'vim-ruby/vim-ruby'
+NeoBundle 'edsono/vim-dbext'
+NeoBundle 'TailMinusF'
+NeoBundle 'rking/vim-ruby-refactoring'
 
 " for emulating a neckbeard
-Bundle 'tpope/vim-fugitive'
-Bundle 'mileszs/ack.vim'
-Bundle 'tpope/vim-eunuch'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'mileszs/ack.vim'
+NeoBundle 'tpope/vim-eunuch'
 
 " various filetypes
 " search for 'official' puppet-plugin
-Bundle 'ajf/puppet-vim'
-" Bundle 'timcharper/textile.vim'
-Bundle 'gerw/vim-latex-suite'
-" Bundle 'leshill/vim-json'
-" Bundle 'vim-scripts/nginx.vim'
-Bundle 'pangloss/vim-javascript'
-Bundle 'kchmck/vim-coffee-script'
-" Bundle 'tpope/vim-afterimage'
-Bundle 'plasticboy/vim-markdown'
-Bundle 'Keithbsmiley/rspec.vim'
+NeoBundle 'ajf/puppet-vim'
+" NeoBundle 'timcharper/textile.vim'
+" NeoBundle 'gerw/vim-latex-suite'
+" NeoBundle 'leshill/vim-json'
+" NeoBundle 'vim-scripts/nginx.vim'
+NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'kchmck/vim-coffee-script'
+" NeoBundle 'tpope/vim-afterimage'
+NeoBundle 'plasticboy/vim-markdown'
+NeoBundle 'Keithbsmiley/rspec.vim'
+NeoBundle 'freitass/todo.txt-vim'
 
 " not proud, just using sometimes
-" Bundle 'php.vim-for-php5'
+" NeoBundle 'php.vim-for-php5'
 
 " have a ruby-block text-object ( r )
-Bundle 'nelstrom/vim-textobj-rubyblock'
-Bundle 'kana/vim-textobj-user'
+NeoBundle 'nelstrom/vim-textobj-rubyblock'
+NeoBundle 'kana/vim-textobj-user'
 
 " snippets
-Bundle 'MarcWeber/vim-addon-mw-utils'
-Bundle 'tomtom/tlib_vim'
-Bundle 'garbas/vim-snipmate'
-Bundle 'honza/vim-snippets'
+NeoBundle 'MarcWeber/vim-addon-mw-utils'
+NeoBundle 'tomtom/tlib_vim'
+NeoBundle 'garbas/vim-snipmate'
+NeoBundle 'honza/vim-snippets'
 
 " colorschemes
-" Bundle 'kronn/vim-colorschemes'
-" Bundle 'altercation/vim-colors-solarized'
-" Bundle 'rking/vim-detailed'
-Bundle 'flazz/vim-colorschemes'
-Bundle 'biskark/vim-ultimate-colorscheme-utility'
+NeoBundle 'flazz/vim-colorschemes'
+NeoBundle 'biskark/vim-ultimate-colorscheme-utility'
 
 " experiments
 " execute code directly from vim
-" Bundle 'nielsmadan/venom'
-" Bundle 'nielsmadan/mercury'
+" NeoBundle 'nielsmadan/venom'
+" NeoBundle 'nielsmadan/mercury'
 
 " run rspec from vim
-" Bundle 'thoughtbot/vim-rspec'
-" Bundle 'tpope/vim-dispatch'
+" NeoBundle 'thoughtbot/vim-rspec'
+" NeoBundle 'tpope/vim-dispatch'
 
-" source-code navigation w/o ctags
-" Bundle 'malkomalko/projections.vim'
-
+" check for missing plugins and ask
+NeoBundleCheck
 " }}}
 
 " settings {{{
