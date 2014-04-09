@@ -2,7 +2,6 @@
 " FILE: parser.vim
 " AUTHOR:  Shougo Matsushita <Shougo.Matsu at gmail.com>
 "          Copyright (C) 2010 http://github.com/gmarik
-" Last Modified: 25 Feb 2014.
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -47,6 +46,7 @@ function! neobundle#parser#lazy(arg) "{{{
   " Update lazy flag.
   let bundle.lazy = 1
   let bundle.resettable = 0
+  let bundle.orig_opts.lazy = 1
   for depend in bundle.depends
     let depend.lazy = bundle.lazy
     let depend.resettable = 0
@@ -143,8 +143,10 @@ function! s:parse_arg(arg) "{{{
 endfunction"}}}
 
 function! neobundle#parser#_init_bundle(name, opts) "{{{
-  let path = neobundle#util#expand(
-        \ substitute(a:name, "['".'"]\+', '', 'g'))
+  let path = substitute(a:name, "['".'"]\+', '', 'g')
+  if path[0] == '~'
+    let path = neobundle#util#expand(path)
+  endif
   let opts = s:parse_options(a:opts)
   if !has_key(opts, 'recipe')
     let opts.recipe = ''
@@ -167,17 +169,22 @@ function! neobundle#parser#_init_bundle(name, opts) "{{{
 endfunction"}}}
 
 function! neobundle#parser#local(localdir, options, names) "{{{
-  for dir in filter(map(filter(split(glob(fnamemodify(
-        \ neobundle#util#expand(a:localdir), ':p')
-        \ . '*'), '\n'), "isdirectory(v:val)"),
+  let base = fnamemodify(neobundle#util#expand(a:localdir), ':p')
+  for dir in filter(map(filter(split(glob(
+        \ base . '*'), '\n'), "isdirectory(v:val)"),
         \ "neobundle#util#substitute_path_separator(
         \   substitute(fnamemodify(v:val, ':p'), '/$', '', ''))"),
         \ "empty(a:names) || index(a:names, fnamemodify(v:val, ':t')) >= 0")
-    call neobundle#parser#bundle([dir,
-          \ extend({
-          \   'local' : 1,
-          \   'base' : neobundle#util#substitute_path_separator(
-          \              fnamemodify(a:localdir, ':p')), }, a:options)])
+    let options = extend({ 'local' : 1, 'base' : base }, a:options)
+    let bundle = neobundle#get(fnamemodify(dir, ':t'))
+    if !empty(bundle)
+      call extend(options, copy(bundle.orig_opts))
+      if bundle.lazy
+        let options.lazy = 1
+      endif
+    endif
+
+    call neobundle#parser#bundle([dir, options])
   endfor
 endfunction"}}}
 
@@ -233,7 +240,8 @@ endfunction"}}}
 
 function! s:parse_options(opts) "{{{
   if empty(a:opts)
-    return get(g:neobundle#default_options, '_', {})
+    return has_key(g:neobundle#default_options, '_') ?
+          \ copy(g:neobundle#default_options['_']) : {}
   endif
 
   if len(a:opts) == 3

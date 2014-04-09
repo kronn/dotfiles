@@ -2,7 +2,6 @@
 " FILE: init.vim
 " AUTHOR:  Shougo Matsushita <Shougo.Matsu at gmail.com>
 "          Copyright (C) 2010 http://github.com/gmarik
-" Last Modified: 19 Feb 2014.
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -28,7 +27,7 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! neobundle#init#_rc(path) "{{{
+function! neobundle#init#_rc(path, is_block) "{{{
   let path =
         \ neobundle#util#substitute_path_separator(
         \ neobundle#util#expand(a:path))
@@ -49,24 +48,53 @@ function! neobundle#init#_rc(path) "{{{
     autocmd!
   augroup END
 
-  call neobundle#config#init()
+  call neobundle#config#init(a:is_block)
   call neobundle#autoload#init()
 endfunction"}}}
 
 function! neobundle#init#_bundle(bundle) "{{{
-  let bundle = a:bundle
-  if !has_key(bundle, 'type') && get(bundle, 'local', 0)
+  if !has_key(a:bundle, 'type') && get(a:bundle, 'local', 0)
     " Default type.
-    let bundle.type = 'nosync'
+    let a:bundle.type = 'nosync'
   endif
-  if !has_key(bundle, 'type')
+  if !has_key(a:bundle, 'type')
     call neobundle#installer#error(
           \ printf('Failed parse name "%s" and args %s',
           \   a:bundle.orig_name, string(a:bundle.orig_opts)))
     return {}
   endif
 
-  let bundle = extend(s:get_default(), bundle)
+  let bundle = {
+          \ 'uri' : '',
+          \ 'script_type' : '',
+          \ 'rev' : '',
+          \ 'rtp' : '',
+          \ 'depends' : [],
+          \ 'lazy' : 0,
+          \ 'force' : 0,
+          \ 'gui' : 0,
+          \ 'terminal' : 0,
+          \ 'overwrite' : 1,
+          \ 'stay_same' : 0,
+          \ 'autoload' : {},
+          \ 'hooks' : {},
+          \ 'called_hooks' : {},
+          \ 'external_commands' : {},
+          \ 'description' : '',
+          \ 'dummy_commands' : [],
+          \ 'dummy_mappings' : [],
+          \ 'sourced' : 0,
+          \ 'disabled' : 0,
+          \ 'local' : 0,
+          \ 'focus' : 0,
+          \ 'verbose' : 0,
+          \ 'orig_name' : '',
+          \ 'vim_version' : '',
+          \ 'orig_opts' : {},
+          \ 'recipe' : '',
+          \ 'base' : neobundle#get_neobundle_dir(),
+          \ }
+  call extend(bundle, a:bundle)
 
   if !has_key(bundle, 'name')
     let bundle.name = neobundle#util#name_conversion(bundle.orig_name)
@@ -91,22 +119,27 @@ function! neobundle#init#_bundle(bundle) "{{{
     endif
   endif
 
-  let bundle.base = s:expand_path(bundle.base)
-  if bundle.base =~ '[/\\]$'
+  if bundle.base[0] == '~'
+    let bundle.base = neobundle#util#expand(bundle.base)
+  endif
+  if bundle.base[-1] == '/' || bundle.base[-1] == '\'
     " Chomp.
-    let bundle.base = substitute(bundle.base, '[/\\]\+$', '', '')
+    let bundle.base = bundle.base[: -2]
   endif
 
   let bundle.path = isdirectory(bundle.uri) ?
         \ bundle.uri : bundle.base.'/'.bundle.directory
 
-  let rtp = bundle.rtp
   " Check relative path.
-  let bundle.rtp = (rtp =~ '^\%([~/]\|\a\+:\)') ?
-        \ s:expand_path(rtp) : (bundle.path.'/'.rtp)
-  if bundle.rtp =~ '[/\\]$'
+  if bundle.rtp !~ '^\%([~/]\|\a\+:\)'
+    let bundle.rtp = bundle.path.'/'.bundle.rtp
+  endif
+  if bundle.rtp[0] == '~'
+    let bundle.rtp = neobundle#util#expand(bundle.rtp)
+  endif
+  if bundle.rtp[-1] == '/' || bundle.rtp[-1] == '\'
     " Chomp.
-    let bundle.rtp = substitute(bundle.rtp, '[/\\]\+$', '', '')
+    let bundle.rtp = bundle.rtp[: -2]
   endif
   if bundle.normalized_name ==# 'neobundle'
     " Do not add runtimepath.
@@ -137,53 +170,6 @@ function! neobundle#init#_bundle(bundle) "{{{
   endif
 
   return bundle
-endfunction"}}}
-
-if neobundle#util#is_windows()
-  function! s:expand_path(path)
-    return neobundle#util#substitute_path_separator(
-          \ simplify(expand(escape(a:path, '*?{}'), 1)))
-  endfunction
-else
-  function! s:expand_path(path)
-    return simplify(expand(escape(a:path, '*?{}'), 1))
-  endfunction
-endif
-
-function! s:get_default() "{{{
-  if !exists('s:default_bundle')
-    let s:default_bundle = {
-          \ 'uri' : '',
-          \ 'script_type' : '',
-          \ 'rev' : '',
-          \ 'rtp' : '',
-          \ 'depends' : [],
-          \ 'lazy' : 0,
-          \ 'force' : 0,
-          \ 'gui' : 0,
-          \ 'terminal' : 0,
-          \ 'overwrite' : 1,
-          \ 'stay_same' : 0,
-          \ 'autoload' : {},
-          \ 'hooks' : {},
-          \ 'called_hooks' : {},
-          \ 'external_commands' : {},
-          \ 'description' : '',
-          \ 'dummy_commands' : [],
-          \ 'dummy_mappings' : [],
-          \ 'sourced' : 0,
-          \ 'disabled' : 0,
-          \ 'local' : 0,
-          \ 'orig_name' : '',
-          \ 'vim_version' : '',
-          \ 'orig_opts' : {},
-          \ 'recipe' : '',
-          \ }
-  endif
-
-  let s:default_bundle.base = neobundle#get_neobundle_dir()
-
-  return deepcopy(s:default_bundle)
 endfunction"}}}
 
 function! s:init_depends(bundle) "{{{

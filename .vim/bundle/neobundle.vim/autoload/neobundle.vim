@@ -1,7 +1,6 @@
 "=============================================================================
 " FILE: neobundle.vim
 " AUTHOR:  Shougo Matsushita <Shougo.Matsu at gmail.com>
-" Last Modified: 25 Feb 2014.
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -48,6 +47,11 @@ call neobundle#util#set_default(
       \ 'g:neobundle#enable_name_conversion', 0)
 call neobundle#util#set_default(
       \ 'g:neobundle#default_options', {})
+call neobundle#util#set_default(
+      \ 'g:neobundle#install_max_processes', 4,
+      \ 'g:unite_source_neobundle_install_max_processes')
+call neobundle#util#set_default(
+      \ 'g:neobundle#install_process_timeout', 120)
 "}}}
 
 let g:neobundle#tapped = {}
@@ -61,6 +65,11 @@ command! -nargs=+ NeoBundle
 
 command! -bar NeoBundleCheck
       \ call neobundle#commands#check()
+
+command! -nargs=? -bar
+      \ -complete=customlist,neobundle#commands#complete_bundles
+      \ NeoBundleCheckUpdate
+      \ call neobundle#commands#check_update(<q-args>)
 
 command! -nargs=+ NeoBundleLazy
       \ call neobundle#parser#lazy(
@@ -117,7 +126,7 @@ command! -nargs=? -bar
 
 command! -nargs=? -bang -bar
       \ NeoBundleList
-      \ echo join(map(neobundle#config#get_neobundles(), 'v:val.name'), "\n")
+      \ call neobundle#commands#list()
 
 command! -bar NeoBundleDocs
       \ call neobundle#commands#helptags(neobundle#config#get_neobundles())
@@ -134,11 +143,32 @@ command! -bar NeoBundleExtraEdit
 command! -bar NeoBundleCount
       \ echo len(neobundle#config#get_neobundles())
 
+command! -bar NeoBundleSaveCache
+      \ call neobundle#commands#save_cache()
+command! -bar NeoBundleLoadCache
+      \ call neobundle#commands#load_cache()
+command! -bar NeoBundleClearCache
+      \ call neobundle#commands#clear_cache()
+
+command! -nargs=1 -bar
+      \ -complete=customlist,neobundle#commands#complete_bundles
+      \ NeoBundleRollback
+      \ call neobundle#commands#rollback(<f-args>)
+
 function! neobundle#rc(...) "{{{
   let path = (a:0 > 0) ? a:1 :
         \ get(filter(split(globpath(&runtimepath, 'bundle', 1), '\n'),
         \ 'isdirectory(v:val)'), 0, '~/.vim/bundle')
-  return neobundle#init#_rc(path)
+  return neobundle#init#_rc(path, 0)
+endfunction"}}}
+function! neobundle#begin(...) "{{{
+  let path = (a:0 > 0) ? a:1 :
+        \ get(filter(split(globpath(&runtimepath, 'bundle', 1), '\n'),
+        \ 'isdirectory(v:val)'), 0, '~/.vim/bundle')
+  return neobundle#init#_rc(path, 1)
+endfunction"}}}
+function! neobundle#end() "{{{
+  call neobundle#config#final()
 endfunction"}}}
 
 function! neobundle#set_neobundle_dir(path)
@@ -186,6 +216,10 @@ endfunction"}}}
 
 function! neobundle#is_sourced(name)
   return neobundle#config#is_sourced(a:name)
+endfunction
+
+function! neobundle#has_cache()
+  return filereadable(neobundle#get_rtp_dir() . '/cache.vim')
 endfunction
 
 function! neobundle#get_not_installed_bundle_names()
@@ -252,7 +286,11 @@ function! neobundle#call_hook(hook_name, ...) "{{{
   endif
 
   for bundle in bundles
-    call call(bundle.hooks[a:hook_name], [bundle], bundle)
+    if type(bundle.hooks[a:hook_name]) == type('')
+      execute 'source' fnameescape(bundle.hooks[a:hook_name])
+    else
+      call call(bundle.hooks[a:hook_name], [bundle], bundle)
+    endif
     let bundle.called_hooks[a:hook_name] = 1
   endfor
 endfunction"}}}

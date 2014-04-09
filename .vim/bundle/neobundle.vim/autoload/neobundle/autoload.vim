@@ -1,7 +1,6 @@
 "=============================================================================
 " FILE: autoload.vim
 " AUTHOR:  Shougo Matsushita <Shougo.Matsu at gmail.com>
-" Last Modified: 19 Feb 2014.
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -28,6 +27,8 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 function! neobundle#autoload#init()
+  let s:active_auto_source = 0
+
   augroup neobundle
     autocmd FileType *
           \ call neobundle#autoload#filetype()
@@ -37,15 +38,19 @@ function! neobundle#autoload#init()
           \ call neobundle#autoload#filename(expand('<afile>'))
     autocmd InsertEnter *
           \ call neobundle#autoload#insert()
-    autocmd BufCreate
-          \ * call neobundle#autoload#explorer(
-          \ expand('<afile>'), 'BufCreate')
-    autocmd BufEnter
-          \ * call neobundle#autoload#explorer(
-          \ expand('<afile>'), 'BufEnter')
-    autocmd BufWinEnter
-          \ * call neobundle#autoload#explorer(
-          \ expand('<afile>'), 'BufWinEnter')
+  augroup END
+
+  for event in ['BufRead', 'BufCreate', 'BufEnter', 'BufWinEnter']
+    execute 'autocmd neobundle' event "* call neobundle#autoload#explorer(
+          \ expand('<afile>'), ".string(event) . ")"
+  endfor
+
+  augroup neobundle-focus
+    autocmd CursorHold * if s:active_auto_source
+          \ | call s:source_focus()
+          \ | endif
+    autocmd FocusLost * let s:active_auto_source = 1
+    autocmd FocusGained * let s:active_auto_source = 0
   augroup END
 
   call neobundle#autoload#filename(bufname('%'))
@@ -112,7 +117,6 @@ endfunction
 function! neobundle#autoload#mapping(mapping, name, mode)
   let cnt = v:count > 0 ? v:count : ''
 
-  " Delete dummy mappings.
   let input = s:get_input()
 
   call neobundle#config#source(a:name)
@@ -147,7 +151,7 @@ function! neobundle#autoload#explorer(path, event)
     let path = '~'
   endif
 
-  let path = s:expand(path)
+  let path = neobundle#util#expand(path)
   if !(isdirectory(path) || (!filereadable(path) && path =~ '^\h\w\+://'))
     return
   endif
@@ -190,6 +194,21 @@ function! neobundle#autoload#get_unite_sources()
   return _
 endfunction
 
+function! s:source_focus()
+  let bundles = neobundle#util#sort_by(filter(
+        \ neobundle#config#get_autoload_bundles(),
+        \ "v:val.focus > 0"), 'v:val.focus')
+  if empty(bundles)
+    augroup neobundle-focus
+      autocmd!
+    augroup END
+    return
+  endif
+
+  call neobundle#config#source_bundles([bundles[0]])
+  call feedkeys("g\<ESC>", 'n')
+endfunction
+
 function! neobundle#autoload#source(bundle_name)
   let bundles = filter(neobundle#config#get_neobundles(),
         \ "has_key(v:val.autoload, 'on_source') &&
@@ -221,14 +240,6 @@ function! s:get_input()
   endwhile
 
   return input
-endfunction
-
-function! s:expand(path)
-  return neobundle#util#substitute_path_separator(
-        \ (a:path =~ '^\~') ? substitute(a:path, '^\~', expand('~'), '') :
-        \ (a:path =~ '^\$\h\w*') ? substitute(a:path,
-        \               '^\$\h\w*', '\=eval(submatch(0))', '') :
-        \ a:path)
 endfunction
 
 function! s:get_lazy_bundles()

@@ -1,7 +1,6 @@
 "=============================================================================
 " FILE: installer.vim
 " AUTHOR:  Shougo Matsushita <Shougo.Matsu at gmail.com>
-" Last Modified: 25 Feb 2014.
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -30,16 +29,6 @@ set cpo&vim
 
 let s:install_info_version = '3.0'
 
-call neobundle#util#set_default(
-      \ 'g:neobundle#rm_command',
-      \ (neobundle#util#is_windows() ? 'rmdir /S /Q' : 'rm -rf'),
-      \ 'g:neobundle_rm_command')
-call neobundle#util#set_default(
-      \ 'g:neobundle#install_max_processes', 4,
-      \ 'g:unite_source_neobundle_install_max_processes')
-call neobundle#util#set_default(
-      \ 'g:neobundle#install_process_timeout', 120)
-
 let s:log = []
 let s:updates_log = []
 
@@ -50,15 +39,20 @@ function! neobundle#installer#update(bundles)
     return
   endif
 
-  call neobundle#commands#helptags(
-        \ neobundle#config#get_neobundles())
+  let all_bundles = neobundle#config#get_neobundles()
+
+  call neobundle#commands#helptags(all_bundles)
   call s:reload(filter(copy(a:bundles),
         \ 'v:val.sourced && !v:val.disabled'))
 
-  call s:save_install_info(neobundle#config#get_neobundles())
+  call s:save_install_info(all_bundles)
 
   if !empty(a:bundles)
-    call s:update_ftdetect()
+    let lazy_bundles = filter(copy(all_bundles), 'v:val.lazy')
+    call neobundle#util#copy_bundle_files(
+          \ lazy_bundles, 'ftdetect')
+    call neobundle#util#copy_bundle_files(
+          \ lazy_bundles, 'after/ftdetect')
   endif
 endfunction
 
@@ -420,6 +414,10 @@ function! neobundle#installer#check_output(context, process, is_unite)
     let bundle.revisions[updated_time] = rev
 
     call neobundle#installer#build(bundle)
+
+    " Load bundle forcely
+    call neobundle#config#rtp_add(bundle)
+
     call add(a:context.source__synced_bundles,
           \ bundle)
   endif
@@ -480,12 +478,6 @@ function! neobundle#installer#lock_revision(process, context, is_unite)
     call neobundle#installer#error(result, a:is_unite)
     return -1
   endif
-endfunction
-
-function! s:update_ftdetect()
-  " Delete old files.
-  call neobundle#util#cleandir('ftdetect')
-  call neobundle#util#cleandir('after/ftdetect')
 endfunction
 
 function! s:save_install_info(bundles)

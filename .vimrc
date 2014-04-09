@@ -6,15 +6,15 @@ set nocompatible  " Surprise, I actually want Vim :-)
  if has('vim_starting')
    set nocompatible               " Be iMproved
 
-   " Required:
+   " required:
    set runtimepath+=~/.vim/bundle/neobundle.vim/
  endif
 
- " Required:
- call neobundle#rc(expand('~/.vim/bundle/'))
+ " required:
+ call neobundle#begin(expand('~/.vim/bundle/'))
 
  " Let NeoBundle manage NeoBundle
- " Required:
+ " required:
  NeoBundleFetch 'Shougo/neobundle.vim'
   " }}}
 
@@ -96,8 +96,9 @@ NeoBundle 'biskark/vim-ultimate-colorscheme-utility'
 " NeoBundle 'thoughtbot/vim-rspec'
 " NeoBundle 'tpope/vim-dispatch'
 
-" check for missing plugins and ask
-NeoBundleCheck
+" end of bundle-list
+call neobundle#end()
+NeoBundleCheck        " check for missing plugins and ask
 " }}}
 
 " settings {{{

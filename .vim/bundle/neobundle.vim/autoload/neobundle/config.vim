@@ -1,7 +1,6 @@
 "=============================================================================
 " FILE: config.vim
 " AUTHOR:  Shougo Matsushita <Shougo.Matsu at gmail.com>
-" Last Modified: 19 Feb 2014.
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -28,12 +27,14 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 if !exists('s:neobundles')
+  let s:is_block = 0
   let s:neobundles = {}
   let s:sourced_neobundles = {}
   let neobundle#tapped = {}
+  let s:lazy_rtps = []
 endif
 
-function! neobundle#config#init() "{{{
+function! neobundle#config#init(is_block) "{{{
   filetype off
 
   for bundle in values(s:neobundles)
@@ -55,6 +56,25 @@ function! neobundle#config#init() "{{{
   augroup neobundle
     autocmd VimEnter * call s:on_vim_enter()
   augroup END
+
+  let s:is_block = a:is_block
+  let s:lazy_rtps = []
+endfunction"}}}
+function! neobundle#config#final() "{{{
+  " Join to the tail in runtimepath.
+  let rtps = neobundle#util#split_rtp(&runtimepath)
+  let index = index(rtps, neobundle#get_rtp_dir())
+  for rtp in filter(s:lazy_rtps, 'isdirectory(v:val)')
+    call insert(rtps, rtp, index)
+    let index += 1
+
+    if isdirectory(rtp.'/after')
+      execute 'set rtp+='.fnameescape(rtp.'/after')
+    endif
+  endfor
+  let &runtimepath = neobundle#util#join_rtp(rtps, &runtimepath, '')
+
+  let s:is_block = 0
 endfunction"}}}
 
 function! neobundle#config#get(name) "{{{
@@ -130,11 +150,14 @@ function! neobundle#config#source(names, ...) "{{{
     let bundle.sourced = 1
     let bundle.disabled = 0
 
-    if !get(s:sourced_neobundles, bundle.name, 0)
-      call s:clear_dummy(bundle)
-    endif
-
     let s:sourced_neobundles[bundle.name] = 1
+
+    if !empty(bundle.dummy_mappings)
+      for [mode, mapping] in bundle.dummy_mappings
+        silent! execute mode.'unmap' mapping
+      endfor
+      let bundle.dummy_mappings = []
+    endif
 
     call neobundle#config#rtp_add(bundle)
     call neobundle#autoload#source(bundle.name)
@@ -235,6 +258,12 @@ endfunction"}}}
 function! neobundle#config#rtp_add(bundle) abort "{{{
   if has_key(s:neobundles, a:bundle.name)
     call neobundle#config#rtp_rm(s:neobundles[a:bundle.name])
+  endif
+
+  if s:is_block
+    " Add rtp lazily.
+    call add(s:lazy_rtps, a:bundle.rtp)
+    return
   endif
 
   let rtp = a:bundle.rtp
@@ -410,7 +439,7 @@ function! neobundle#config#add(bundle, ...) "{{{
     " echomsg string(prev_bundle.orig_arg)
     " Warning.
     call neobundle#util#print_error(
-          \ 'Overwrite previous neobundle configuration in ' . bundle.name)
+          \ '[neobundle] Plugin may be ' . bundle.name . ' defined multiply in .vimrc')
   endif
 endfunction"}}}
 
@@ -528,14 +557,6 @@ function! s:add_lazy(bundle) "{{{
     if has_key(bundle.autoload, 'mappings')
       call s:add_dummy_mappings(bundle)
     endif
-
-    " Load ftdetect.
-    for file in map(filter(['ftdetect', 'after/ftdetect'],
-          \ "isdirectory(bundle.rtp.'/'.v:val)"), "
-          \ split(glob(bundle.rtp.'/'.v:val.'/**/*.vim'), '\n')
-          \ ")
-      silent! source `=file`
-    endfor
   endif
 endfunction"}}}
 
@@ -561,7 +582,7 @@ endfunction"}}}
 function! s:add_dummy_mappings(bundle) "{{{
   let a:bundle.dummy_mappings = []
   for [modes, mappings] in map(neobundle#util#convert2list(
-        \ a:bundle.autoload.mappings), "
+        \ copy(a:bundle.autoload.mappings)), "
         \   type(v:val) == type([]) ?
         \     [v:val[0], v:val[1:]] : ['nxo', [v:val]]
         \ ")
@@ -583,6 +604,10 @@ function! s:add_dummy_mappings(bundle) "{{{
 endfunction"}}}
 
 function! s:on_source(bundle) "{{{
+  if a:bundle.verbose && a:bundle.lazy
+    redraw
+    echo 'source:' a:bundle.name
+  endif
   call neobundle#call_hook('on_source', a:bundle)
 
   " Reload script files.
@@ -601,21 +626,14 @@ function! s:on_source(bundle) "{{{
       execute 'silent doautocmd' a:bundle.augroup 'GUIEnter'
     endif
   endif
+
+  if a:bundle.verbose && a:bundle.lazy
+    redraw
+    echo 'sourced:' a:bundle.name
+  endif
 endfunction"}}}
 
 function! s:clear_dummy(bundle) "{{{
-  " Unmap dummy mappings.
-  for [mode, mapping] in get(a:bundle, 'dummy_mappings', [])
-    silent! execute mode.'unmap' mapping
-  endfor
-
-  " Delete dummy commands.
-  for command in get(a:bundle, 'dummy_commands', [])
-    silent! execute 'delcommand' command
-  endfor
-
-  let a:bundle.dummy_mappings = []
-  let a:bundle.dummy_commands = []
 endfunction"}}}
 
 function! s:is_reset_ftplugin(filetype, rtp) "{{{

@@ -1,8 +1,8 @@
 "=============================================================================
 " FILE: git.vim
 " AUTHOR:  Shougo Matsushita <Shougo.Matsu@gmail.com>
+"          Robert Nelson     <robert@rnelson.ca>
 "          Copyright (C) 2010 http://github.com/gmarik
-" Last Modified: 25 Feb 2014.
 " License: MIT license  {{{
 "     Permission is hereby granted, free of charge, to any person obtaining
 "     a copy of this software and associated documentation files (the
@@ -36,6 +36,9 @@ call neobundle#util#set_default(
       \ 'g:neobundle_default_git_protocol')
 call neobundle#util#set_default(
       \ 'g:neobundle#types#git#enable_submodule', 1)
+call neobundle#util#set_default(
+      \ 'g:neobundle#types#git#clone_depth', 0,
+      \ 'g:neobundle_git_clone_depth')
 "}}}
 
 function! neobundle#types#git#define() "{{{
@@ -103,6 +106,12 @@ function! s:type.get_sync_command(bundle) "{{{
     let cmd = 'clone'
     if g:neobundle#types#git#enable_submodule
       let cmd .= ' --recursive'
+    endif
+
+    let depth = get(a:bundle, 'type__depth',
+          \ g:neobundle#types#git#clone_depth)
+    if depth > 0 && a:bundle.rev == '' && a:bundle.uri !~ '^git@'
+      let cmd .= ' --depth=' . depth
     endif
 
     let cmd .= printf(' %s "%s"', a:bundle.uri, a:bundle.path)
@@ -177,6 +186,14 @@ function! s:type.get_gc_command(bundle) "{{{
   endif
 
   return g:neobundle#types#git#command_path .' gc'
+endfunction"}}}
+function! s:type.get_revision_remote_command(bundle) "{{{
+  if !executable(g:neobundle#types#git#command_path)
+    return ''
+  endif
+
+  return g:neobundle#types#git#command_path
+        \ .' ls-remote origin HEAD'
 endfunction"}}}
 
 function! s:parse_other_pattern(protocol, path, opts) "{{{
