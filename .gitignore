@@ -37,6 +37,7 @@
 .dbvis/
 .dbwrench2/
 .dia
+.dmenu_cache
 .dmrc
 .dropbox-dist/
 .dropbox/
@@ -47,6 +48,7 @@
 .elinks/
 .erlang.cookie
 .esd_auth
+.fehbg
 .filezilla/
 .fontconfig/
 .fonts/Optima-Bold-Italic.ttf
@@ -116,6 +118,7 @@
 .navicat/
 .netbeans/
 .netrc
+.nv
 .nvidia-settings-rc
 .offlineimap/
 .offlineimaprc
@@ -152,6 +155,7 @@
 .rubinius_last_error
 .rvm/
 .sane/
+.speech-dispatcher/
 .ssh
 .ssh/
 .steam*
@@ -163,6 +167,7 @@
 .thumbnails/
 .thunderbird/
 .to_pass/
+.todo/
 .tomighty/
 .tora.tse
 .tora_cache/
@@ -173,7 +178,7 @@
 .vim/.netrwhist
 .vim/backups/*
 .vim/bundle/*
-.vim/pathogen/
+.vim/spell/
 .vim/tmp/*
 .vimgolf
 .viminfo
@@ -181,9 +186,12 @@
 .w3af/
 .w3m/
 .wavemonrc
+.wine-pipelight/
+.wine/
 .workrave/
 .xine/
 .xinput.d/
+.xinputrc
 .xmonad/xmonad-*
 .xmonad/xmonad.errors
 .xmonad/xmonad.hi
@@ -198,6 +206,7 @@ Desktop/
 Documents/
 Downloads/
 Dropbox/
+Games/
 HttpDump.log
 Library/
 Mail/
