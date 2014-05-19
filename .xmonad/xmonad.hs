@@ -1,1 +1,1 @@
-xmonad.hs.gnome
+xmonad.hs.lxde

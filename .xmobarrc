@@ -1,0 +1,24 @@
+-- vim:ft=haskell
+Config { font = "xft:inconsolata for powerline:bold:pixelsize=12:antialias=true:hinting=true"
+       , bgColor = "black"
+       , fgColor = "grey"
+       , position = TopW L 88
+       -- , position = Bottom
+       , lowerOnStart = False
+       , sepChar = "%"
+       , alignSep = "}{"
+       , commands = [ Run Battery [   "-t", "<acstatus> (<left>%)"
+                                    , "-L", "20", "-H", "80"
+                                    , "-l", "red", "-h", "green"
+                                    , "--", "-O", "Charging", "-o", "Battery: <timeleft>"] 30
+                    , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
+                    , Run Weather "EDDB" ["-t","<tempC>°C","-L","0","-H","20","--normal","green","--high","red","--low","lightblue"] 300
+                    , Run Date "%F - %R" "date" 100
+                    , Run Memory ["-t","Mem: <usedratio>%"] 20
+                    , Run StdinReader
+                    , Run Com "workrave-info" [] "workrave" 10
+                    ]
+       , template = "%StdinReader% }{ %cpu% | %battery% | %memory% | %workrave%     <fc=#ee9a00>%date%</fc> | %EDDB%"
+       -- , template = "%StdinReader% }{ | %cpu% | %memory%     <fc=#ee9a00>%date%</fc> | %EDDB%"
+       }
+
