@@ -33,6 +33,7 @@ alias l="ll -h"
 
 # git convinience
 alias homegit="GIT_DIR=~/Code/projects/dotfiles/.git GIT_WORK_TREE=~/ git"
+alias wgd="watch_git_diff"
 
 # ssh
 alias ssh="TERM=xterm ssh"
@@ -44,3 +45,8 @@ alias cuke="truncate --size 0 log/*.log; clear; CAPYBARA_CHROME=yes bundle exec 
 alias watch_git_diff="watch -c 'git diff --color=always; echo \"Unstaged ^^^^^ |||| vvvvv staged\"; git diff --cached --color=always'"
 alias b="bundle"
 alias g="bundle exec guard"
+alias stderred="LD_PRELOAD=$HOME/Code/opensource/stderred/build/libstderred.so\${LD_PRELOAD:+:\$LD_PRELOAD}"
+
+alias t="todo.sh" && complete -F _todo t
+alias tmate-access="tmate show-messages | grep 'session: ssh' | sed 's/.*ssh/ssh/' > ~/tmate-access"
+alias next='mplayer "`ls -htr -1 | head -n1`"'

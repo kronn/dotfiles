@@ -5,7 +5,7 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
 fi
 
 # source completions if not already defined
-for FILE in {git,capistrano,rake,thor,git-flow}; do
+for FILE in {git,capistrano,rake,thor,git-flow,todo}; do
   complete -p $FILE 1>/dev/null 2>&1 || source ~/.bash/$FILE-completion.bash
 done
 
