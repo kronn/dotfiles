@@ -29,13 +29,14 @@ NeoBundle 'scrooloose/nerdtree'
 
 " general editor extensions
 NeoBundle 'tpope/vim-surround'
-NeoBundle 'tpope/vim-repeat'
+" NeoBundle 'tpope/vim-repeat'
 NeoBundle 'tpope/vim-commentary'
 NeoBundle 'tpope/vim-endwise'
 NeoBundle 'Raimondi/delimitMate'
 NeoBundle 'godlygeek/tabular'
 NeoBundle 'tpope/vim-ragtag'
 NeoBundle 'AndrewRadev/splitjoin.vim'
+NeoBundle 'tommcdo/vim-exchange'
 
 " UI candy
 NeoBundle 'bling/vim-airline'
@@ -50,6 +51,9 @@ NeoBundle 'vim-ruby/vim-ruby'
 NeoBundle 'edsono/vim-dbext'
 NeoBundle 'TailMinusF'
 NeoBundle 'rking/vim-ruby-refactoring'
+" have a ruby-block text-object ( r )
+NeoBundle 'nelstrom/vim-textobj-rubyblock'
+NeoBundle 'kana/vim-textobj-user'
 
 " for emulating a neckbeard
 NeoBundle 'tpope/vim-fugitive'
@@ -73,15 +77,11 @@ NeoBundle 'freitass/todo.txt-vim'
 " not proud, just using sometimes
 " NeoBundle 'php.vim-for-php5'
 
-" have a ruby-block text-object ( r )
-NeoBundle 'nelstrom/vim-textobj-rubyblock'
-NeoBundle 'kana/vim-textobj-user'
-
-" snippets
-NeoBundle 'MarcWeber/vim-addon-mw-utils'
-NeoBundle 'tomtom/tlib_vim'
-NeoBundle 'garbas/vim-snipmate'
-NeoBundle 'honza/vim-snippets'
+" " snippets
+" NeoBundle 'MarcWeber/vim-addon-mw-utils'
+" NeoBundle 'tomtom/tlib_vim'
+" NeoBundle 'garbas/vim-snipmate'
+" NeoBundle 'honza/vim-snippets'
 
 " colorschemes
 NeoBundle 'flazz/vim-colorschemes'
@@ -206,8 +206,7 @@ let php_folding=1
 
 " NERDTree {{{
 let NERDChristmasTree=1   " Colorful output!!1!
-" let NERDTreeChDirMode=2   " Always cd to the rootdir of the NERDTree
-let NERDTreeHijackNetrw=1
+let NERDTreeHijackNetrw=0 " netrw is not so bad, use it more
 " }}}
 
 let g:rspec_command = "!rspec --drb --color -f documentation {spec}"
