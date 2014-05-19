@@ -100,3 +100,12 @@ URxvt*scrollBar_right: true
 
 # scrollbar style - rxvt (default), plain, next, or xterm
 URxvt*scrollstyle: plain
+
+# do not scroll with output
+URxvt*scrollTtyOutput: false
+
+# scroll in relation to buffer (with mouse scroll or Shift+Page Up)
+# URxvt*scrollWithBuffer: false
+
+# scroll back to the bottom on keypress
+URxvt*scrollTtyKeypress: true
