@@ -3,30 +3,37 @@ import XMonad
 import XMonad.Actions.CycleWS
 import XMonad.Actions.CopyWindow       -- for having the same window on multiple workspaces
 import qualified XMonad.Actions.FlexibleManipulate as Flex
-
-import XMonad.Config.Desktop
-
+import XMonad.Config.Gnome
 import XMonad.Hooks.DynamicLog         -- for enabling any loghook
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.Place
 
-import XMonad.Layout.Circle            -- movie OS 1.0 -- arrange windows in a circle around a main window
+import XMonad.Layout.Circle            -- movie OS 1.0
 import XMonad.Layout.Grid
 import XMonad.Layout.IM
 import XMonad.Layout.NoBorders         -- remove borders for lonely windows
+import XMonad.Layout.OneBig
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.ThreeColumns
 
 import XMonad.Util.Run(spawnPipe)      -- xmobar support
 import System.IO                       -- xmobar support
+-- import XMonad.Util.EZConfig(additionalKeys)
 
 import Data.Ratio ((%))                -- used for various layouts
 import qualified Data.Map as M         -- used for merging key-sets and mouse-bindings
 import qualified XMonad.StackSet as W  -- used for screenkey floating and window-copying
 
+-- import qualified DBus as D
+-- import qualified DBus.Client as D
+-- import qualified Codec.Binary.UTF8.String as UTF8
+
+-- TODO maybe disable "focus follows mouse"
+
 -- basic Settings which may be needed more than once
 theModifierKey = mod4Mask      -- Rebind Mod to the Windows key
+-- theTerminal = "gnome-terminal" -- far from ideal, but nicely integrated
 theTerminal = "urxvt"          -- better reflowing of text, but has learning-curve
 
 -- display settings
@@ -91,7 +98,9 @@ defaultLayout = tiledLayout ||| Mirror tiledLayout ||| Full
 
 -- defaultLayout with a different starting Point
 fullFirstLayout = Full ||| tiledLayout ||| Mirror tiledLayout
-landscapeFirstLayout = Mirror tiledLayout ||| Full ||| tiledLayout
+
+-- experimental layout for one big app and some potential others
+browserLayout = Full ||| OneBig (3/4) (3/4)
 
 -- special layouts
 imRatio = (1%6)
@@ -112,16 +121,19 @@ threeColLayout = ThreeColMid nmaster delta ratio
     ratio   = 2/3
 
 codeLayout = biggerMasterLayout ||| Mirror biggerMasterLayout
+-- codeLayout = biggerMasterLayout ||| Mirror biggerMasterLayout ||| OneBig (3/4) (3/4) ||| Circle
+-- codeLayout = biggerMasterLayout ||| Mirror biggerMasterLayout ||| OneBig (3/4) (3/4)
 
 circleLayout = Circle ||| Full
 
 -- TODO optimize so that the screenkey-window is not overlaying anything
 presenterLayout = Mirror (Tall 1 (5%100) (90%100))
 
-ircLayout = landscapeFirstLayout
+ircLayout = Full ||| tiledLayout ||| Mirror tiledLayout
 
 theLayouts = onWorkspace "9:chat" imLayout
            . onWorkspace "1:web" fullFirstLayout
+           -- . onWorkspace "1:web" browserLayout
            . onWorkspace "8:irc" ircLayout
            . onWorkspace "2:code" codeLayout
            . onWorkspace "3:code" codeLayout
@@ -142,7 +154,6 @@ theKeys (XConfig {modMask = modm}) = M.fromList $ [
           , ((modm , xK_Right), nextWS)
           , ((modm , xK_Left), prevWS)
 
-          , ((modm .|. controlMask, xK_l), spawn "gnome-screensaver-command -l")
 
           -- tooling around copying a window to another space
           -- this needs XMonad.Actions.CopyWindow and XMonad.StackSet as W
@@ -166,38 +177,33 @@ myMouse (XConfig {modMask = modm}) = [
     -- move a floated window with the mouse.
     ((modm, button1), (\w -> focus w >> Flex.mouseWindow Flex.linear w))
   ]
-theMouse x = M.union (mouseBindings desktopConfig x) (M.fromList (myMouse x))
+theMouse x = M.union (mouseBindings gnomeConfig x) (M.fromList (myMouse x))
 
 
 -- custom functions
 --
 -- none, currently
 
-
 -- wire everything up and together
 main :: IO ()
 main = do
-    -- spawn "lxpanel"
 
-    xmproc <- spawnPipe "xmobar"
-    spawn "killall trayer; trayer --edge top --align right --widthtype percent --width 13 --height 18 --transparent true --alpha 0 --tint 0x000000"
+    -- spawn "xcompmgr -C -F"
 
-    -- spawn "xcompmgr"           -- transparency
-    -- swawn "compton -b --backend glx --paint-on-overlay"
-    spawn "/bin/sh ~/.fehbg &" -- background image
-    -- spawn "~/bin/workenvironment-setup-interactive &" -- setup all the things
+    -- xmproc <- spawnPipe "xmobar"
 
-    xmonad $ desktopConfig { modMask = theModifierKey
-      , logHook = dynamicLogWithPP xmobarPP
-                        { ppOutput = hPutStrLn xmproc
-                        , ppTitle = xmobarColor "green" "" . shorten 100
-                        }
+    xmonad $ gnomeConfig { modMask = theModifierKey
+      -- , logHook = dynamicLogWithPP (prettyPrinter dbus)
+      -- , logHook = transparencyLogHook <+> dynamicLogWithPP (prettyPrinter dbus)
+      -- , logHook = dynamicLogWithPP xmobarPP
+      --                   { ppOutput = hPutStrLn xmproc
+      --                   , ppTitle = xmobarColor "green" "" . shorten 50
+      --                   }
       , terminal = theTerminal
-      , manageHook = theManageHook <+> manageHook desktopConfig
-      , layoutHook = avoidStruts $ smartBorders $ theLayouts $ layoutHook desktopConfig
+      , manageHook = theManageHook <+> manageHook gnomeConfig
+      , layoutHook = avoidStruts $ smartBorders $ theLayouts $ layoutHook gnomeConfig
       , workspaces = theWorkspaces
-      , startupHook = spawn "~/bin/workenvironment-setup-interactive"
-      , keys = \c -> theKeys c `M.union` keys desktopConfig c
+      , keys = \c -> theKeys c `M.union` keys gnomeConfig c
       , mouseBindings = theMouse
       , borderWidth = theBorderWidth
       , normalBorderColor = theNormalBorderColor
