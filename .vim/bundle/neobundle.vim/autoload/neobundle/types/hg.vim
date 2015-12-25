@@ -45,13 +45,10 @@ let s:type = {
 function! s:type.detect(path, opts) "{{{
   if isdirectory(a:path.'/.hg')
     " Local repository.
-    return { 'name' : split(a:path, '/')[-1],
-          \  'uri' : a:path, 'type' : 'hg' }
+    return { 'uri' : a:path, 'type' : 'hg' }
   elseif isdirectory(a:path)
     return {}
   endif
-
-  let type = ''
 
   let protocol = matchstr(a:path, '^.\{-}\ze://')
   if protocol == '' || a:path =~#
@@ -76,8 +73,7 @@ function! s:type.detect(path, opts) "{{{
     return {}
   endif
 
-  return { 'name': neobundle#util#name_conversion(uri),
-        \  'uri' : uri, 'type' : 'hg' }
+  return { 'uri' : uri, 'type' : 'hg' }
 endfunction"}}}
 function! s:type.get_sync_command(bundle) "{{{
   if !executable(g:neobundle#types#hg#command_path)
@@ -108,7 +104,7 @@ function! s:type.get_revision_lock_command(bundle) "{{{
   endif
 
   return g:neobundle#types#hg#command_path
-        \ ' up ' . a:bundle.rev
+        \ . ' up ' . a:bundle.rev
 endfunction"}}}
 
 let &cpo = s:save_cpo

@@ -32,6 +32,13 @@ function! neobundle#parser#bundle(arg, ...) "{{{
   let is_parse_only = get(a:000, 0, 0)
   if !is_parse_only
     call neobundle#config#add(bundle)
+
+    if !neobundle#config#within_block()
+          \ && !bundle.lazy && has('vim_starting')
+      call neobundle#util#print_error(
+            \ '[neobundle] `NeoBundle` commands must be executed within' .
+            \ ' a neobundle#begin/end block.  Please check your usage.')
+    endif
   endif
 
   return bundle
@@ -168,23 +175,61 @@ function! neobundle#parser#_init_bundle(name, opts) "{{{
   return bundle
 endfunction"}}}
 
-function! neobundle#parser#local(localdir, options, names) "{{{
+function! neobundle#parser#local(localdir, options, includes) "{{{
   let base = fnamemodify(neobundle#util#expand(a:localdir), ':p')
-  for dir in filter(map(filter(split(glob(
-        \ base . '*'), '\n'), "isdirectory(v:val)"),
-        \ "neobundle#util#substitute_path_separator(
-        \   substitute(fnamemodify(v:val, ':p'), '/$', '', ''))"),
-        \ "empty(a:names) || index(a:names, fnamemodify(v:val, ':t')) >= 0")
+  let directories = []
+  for glob in a:includes
+    let directories += map(filter(split(glob(base . glob), '\n'),
+          \ "isdirectory(v:val)"), "
+          \ substitute(neobundle#util#substitute_path_separator(
+          \   fnamemodify(v:val, ':p')), '/$', '', '')")
+  endfor
+  for dir in neobundle#util#uniq(directories)
     let options = extend({ 'local' : 1, 'base' : base }, a:options)
-    let bundle = neobundle#get(fnamemodify(dir, ':t'))
+    let name = fnamemodify(dir, ':t')
+    let bundle = neobundle#get(name)
     if !empty(bundle)
       call extend(options, copy(bundle.orig_opts))
       if bundle.lazy
         let options.lazy = 1
       endif
+
+      " Remove from lazy runtimepath
+      call filter(neobundle#config#get_lazy_rtp_bundles(),
+            \ "fnamemodify(v:val.rtp, ':h:t') != name")
     endif
 
     call neobundle#parser#bundle([dir, options])
+  endfor
+endfunction"}}}
+
+function! neobundle#parser#load_toml(filename, default) "{{{
+  try
+    let toml = neobundle#TOML#parse_file(neobundle#util#expand(a:filename))
+  catch /vital: Text.TOML:/
+    call neobundle#util#print_error(
+          \ '[neobundle] Invalid toml format: ' . a:filename)
+    call neobundle#util#print_error(v:exception)
+    return 1
+  endtry
+  if type(toml) != type({}) || !has_key(toml, 'plugins')
+    call neobundle#util#print_error(
+          \ '[neobundle] Invalid toml file: ' . a:filename)
+    return 1
+  endif
+
+  " Parse.
+  for plugin in toml.plugins
+    if !has_key(plugin, 'repository')
+      call neobundle#util#print_error(
+            \ '[neobundle] No repository plugin data: ' . a:filename)
+      return 1
+    endif
+
+    let options = extend(plugin, a:default, 'keep')
+    " echomsg plugin.repository
+    " echomsg string(options)
+    call neobundle#parser#bundle([plugin.repository, options])
   endfor
 endfunction"}}}
 
@@ -204,37 +249,40 @@ function! neobundle#parser#path(path, ...) "{{{
   else
     let detect = neobundle#config#get_types('git').detect(path, opts)
     if !empty(detect)
+      let detect.name = neobundle#util#name_conversion(path)
       return detect
     endif
 
     let types = neobundle#config#get_types()
   endif
 
+  let detect = {}
   for type in types
     let detect = type.detect(path, opts)
-
     if !empty(detect)
-      return detect
+      break
     endif
   endfor
 
-  if isdirectory(path)
+  if empty(detect) && isdirectory(path)
     " Detect nosync type.
-    return { 'name' : split(path, '/')[-1],
-          \  'uri' : path, 'type' : 'nosync' }
+    return { 'uri' : path, 'type' : 'nosync' }
   endif
 
-  return {}
+  if !empty(detect) && !has_key(detect, 'name')
+    let detect.name = neobundle#util#name_conversion(path)
+  endif
+
+  return detect
 endfunction"}}}
 
 function! neobundle#parser#_function_prefix(name) "{{{
   let function_prefix = tolower(fnamemodify(a:name, ':r'))
   let function_prefix = substitute(function_prefix,
-        \'^vim-', '','')
+        \'^vim-\|-vim$', '','')
   let function_prefix = substitute(function_prefix,
         \'^unite-', 'unite#sources#','')
-  let function_prefix = substitute(function_prefix,
-        \'-', '_', 'g')
+  let function_prefix = tr(function_prefix, '-', '_')
   return function_prefix
 endfunction"}}}
 

@@ -27,7 +27,7 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! neobundle#init#_rc(path, is_block) "{{{
+function! neobundle#init#_rc(path) "{{{
   let path =
         \ neobundle#util#substitute_path_separator(
         \ neobundle#util#expand(a:path))
@@ -48,7 +48,7 @@ function! neobundle#init#_rc(path, is_block) "{{{
     autocmd!
   augroup END
 
-  call neobundle#config#init(a:is_block)
+  call neobundle#config#init()
   call neobundle#autoload#init()
 endfunction"}}}
 
@@ -80,6 +80,7 @@ function! neobundle#init#_bundle(bundle) "{{{
           \ 'hooks' : {},
           \ 'called_hooks' : {},
           \ 'external_commands' : {},
+          \ 'build_commands': {},
           \ 'description' : '',
           \ 'dummy_commands' : [],
           \ 'dummy_mappings' : [],
@@ -93,6 +94,9 @@ function! neobundle#init#_bundle(bundle) "{{{
           \ 'orig_opts' : {},
           \ 'recipe' : '',
           \ 'base' : neobundle#get_neobundle_dir(),
+          \ 'install_rev' : '',
+          \ 'install_process_timeout'
+          \    : g:neobundle#install_process_timeout,
           \ }
   call extend(bundle, a:bundle)
 
@@ -102,7 +106,8 @@ function! neobundle#init#_bundle(bundle) "{{{
 
   if !has_key(bundle, 'normalized_name')
     let bundle.normalized_name = substitute(
-          \ fnamemodify(bundle.name, ':r'), '^vim-\|-vim$', '', 'g')
+          \ fnamemodify(bundle.name, ':r'),
+          \ '\c^vim[_-]\|[_-]vim$', '', 'g')
   endif
   if !has_key(bundle.orig_opts, 'name') &&
      \ g:neobundle#enable_name_conversion
@@ -169,6 +174,18 @@ function! neobundle#init#_bundle(bundle) "{{{
     let bundle.sourced = 1
   endif
 
+  if type(bundle.disabled) == type('')
+    sandbox let bundle.disabled = eval(bundle.disabled)
+  endif
+
+  let bundle.disabled = bundle.disabled
+        \ || (bundle.gui && !has('gui_running'))
+        \ || (bundle.terminal && has('gui_running'))
+        \ || (bundle.vim_version != ''
+        \     && s:check_version(bundle.vim_version))
+        \ || (!empty(bundle.external_commands)
+        \     && neobundle#config#check_commands(bundle.external_commands))
+
   return bundle
 endfunction"}}}
 
@@ -192,6 +209,16 @@ function! s:init_depends(bundle) "{{{
   endfor
 
   let bundle.depends = _
+endfunction"}}}
+
+function! s:check_version(min_version) "{{{
+  let versions = split(a:min_version, '\.')
+  let major = get(versions, 0, 0)
+  let minor = get(versions, 1, 0)
+  let patch = get(versions, 2, 0)
+  let min_version = major * 100 + minor
+  return v:version < min_version ||
+        \ (patch != 0 && v:version == min_version && !has('patch'.patch))
 endfunction"}}}
 
 let &cpo = s:save_cpo

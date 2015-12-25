@@ -40,13 +40,6 @@ let s:source = {
       \ }
 
 function! s:source.gather_candidates(args, context) "{{{
-  if !executable('curl') && !executable('wget')
-    call unite#print_error(
-          \ '[neobundle/search:vim-scripts.org] '.
-          \ 'curl or wget command is not available!')
-    return []
-  endif
-
   let repository = 'http://vim-scripts.org/api/scripts_recent.json'
 
   call unite#print_message(
@@ -67,7 +60,7 @@ function! s:source.gather_candidates(args, context) "{{{
   catch
     call unite#print_error(
           \ '[neobundle/search:vim-scripts.org] '
-          \ .'Error occured in loading cache.')
+          \ .'Error occurred in loading cache.')
     call unite#print_error(
           \ '[neobundle/search:vim-scripts.org] '
           \ .'Please re-make cache by <Plug>(unite_redraw) mapping.')
@@ -99,13 +92,18 @@ function! s:get_repository_plugins(context, path) "{{{
       let cmd = 'curl --fail -s -o "' . temp . '" '. a:path
     elseif executable('wget')
       let cmd = 'wget -q -O "' . temp . '" ' . a:path
+    else
+      call unite#print_error(
+            \ '[neobundle/search:vim-scripts.org] '.
+            \ 'curl or wget command is not available!')
+      return []
     endif
 
     let result = unite#util#system(cmd)
 
     if unite#util#get_last_status()
       call unite#print_message('[neobundle/search:vim-scripts.org] ' . cmd)
-      call unite#print_error('[neobundle/search:vim-scripts.org] Error occured!')
+      call unite#print_error('[neobundle/search:vim-scripts.org] Error occurred!')
       call unite#print_error(result)
       return []
     elseif !filereadable(temp)

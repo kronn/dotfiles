@@ -61,9 +61,7 @@ function! s:source.source__converter(candidates, context) "{{{
   return a:candidates
 endfunction"}}}
 
-let s:source.filters =
-      \ ['matcher_default', 'sorter_default',
-      \      s:source.source__converter]
+let s:source.converters = s:source.source__converter
 "}}}
 
 function! s:source.gather_candidates(args, context) "{{{
@@ -95,10 +93,11 @@ function! s:source.gather_candidates(args, context) "{{{
       let candidate.abbr .= ' : ' . candidate.source__description
     endif
 
-    let status = s:get_commit_status(
-          \         a:context.source__bang, candidate.action__bundle)
-    if status != ''
-      let candidate.abbr .= "\n   " . status
+    if a:context.source__bang
+      let status = s:get_commit_status(candidate.action__bundle)
+      if status != ''
+        let candidate.abbr .= "\n   " . status
+      endif
     endif
 
     let candidate.word .= candidate.source__description
@@ -107,15 +106,9 @@ function! s:source.gather_candidates(args, context) "{{{
   return _
 endfunction"}}}
 
-function! s:get_commit_status(bang, bundle) "{{{
+function! s:get_commit_status(bundle) "{{{
   if !isdirectory(a:bundle.path)
     return 'Not installed'
-  endif
-
-  if a:bang && !neobundle#util#is_windows()
-        \ || !a:bang && neobundle#util#is_windows()
-    return neobundle#util#substitute_path_separator(
-          \ fnamemodify(a:bundle.path, ':~'))
   endif
 
   let type = neobundle#config#get_types(a:bundle.type)
@@ -127,15 +120,15 @@ function! s:get_commit_status(bang, bundle) "{{{
   endif
 
   let cwd = getcwd()
-
-  call neobundle#util#cd(a:bundle.path)
-
-  let output = neobundle#util#system(cmd)
-
-  call neobundle#util#cd(cwd)
+  try
+    call neobundle#util#cd(a:bundle.path)
+    let output = neobundle#util#system(cmd)
+  finally
+    call neobundle#util#cd(cwd)
+  endtry
 
   if neobundle#util#get_last_status()
-    return printf('Error(%d) occured when executing "%s"',
+    return printf('Error(%d) occurred when executing "%s"',
           \ neobundle#util#get_last_status(), cmd)
   endif
 

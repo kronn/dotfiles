@@ -40,12 +40,21 @@ function! neobundle#autoload#init()
           \ call neobundle#autoload#insert()
   augroup END
 
-  for event in ['BufRead', 'BufCreate', 'BufEnter', 'BufWinEnter']
-    execute 'autocmd neobundle' event "* call neobundle#autoload#explorer(
+  if has('patch-7.4.414')
+    autocmd neobundle CmdUndefined *
+          \ call neobundle#autoload#command_prefix()
+  endif
+
+  augroup neobundle-explorer
+    autocmd!
+  augroup END
+  for event in ['BufRead', 'BufCreate', 'BufEnter', 'BufWinEnter', 'BufNew', 'VimEnter']
+    execute 'autocmd neobundle-explorer' event "* call neobundle#autoload#explorer(
           \ expand('<afile>'), ".string(event) . ")"
   endfor
 
   augroup neobundle-focus
+    autocmd!
     autocmd CursorHold * if s:active_auto_source
           \ | call s:source_focus()
           \ | endif
@@ -59,10 +68,9 @@ endfunction
 function! neobundle#autoload#filetype()
   let bundles = filter(neobundle#config#get_autoload_bundles(),
         \ "has_key(v:val.autoload, 'filetypes')")
-  for filetype in neobundle#util#get_filetypes()
+  for filetype in add(neobundle#util#get_filetypes(), 'all')
     call neobundle#config#source_bundles(filter(copy(bundles),"
-          \ index(neobundle#util#convert2list(
-          \     v:val.autoload.filetypes), filetype) >= 0"))
+          \ index(v:val.autoload.filetypes, filetype) >= 0"))
   endfor
 endfunction
 
@@ -71,8 +79,7 @@ function! neobundle#autoload#filename(filename)
         \ "has_key(v:val.autoload, 'filename_patterns')")
   if !empty(bundles)
     call neobundle#config#source_bundles(filter(copy(bundles),"
-          \ len(filter(copy(neobundle#util#convert2list(
-          \  v:val.autoload.filename_patterns)),
+          \ len(filter(copy(v:val.autoload.filename_patterns),
           \  'a:filename =~? v:val')) > 0"))
   endif
 endfunction
@@ -93,8 +100,7 @@ function! neobundle#autoload#function()
   let bundles = filter(neobundle#config#get_autoload_bundles(),
         \ "get(v:val.autoload, 'function_prefix', '').'#' ==# function_prefix ||
         \  (has_key(v:val.autoload, 'functions') &&
-        \    index(neobundle#util#convert2list(
-        \     v:val.autoload.functions), function) >= 0)")
+        \    index(v:val.autoload.functions, function) >= 0)")
   call neobundle#config#source_bundles(bundles)
 endfunction
 
@@ -104,7 +110,9 @@ function! neobundle#autoload#command(command, name, args, bang, line1, line2)
 
   call neobundle#config#source(a:name)
 
-  let range = (a:line1 != a:line2) ? "'<,'>" : ''
+  let range = (a:line1 == a:line2) ? '' :
+        \ (a:line1==line("'<") && a:line2==line("'>")) ?
+        \ "'<,'>" : a:line1.",".a:line2
 
   try
     execute range.a:command.a:bang a:args
@@ -112,6 +120,16 @@ function! neobundle#autoload#command(command, name, args, bang, line1, line2)
     " E481: No range allowed
     execute a:command.a:bang a:args
   endtry
+endfunction
+
+function! neobundle#autoload#command_prefix()
+  let command = expand('<afile>')
+
+  let bundles = filter(neobundle#config#get_autoload_bundles(),
+        \ "get(v:val.autoload, 'command_prefix', '') != '' &&
+        \  stridx(tolower(command),
+        \  tolower(get(v:val.autoload, 'command_prefix', ''))) == 0")
+  call neobundle#config#source_bundles(bundles)
 endfunction
 
 function! neobundle#autoload#mapping(mapping, name, mode)
@@ -134,14 +152,23 @@ function! neobundle#autoload#mapping(mapping, name, mode)
 
   call feedkeys(cnt, 'n')
 
-  let mapping = substitute(a:mapping, '<Plug>', "\<Plug>", 'g')
+  let mapping = a:mapping
+  while mapping =~ '<[[:alnum:]-]\+>'
+    let mapping = substitute(mapping, '\c<Leader>',
+          \ get(g:, 'mapleader', '\'), 'g')
+    let mapping = substitute(mapping, '\c<LocalLeader>',
+          \ get(g:, 'maplocalleader', '\'), 'g')
+    let ctrl = matchstr(mapping, '<\zs[[:alnum:]-]\+\ze>')
+    execute 'let mapping = substitute(
+          \ mapping, "<' . ctrl . '>", "\<' . ctrl . '>", "")'
+  endwhile
   call feedkeys(mapping . input, 'm')
 
   return ''
 endfunction
 
 function! neobundle#autoload#explorer(path, event)
-  if bufnr('%') != expand('<abuf>') || a:path == ''
+  if a:path == ''
     return
   endif
 
@@ -158,7 +185,11 @@ function! neobundle#autoload#explorer(path, event)
 
   let bundles = filter(neobundle#config#get_autoload_bundles(),
         \ "get(v:val.autoload, 'explorer', 0)")
-  if !empty(bundles)
+  if empty(bundles)
+    augroup neobundle-explorer
+      autocmd!
+    augroup END
+  else
     call neobundle#config#source_bundles(bundles)
     execute 'doautocmd' a:event
   endif
@@ -174,8 +205,8 @@ function! neobundle#autoload#unite_sources(sources)
       let bundles += copy(sources_bundles)
     else
       let bundles += filter(copy(sources_bundles),
-            \ "index(neobundle#util#convert2list(
-            \    v:val.autoload.unite_sources), source_name) >= 0")
+            \ "!empty(filter(copy(v:val.autoload.unite_sources),
+            \    'stridx(source_name, v:val) >= 0'))")
     endif
   endfor
 
@@ -187,8 +218,7 @@ function! neobundle#autoload#get_unite_sources()
   let sources_bundles = filter(neobundle#config#get_autoload_bundles(),
           \ "has_key(v:val.autoload, 'unite_sources')")
   for bundle in sources_bundles
-    let _ += neobundle#util#convert2list(
-          \ bundle.autoload.unite_sources)
+    let _ += bundle.autoload.unite_sources
   endfor
 
   return _
@@ -212,8 +242,7 @@ endfunction
 function! neobundle#autoload#source(bundle_name)
   let bundles = filter(neobundle#config#get_neobundles(),
         \ "has_key(v:val.autoload, 'on_source') &&
-        \   index(neobundle#util#convert2list(
-        \         v:val.autoload.on_source), a:bundle_name) >= 0 &&
+        \   index(v:val.autoload.on_source, a:bundle_name) >= 0 &&
         \   !v:val.sourced && v:val.lazy")
   if !empty(bundles)
     call neobundle#config#source_bundles(bundles)
@@ -226,8 +255,10 @@ function! s:get_input()
 
   call feedkeys(termstr, 'n')
 
+  let type_num = type(0)
   while 1
-    let input .= nr2char(getchar())
+    let char = getchar()
+    let input .= type(char) == type_num ? nr2char(char) : char
 
     let idx = stridx(input, termstr)
     if idx >= 1

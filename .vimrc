@@ -45,12 +45,13 @@ NeoBundle 'bling/vim-airline'
 NeoBundle 'tpope/vim-rails'
 NeoBundle 'tpope/vim-cucumber'
 " vim-projectile makes this superfluous
-" NeoBundle 'tpope/vim-rake'
+NeoBundle 'tpope/vim-rake'
 NeoBundle 'muz/vim-gemfile'
 NeoBundle 'vim-ruby/vim-ruby'
 NeoBundle 'edsono/vim-dbext'
 NeoBundle 'TailMinusF'
 NeoBundle 'rking/vim-ruby-refactoring'
+NeoBundle 'ngmy/vim-rubocop'
 " have a ruby-block text-object ( r )
 NeoBundle 'nelstrom/vim-textobj-rubyblock'
 NeoBundle 'kana/vim-textobj-user'
@@ -61,33 +62,43 @@ NeoBundle 'mileszs/ack.vim'
 NeoBundle 'tpope/vim-eunuch'
 
 " various filetypes
-" search for 'official' puppet-plugin
+" TODO search for 'official' puppet-plugin
 NeoBundle 'ajf/puppet-vim'
-" NeoBundle 'timcharper/textile.vim'
+NeoBundle 'timcharper/textile.vim'
 " NeoBundle 'gerw/vim-latex-suite'
-" NeoBundle 'leshill/vim-json'
+NeoBundle 'elzr/vim-json'
+" NeoBundle 'tpope/vim-jdaddy'
 " NeoBundle 'vim-scripts/nginx.vim'
 NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'kchmck/vim-coffee-script'
 " NeoBundle 'tpope/vim-afterimage'
 NeoBundle 'plasticboy/vim-markdown'
 NeoBundle 'Keithbsmiley/rspec.vim'
-NeoBundle 'freitass/todo.txt-vim'
+" NeoBundle 'freitass/todo.txt-vim'
+" NeoBundle 'wannesm/wmgraphviz.vim'
+NeoBundle 'heartsentwined/vim-emblem'
+NeoBundle 'fatih/vim-go'
+NeoBundle 'ekalinin/Dockerfile.vim'
 
 " not proud, just using sometimes
-" NeoBundle 'php.vim-for-php5'
+" symfony is not that bad, after all…
+NeoBundle 'donnut/vim-php54-syntax'
+NeoBundle 'evidens/vim-twig'
 
 " " snippets
-" NeoBundle 'MarcWeber/vim-addon-mw-utils'
-" NeoBundle 'tomtom/tlib_vim'
-" NeoBundle 'garbas/vim-snipmate'
-" NeoBundle 'honza/vim-snippets'
+NeoBundle 'SirVer/ultisnips'
+NeoBundle 'honza/vim-snippets'
+
+" track time from within Vim
+NeoBundle 'wakatime/vim-wakatime'
 
 " colorschemes
 NeoBundle 'flazz/vim-colorschemes'
 NeoBundle 'biskark/vim-ultimate-colorscheme-utility'
 
 " experiments
+" ===========
+
 " execute code directly from vim
 " NeoBundle 'nielsmadan/venom'
 " NeoBundle 'nielsmadan/mercury'
@@ -95,6 +106,9 @@ NeoBundle 'biskark/vim-ultimate-colorscheme-utility'
 " run rspec from vim
 " NeoBundle 'thoughtbot/vim-rspec'
 " NeoBundle 'tpope/vim-dispatch'
+
+" use wordpress from vim
+NeoBundle "blogit.vim"
 
 " end of bundle-list
 call neobundle#end()
@@ -114,6 +128,7 @@ set incsearch    " do incremental searching
 set hlsearch     " show my search results
 set ignorecase   " Ignore case when searching
 set smartcase    " Ignore case when searching lowercase
+set path=.,lib,/usr/include,
 
 set lbr          " long lines are wrapped on word boundaries
 
@@ -123,6 +138,17 @@ set modelines=5  " this is the default, but i really want it that way
 
 " Time to wait after ESC (default causes an annoying delay)
 set timeout timeoutlen=1000 ttimeoutlen=100
+
+" reload the file automatically, if it changes outside of vim
+set autoread
+
+" allow mouse usage
+" especially allow me to scroll up and down with the mouse-wheel while thinking
+" set mouse=a
+
+" allow for per-directory .exrc's
+" set exrc    " not now, but maybe in the future
+set secure  " prevent malicious code in .exrc's
 
 " Spaces not Tabs.
 set tabstop=2
@@ -216,7 +242,10 @@ let g:splitjoin_split_mapping = ''
 let g:splitjoin_join_mapping = ''
 " }}}
 
+" airline {{{
 let g:airline_powerline_fonts = 1
+let g:airline#extensions#branch#format = 1
+" }}}
 
 " rails.vim {{{
 " projections - typing `:Rfactory users` will open the users factory
@@ -253,6 +282,30 @@ let g:rails_projections = {
       \   "related": "Gemfile.lock"
       \ }
       \}
+" }}}
+
+" UltiSnips {{{
+let g:UltiSnipsEditSplit="vertical"
+let g:UltiSnipsSnippetsDir="~/.vim/UltiSnips"
+" get 'TextMate' behaviour, which maps to SnipMate-behaviour
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+" }}}
+
+" {{{ Textile.vim
+let g:TextileOS="Linux"
+let g:TextileBrowser="/usr/bin/google-chrome"
+" }}}
+
+" {{{ Graphiz
+let g:WMGraphviz_output="png"
+let g:WMGraphviz_viewer="display"
+" }}}
+
+" blogit {{{
+let blogit_unformat="pandoc --from=html --to=markdown --reference-links"
+let blogit_format="pandoc --from=markdown --to=html --no-wrap"
 " }}}
 
 " }}}
@@ -384,8 +437,19 @@ if has('autocmd')
   autocmd BufRead *.yml setlocal fdm=indent fdl=2 ai
   autocmd BufNewFile,BufRead *.feature inoremap <silent> <Bar>   <Bar><ESC>:call <SID>align()<CR>a
   autocmd BufNewFile,BufReadPost *.coffee setlocal fdm=indent sw=2 ts=2 et
+  autocmd BufRead,BufNewFile *.json set filetype=json
 
   autocmd FileType gitconfig setlocal noet
+
+  augroup json_autocmd
+    autocmd!
+    autocmd FileType json set autoindent
+    autocmd FileType json set formatoptions=tcq2l
+    autocmd FileType json set textwidth=78 shiftwidth=2
+    autocmd FileType json set softtabstop=2 tabstop=8
+    autocmd FileType json set expandtab
+    autocmd FileType json set foldmethod=syntax
+  augroup END
 
   if &diff
   else
@@ -437,6 +501,12 @@ map Od :cp<CR>
 " " presentations
 " map <C-Right> :next<CR>
 " map <C-Left> :previous<CR>
+
+" macros put into keybindings
+" convert hash-syntax
+" map <Leader>s :normal /=>F:xEplndaw
+" nmap <Leader>s /=><CR>F:xEplndaw<CR>
+
 
 " Key-mappings and extensions for plugins {{{
 

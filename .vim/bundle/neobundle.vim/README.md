@@ -3,24 +3,28 @@
 ## About
 
 NeoBundle is a next generation Vim plugin manager. This plugin is based on
-Vundle(https://github.com/gmarik/vundle), but I renamed and added tons of
+[Vundle](https://github.com/gmarik/vundle), but I renamed and added tons of
 features,  while Vundle tends to stay simple.
 
 Requirements:
 * Vim 7.2.051 or above.
-* "git" command in $PATH(if you want to install github or vim.org plugins)
+* "git" command in $PATH (if you want to install github or vim.org plugins)
 
 Recommends:
-* vimproc(if you want to install/update asynchronously)
-https://github.com/Shougo/vimproc.vim
+* [vimproc](https://github.com/Shougo/vimproc.vim) if you want to
+  install/update asynchronously in Unite interface.
 
-Note: Neobundle is not stable plugin manager.  If you want to stable plugin
-manager, you should use Vundle plugin.  It is well works widely and more
+Note: In :NeoBundleUpdate/:NeoBundleInstall commands, you can parallel update by
+vimproc, but you cannot do other work unlike Unite interface.
+
+Note: Neobundle is not a stable plugin manager.  If you want a stable plugin
+manager, you should use Vundle plugin.  It well works widely and it is more
 tested.  If you want to use extended features, you can use neobundle.
 
-Vundle features : Stable, simple, good for beginners
-neobundle features : Early development(may break compatibility), very complex,
-good for plugin power users(for example, 50+ plugins and over 1000 lines
+Vundle features: Stable, simple, good for beginners
+
+Neobundle features: Early development (may break compatibility), very complex,
+good for plugin power users (for example, 50+ plugins and over 1000 lines
 .vimrc, ...)
 
 ## How it works
@@ -36,8 +40,8 @@ repositories, simply call `NeoBundleUpdate`.
 
 A few other useful commands:
 - `:NeoBundleList`          - list configured bundles
-- `:NeoBundleInstall(!)`    - install(update) bundles
-- `:NeoBundleClean(!)`      - confirm(or auto-approve) removal of unused bundles
+- `:NeoBundleInstall(!)`    - install (update) bundles
+- `:NeoBundleClean(!)`      - confirm (or auto-approve) removal of unused bundles
 
 Refer to `:help neobundle` for more examples and for a full list of commands.
 
@@ -45,7 +49,7 @@ Refer to `:help neobundle` for more examples and for a full list of commands.
 
 ### 1. Install NeoBundle
 
-#### If you are using Unix/Linux or Mac OX.
+#### If you are using Unix/Linux or Mac OS X.
 
 1. Run below script.
 
@@ -68,8 +72,13 @@ Complete.
      Sample `.vimrc`:
 
      ```vim
+     " Note: Skip initialization for vim-tiny or vim-small.
+     if 0 | endif
+
      if has('vim_starting')
-       set nocompatible               " Be iMproved
+       if &compatible
+         set nocompatible               " Be iMproved
+       endif
 
        " Required:
        set runtimepath+=~/.vim/bundle/neobundle.vim/
@@ -83,14 +92,8 @@ Complete.
      NeoBundleFetch 'Shougo/neobundle.vim'
 
      " My Bundles here:
-     NeoBundle 'Shougo/neosnippet.vim'
-     NeoBundle 'Shougo/neosnippet-snippets'
-     NeoBundle 'tpope/vim-fugitive'
-     NeoBundle 'kien/ctrlp.vim'
-     NeoBundle 'flazz/vim-colorschemes'
-
-     " You can specify revision/branch/tag.
-     NeoBundle 'Shougo/vimshell', { 'rev' : '3787e5' }
+     " Refer to |:NeoBundle-examples|.
+     " Note: You don't set neobundle setting in .gvimrc!
 
      call neobundle#end()
 
@@ -104,13 +107,22 @@ Complete.
 
 ### 2. Install configured bundles
 
-Launch `vim`, run `:NeoBundleInstall`, or `:Unite neobundle/install`(required unite.vim) Or Command run `bin/neoinstall`
+Launch `vim`, run `:NeoBundleInstall` or `:Unite neobundle/install` (required
+unite.vim) Or Command run `bin/neoinstall` or `vim +NeoBundleInstall +qall`
+
+
+## How to test
+
+Run `make test` command in command line(required vim-themis).
+
+https://github.com/thinca/vim-themis
+
 
 ## Advantages over Vundle
 
-1. Plugin prefixed command name(:Bundle vs :NeoBundle).
-2. Support for vimproc(asynchronous update/install).
-3. Support for unite.vim interface(update/install/search).
+1. Plugin prefixed command name (:Bundle vs :NeoBundle).
+2. Support for vimproc (asynchronous update/install).
+3. Support for unite.vim interface (update/install/search).
 4. Support for revision locking.
 5. Support for multiple version control systems (Subversion/Git).
 6. Support for lazy initialization for optimizing startup time.

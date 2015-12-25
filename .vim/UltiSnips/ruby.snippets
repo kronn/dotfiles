@@ -1,0 +1,7 @@
+snippet .tap "output " w
+.tap { |v| $stderr.puts "#{v.class} #{v.inspect}" }
+endsnippet
+
+# snippet "(\S+)\.tap" ".tap { |v| output}"
+# `!p snip.rv=match.group(1)`.tap { |v| $stderr.puts "#{v.class} #{v.inspect}" }
+# endsnippet

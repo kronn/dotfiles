@@ -41,6 +41,14 @@ elseif v:version < 702 || (v:version == 702 && !has('patch51'))
   unlet s:save_cpo
 
   finish
+elseif fnamemodify(&shell, ':t') ==# 'fish' && !has('patch-7.4.276')
+  echoerr 'Vim does not support "' . &shell . '".'
+        \ .' You must use Vim 7.4.276 or later.'
+
+  let &cpo = s:save_cpo
+  unlet s:save_cpo
+
+  finish
 endif
 
 let g:loaded_neobundle = 1
