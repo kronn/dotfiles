@@ -5,3 +5,15 @@ desc "refresh local cache"
 task :refresh do
   system "rm", ".cache_cap_t"
 end
+
+desc "wait for user-confirmation"
+task :wait do
+  perform_waiting
+end
+
+def perform_waiting
+  Capistrano::CLI.ui.ask "Take a breath! Continue with ↵, when you're ready."
+rescue Interrupt
+  puts "\n-- Okay, maybe some other time. KTHXBAI--\n"
+  exit
+end
