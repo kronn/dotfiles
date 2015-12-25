@@ -23,9 +23,6 @@ case `uname` in
     ;;
 esac
 
-# gnome
-alias go='gnome-open'
-
 # ls
 alias la='ls -a'
 alias ll="ls -l"
@@ -34,6 +31,7 @@ alias l="ll -h"
 # git convinience
 alias homegit="GIT_DIR=~/Code/projects/dotfiles/.git GIT_WORK_TREE=~/ git"
 alias wgd="watch_git_diff"
+alias pac="php app/console"
 
 # ssh
 alias ssh="TERM=xterm ssh"
@@ -42,9 +40,10 @@ alias ssh="TERM=xterm ssh"
 alias mmta="milkmaid task add"
 # alias cuke="truncate --size 0 log/*.log; clear; KOPFLOS=no CAPYBARA_CHROME=yes bundle exec cucumber -s -r features/"
 alias cuke="truncate --size 0 log/*.log; clear; CAPYBARA_CHROME=yes bundle exec cucumber -s -r features/"
-alias watch_git_diff="watch -c 'git diff --color=always; echo \"Unstaged ^^^^^ |||| vvvvv staged\"; git diff --cached --color=always'"
+alias watch_git_diff="watch -c 'git diff --color=always;echo \"===== Unstaged ^^^^^ |||| vvvvv staged =====\";git diff --cached --color=always'"
 alias b="bundle"
 alias g="bundle exec guard"
+alias z="store_pwd; clear; zeus start"
 alias stderred="LD_PRELOAD=$HOME/Code/opensource/stderred/build/libstderred.so\${LD_PRELOAD:+:\$LD_PRELOAD}"
 
 alias t="todo.sh" && complete -F _todo t

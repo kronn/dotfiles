@@ -4,8 +4,12 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
   . /etc/bash_completion
 fi
 
+# source completions always, overwriting existing ones
+for FILE in rake; do
+  source ~/.bash/$FILE-completion.bash
+done
 # source completions if not already defined
-for FILE in {git,capistrano,rake,thor,git-flow,todo}; do
+for FILE in {git,capistrano,thor,git-flow,todo}; do
   complete -p $FILE 1>/dev/null 2>&1 || source ~/.bash/$FILE-completion.bash
 done
 
@@ -19,8 +23,8 @@ done
 shopt -s checkwinsize
 
 # Tweak History handling
-export HISTCONTROL=erasedups:ignoredups:ignorespace
-export HISTSIZE=10000000
+export HISTCONTROL="erasedups:ignoreboth"
+export HISTSIZE=40000000
 export HISTFILESIZE=40000000
 shopt -s histappend
 

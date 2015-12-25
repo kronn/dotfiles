@@ -11,6 +11,17 @@ function finish() {
   fi
 }
 
+function publish() {
+  PREFIX=`git config gitflow.prefix.feature | sed 's!\/!\\\/!'`
+  BRANCH=`git branch | grep '^*' | sed 's!\*\ !!'`
+  FLOW_BRANCH=`echo $BRANCH | sed "s!$PREFIX!!"`
+
+  if [ -n `echo $BRANCH | grep $PREFIX` ]; then
+    echo "publishing $FLOW_BRANCH"
+    git flow feature publish $FLOW_BRANCH
+  fi
+}
+
 function review() {
   for COMMIT in `git log --reverse --format=format:%H ${1:-'develop..'}`; do
     clear

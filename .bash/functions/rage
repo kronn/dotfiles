@@ -7,3 +7,11 @@ fliptable() {
 fliptwotables() {
   echo '┻━┻ ヽ(`Д´)ﾉ ┻━┻'
 }
+
+flipbouncingtables() {
+  echo '（╯°□°）╯   ͡   ×   ͡   ×   ┻━┻'
+}
+
+shrug() {
+  echo '¯\_(ツ)_/¯'
+}
