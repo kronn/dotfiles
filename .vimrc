@@ -439,6 +439,7 @@ if has('autocmd')
   autocmd BufNewFile,BufRead *.feature inoremap <silent> <Bar>   <Bar><ESC>:call <SID>align()<CR>a
   autocmd BufNewFile,BufReadPost *.coffee setlocal fdm=indent sw=2 ts=2 et
   autocmd BufRead,BufNewFile *.json set filetype=json
+  autocmd BufNewFile,BufRead Jenkinsfile setlocal ft=groovy
 
   autocmd FileType gitconfig setlocal noet
 
@@ -461,8 +462,8 @@ if has('autocmd')
   " don't clutter the bufferspace with fugitive-buffers
   autocmd BufReadPost fugitive://* set bufhidden=delete
 
-  " thanks to @lucapette for pointing the usefulness of this one out
-  autocmd BuFRead *.haml,*.sass setlocal cursorcolumn
+  " " thanks to @lucapette for pointing the usefulness of this one out
+  " autocmd BuFRead *.haml,*.sass setlocal cursorcolumn
 
   " recalculate the tab warning flag when idle and after writing
   autocmd cursorhold,BufWritePost * unlet! b:statusline_tab_warning
