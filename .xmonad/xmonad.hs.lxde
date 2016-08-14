@@ -44,6 +44,7 @@ theFocusedBorderColor = "#cc9933"
 theWorkspaces = ["1:web", "2:code", "3:code" , "4:code", "5:mail", "6:music" , "7:tools", "8:irc", "9:chat"]
 
 -- special Window handling
+-- use `xprop` to determine the properties of a window
 theManageHook = composeAll [
         className =? "Xmessage" --> doFloat,
         className =? "Do" --> doFloat, -- float GnomeDO (like you expect it)
@@ -58,11 +59,12 @@ theManageHook = composeAll [
         -- send applications to the right workspace
         className =? "Empathy" --> doShift "9:chat",
         className =? "Pidgin" --> doShift "9:chat",
-        className =? "Google-chrome" --> doShift "1:web",
+        className =? "google-chrome" --> doShift "1:web",
         className =? "Thunderbird" --> doShift "5:mail",
         className =? "Claws-mail" --> doShift "5:mail",
         className =? "Rythmbox" --> doShift "6:music",
         className =? "banshee" --> doShift "6:music", -- oh the joy of consistent WM_CLASS-names ...
+        className =? "Vlc" --> doShift "6:music",
 
         className =? "Gtimelog" --> doShift "7:tools",
         className =? "Gimp-2.6" --> doShift "7:tools",
