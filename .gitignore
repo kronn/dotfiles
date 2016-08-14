@@ -263,3 +263,4 @@ homebrew/
 mysqlaccess.log
 pgadmin.log
 tmp/
+.bundle/cache/
