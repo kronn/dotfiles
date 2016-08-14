@@ -265,3 +265,4 @@ pgadmin.log
 tmp/
 .bundle/cache/
 .goobookrc
+.gtkrc-2.0
