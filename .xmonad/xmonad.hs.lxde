@@ -180,7 +180,7 @@ main = do
     -- spawn "lxpanel"
 
     xmproc <- spawnPipe "xmobar"
-    spawn "killall trayer; trayer --edge top --align right --widthtype percent --width 13 --height 18 --transparent true --alpha 0 --tint 0x000000"
+    spawn "killall trayer; trayer --edge top --align right --widthtype percent --width 15 --height 18 --transparent true --alpha 0 --tint 0x000000"
 
     -- spawn "xcompmgr"           -- transparency
     -- swawn "compton -b --backend glx --paint-on-overlay"

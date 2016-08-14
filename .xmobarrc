@@ -2,7 +2,7 @@
 Config { font = "xft:inconsolata for powerline:bold:pixelsize=12:antialias=true:hinting=true"
        , bgColor = "black"
        , fgColor = "grey"
-       , position = TopW L 88
+       , position = TopW L 85
        -- , position = Bottom
        , lowerOnStart = False
        , sepChar = "%"
@@ -10,17 +10,20 @@ Config { font = "xft:inconsolata for powerline:bold:pixelsize=12:antialias=true:
        , commands = [ Run Battery [   "-t", "<acstatus> (<left>%)"
                                     , "-L", "20", "-H", "80"
                                     , "-l", "red", "-h", "green"
-                                    , "--", "-O", "Charging", "-o", "Batt: <timeleft>"] 30
+                                    , "--", "-O", "Charging", "-o", "Batt: <timeleft>"] 100
                     , Run CoreTemp [ "-t", "<core0>|<core1>°C",
                                      "-L", "50", "-H", "70",
                                      "-l", "lightblue", "-h", "red"] 50
-                    , Run Cpu ["-L","3","-H","50","--normal","green","--high","red","-t","C: <total>%"] 10
-                    , Run Weather "EDDB" ["-t","<tempC>°C","-L","10","-H","24","--normal","green","--high","red","--low","lightblue"] 300
+                    , Run Cpu ["-L","3","-H","50","--normal","green","--high","red","-t","C: <total>%"] 50
+                    -- , Run Weather "EDDB" ["-t","<tempC>°C","-L","10","-H","24","--normal","green","--high","red","--low","lightblue"] 300
+                    , Run Weather "LSZH" ["-t","<tempC>°C","-L","10","-H","24","--normal","green","--high","red","--low","lightblue"] 300
                     , Run Date "%F - %R" "date" 100
-                    , Run Memory ["-t","M: <usedratio>%"] 20
+                    , Run Memory ["-t","M: <usedratio>%"] 50
                     , Run StdinReader
                     , Run Com "workrave-info" [] "workrave" 10
                     ]
-       , template = "%StdinReader% }{ %cpu% %coretemp% | %battery% | %memory% | %workrave%     <fc=#ee9a00>%date%</fc> | %EDDB%"
+       -- , template = "%StdinReader% }{ %cpu% %coretemp% | %battery% | %memory% | %workrave% | <fc=#ee9a00>%date%</fc> | %EDDB%"
+       , template = "%StdinReader% }{ %cpu% %coretemp% | %battery% | %memory% | %workrave% | <fc=#ee9a00>%date%</fc> | %LSZH%"
+       -- , template = "%StdinReader% }{ %battery% | %workrave%     <fc=#ee9a00>%date%</fc> | %EDDB%"
        }
 
