@@ -145,7 +145,7 @@ set autoread
 
 " allow mouse usage
 " especially allow me to scroll up and down with the mouse-wheel while thinking
-" set mouse=a
+set mouse=a
 
 " allow for per-directory .exrc's
 " set exrc    " not now, but maybe in the future
