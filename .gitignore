@@ -1,4 +1,5 @@
 .CFUserTextEncoding
+.CloudStation/
 .DS_Store
 .FontForge/
 .ICEauthority
@@ -12,6 +13,8 @@
 .adobe/
 .android/
 .aptitude/
+.atl.properties
+.atlauncher/
 .audacity-data/
 .autotest
 .bash/local
@@ -19,9 +22,11 @@
 .bashrc-dist
 .bitcoin/
 .blueprints.git/
+.byobu/
 .bzr.log
 .cabal/
 .cache/
+.ccnet/
 .cheat/
 .chromedriver-helper/
 .clamtk/
@@ -30,6 +35,7 @@
 .cola
 .compiz-1/
 .compiz/
+.composer/
 .config/
 .cups/
 .dbshell
@@ -40,6 +46,7 @@
 .dmenu_cache
 .dmrc
 .dropbox-dist/
+.dropbox-master/
 .dropbox/
 .dvdcss
 .easytag
@@ -73,6 +80,7 @@
 .gnome2/
 .gnucash/
 .gnupg/
+.goobook_auth.json
 .goobook_cache
 .goutputstream-0J6KJW
 .goutputstream-GFAFKW
@@ -84,9 +92,12 @@
 .gtk-gnutella/
 .gtkpod/
 .guard_history
+.habitrpgrc
 .heroku/
 .hplip/
 .htoprc
+.htsrtmlastsync
+.htsrtmtoken.json
 .icedtea/
 .icons/
 .install4j
@@ -103,6 +114,7 @@
 .local/
 .macromedia/
 .milkmaid
+.minecraft/
 .mission-control/
 .mozilla/
 .mplayer/
@@ -118,10 +130,12 @@
 .navicat/
 .netbeans/
 .netrc
+.npm/
 .nv
 .nvidia-settings-rc
 .offlineimap/
 .offlineimaprc
+.openshot/
 .pam_environment
 .passenger/
 .pentadactyl/
@@ -129,12 +143,14 @@
 .pgadmin3
 .pgadmin_histoqueries
 .pgpass
+.phantomjs/
 .php_history
 .pip
 .pki/
 .plover-lock-wintermute-0
 .profile
 .pry_history
+.psensor/
 .psi/
 .psql_history
 .pulse-cookie
@@ -143,8 +159,11 @@
 .purple/
 .putty/
 .pws
+.python-eggs/
 .qt/
 .quodlibet/
+.qweechat/
+.qws/
 .rbx/
 .rdebug_hist
 .rediscli_history
@@ -155,13 +174,17 @@
 .rubinius_last_error
 .rvm/
 .sane/
+.screenlayout/
 .speech-dispatcher/
+.sqlite_history
 .ssh
 .ssh/
 .steam*
 .subversion/
 .sudo_as_admin_successful
+.synaptic/
 .tagtoolrc
+.telegram-cli/
 .termtter/token
 .texmf-var/
 .thumbnails/
@@ -173,6 +196,7 @@
 .tora_cache/
 .tsclient/
 .twinkle/
+.uuid
 .vagrant.d/
 .vim-cache/
 .vim/.netrwhist
@@ -186,10 +210,12 @@
 .w3af/
 .w3m/
 .wavemonrc
+.weechat/
 .wine-pipelight/
 .wine/
 .workrave/
 .xine/
+.xinitrc.experimental
 .xinput.d/
 .xinputrc
 .xmonad/xmonad-*
@@ -200,6 +226,7 @@
 .xsession-errors.old
 Applications/
 Audiobooks/
+CloudStation/
 Code/
 DbVisualizer-8.0.4/
 Desktop/
@@ -207,6 +234,7 @@ Documents/
 Downloads/
 Dropbox/
 Games/
+Google Drive/
 HttpDump.log
 Library/
 Mail/
@@ -215,6 +243,7 @@ Music/
 Pictures/
 Private/
 Public/
+Seafile/
 Sites/
 Ubuntu One/
 Videos/
@@ -223,12 +252,14 @@ android-sdk-linux/
 bin/
 chromedriver.log
 dbext_sql_history.txt
+dmesg/
+dumps/
 dwhelper/
 examples.desktop
 fontconfig/
 gPodder/
+go/
 homebrew/
 mysqlaccess.log
 pgadmin.log
-.dropbox-master/
-.dropbox-master/
+tmp/
