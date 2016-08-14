@@ -26,7 +26,7 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! unite#sources#neobundle_lazy#define() "{{{
+function! unite#sources#neobundle_lazy#define() abort "{{{
   return s:source
 endfunction"}}}
 
@@ -37,10 +37,10 @@ let s:source = {
       \ 'default_action' : 'source',
       \ }
 
-function! s:source.gather_candidates(args, context) "{{{
+function! s:source.gather_candidates(args, context) abort "{{{
   let _ = []
   for bundle in filter(copy(neobundle#config#get_neobundles()),
-        \ '!neobundle#config#is_sourced(v:val.name)')
+        \ '!v:val.sourced')
     let name = substitute(bundle.orig_name,
         \  '^\%(https\?\|git\)://\%(github.com/\)\?', '', '')
     let dict = {
@@ -64,7 +64,7 @@ let s:source.action_table.source = {
       \ 'is_selectable' : 1,
       \ 'is_invalidate_cache' : 1,
       \ }
-function! s:source.action_table.source.func(candidates) "{{{
+function! s:source.action_table.source.func(candidates) abort "{{{
   call call('neobundle#config#source',
         \ map(copy(a:candidates), 'v:val.action__bundle_name'))
 endfunction"}}}

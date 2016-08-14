@@ -8,8 +8,7 @@ if isdirectory(path)
   call system(printf('%s "%s"', rm_command, path))
 endif
 
-let neobundle#types#git#default_protocol =
-      \ exists('$http_proxy') ? 'https' : 'git'
+let neobundle#types#git#default_protocol = 'git'
 
 call neobundle#begin(path)
 
@@ -32,7 +31,6 @@ NeoBundle 'L9'
 NeoBundle 'FuzzyFinder'
 NeoBundle 'rails.vim'
 " Non git repos
-NeoBundle 'http://svn.macports.org/repository/macports/contrib/mpvim/'
 NeoBundle 'https://bitbucket.org/ns9tks/vim-fuzzyfinder'
 
 call neobundle#end()

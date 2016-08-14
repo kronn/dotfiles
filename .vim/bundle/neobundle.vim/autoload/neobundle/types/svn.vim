@@ -31,7 +31,7 @@ call neobundle#util#set_default(
       \ 'g:neobundle#types#svn#command_path', 'svn')
 "}}}
 
-function! neobundle#types#svn#define() "{{{
+function! neobundle#types#svn#define() abort "{{{
   return s:type
 endfunction"}}}
 
@@ -39,31 +39,24 @@ let s:type = {
       \ 'name' : 'svn',
       \ }
 
-function! s:type.detect(path, opts) "{{{
+function! s:type.detect(path, opts) abort "{{{
   if isdirectory(a:path)
     return {}
   endif
 
   let type = ''
-  let name = ''
   let uri = ''
 
-  if a:path =~# '\<\%(file\|https\?\|svn\)://'
-        \ && a:path =~? '[/.]svn[/.]'
+  if (a:path =~# '\<\%(file\|https\)://'
+        \ && a:path =~? '[/.]svn[/.]')
+        \ || a:path =~# '\<svn+ssh://'
     let uri = a:path
-    let type = 'svn'
-  elseif a:path =~# '\<\%(gh\|github\):\S\+\|://github.com/'
-    let name = substitute(split(a:path, ':')[-1],
-          \   '^//github.com/', '', '')
-    let uri =  'https://github.com/'. name
-    let uri .= '/trunk'
-
     let type = 'svn'
   endif
 
   return type == '' ?  {} : { 'uri': uri, 'type' : type }
 endfunction"}}}
-function! s:type.get_sync_command(bundle) "{{{
+function! s:type.get_sync_command(bundle) abort "{{{
   if !executable(g:neobundle#types#svn#command_path)
     return 'E: svn command is not installed.'
   endif
@@ -77,14 +70,14 @@ function! s:type.get_sync_command(bundle) "{{{
 
   return g:neobundle#types#svn#command_path . ' ' . cmd
 endfunction"}}}
-function! s:type.get_revision_number_command(bundle) "{{{
+function! s:type.get_revision_number_command(bundle) abort "{{{
   if !executable(g:neobundle#types#svn#command_path)
     return ''
   endif
 
   return g:neobundle#types#svn#command_path . ' info'
 endfunction"}}}
-function! s:type.get_revision_lock_command(bundle) "{{{
+function! s:type.get_revision_lock_command(bundle) abort "{{{
   if !executable(g:neobundle#types#svn#command_path)
         \ || a:bundle.rev == ''
     return ''

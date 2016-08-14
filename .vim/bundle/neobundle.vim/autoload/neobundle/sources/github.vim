@@ -26,7 +26,7 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! neobundle#sources#github#define() "{{{
+function! neobundle#sources#github#define() abort "{{{
   return s:source
 endfunction"}}}
 
@@ -35,25 +35,31 @@ let s:source = {
       \ 'short_name' : 'github',
       \ }
 
-function! s:source.gather_candidates(args, context) "{{{
-  if !executable('wget')
-    call unite#print_error(
-          \ '[neobundle/search:github] '.
-          \ 'wget command is not available!')
-    return []
-  endif
+" sorter
+let s:filter = {
+\   "name" : "sorter_stars",
+\}
 
+function! s:filter.filter(candidates, context) abort
+    return unite#util#sort_by(a:candidates, 'v:val.source__stars')
+endfunction
+
+call unite#define_filter(s:filter)
+unlet s:filter
+
+function! s:source.gather_candidates(args, context) abort "{{{
   let plugins = s:get_github_searches(a:context.source__input)
 
+
   return map(copy(plugins), "{
-        \ 'word' : v:val.username.'/'.v:val.name . ' ' . v:val.description,
+        \ 'word' : v:val.full_name. ' ' . v:val.description,
         \ 'source__name' : (v:val.fork ? '| ' : '') .
-        \          v:val.username.'/'.v:val.name,
-        \ 'source__path' : v:val.username.'/'.v:val.name,
+        \          v:val.full_name,
+        \ 'source__path' : v:val.full_name,
         \ 'source__description' : v:val.description,
+        \ 'source__stars' : v:val.stargazers_count,
         \ 'source__options' : [],
-        \ 'action__uri' : 'https://github.com/' .
-        \        v:val.username.'/'.v:val.name,
+        \ 'action__uri' : v:val.html_url,
         \ }")
 endfunction"}}}
 
@@ -61,12 +67,12 @@ endfunction"}}}
 " @vimlint(EVL102, 1, l:true)
 " @vimlint(EVL102, 1, l:false)
 " @vimlint(EVL102, 1, l:null)
-function! s:get_github_searches(string) "{{{
-  let path = 'https://api.github.com/legacy/repos/search/'
-        \ . a:string . '*?language=VimL'
+function! s:get_github_searches(string) abort "{{{
+  let uri = 'https://api.github.com/search/repositories?q='
+        \ . a:string . '+language:VimL'.'\&sort=stars'.'\&order=desc'
   let temp = neobundle#util#substitute_path_separator(tempname())
 
-  let cmd = printf('%s "%s" "%s"', 'wget -q -O ', temp, path)
+  let cmd = neobundle#util#wget(uri, temp)
 
   call unite#print_message(
         \ '[neobundle/search:github] Searching plugins from github...')
@@ -74,7 +80,12 @@ function! s:get_github_searches(string) "{{{
 
   let result = unite#util#system(cmd)
 
-  if unite#util#get_last_status()
+  if cmd =~# '^E:'
+    call unite#print_error(
+          \ '[neobundle/search:github] '.
+          \ 'wget or curl command is not available!')
+    return []
+  elseif unite#util#get_last_status()
     call unite#print_message('[neobundle/search:github] ' . cmd)
     call unite#print_error('[neobundle/search:github] Error occurred!')
     call unite#print_error(result)
@@ -89,16 +100,18 @@ function! s:get_github_searches(string) "{{{
 
   let [true, false, null] = [1,0,"''"]
   sandbox let data = eval(join(readfile(temp)))
-  call filter(data.repositories,
-        \ "stridx(v:val.username.'/'.v:val.name, a:string) >= 0")
+  call filter(data.items,
+        \ "stridx(v:val.full_name, a:string) >= 0")
 
   call delete(temp)
 
-  return data.repositories
+  return data.items
 endfunction"}}}
 " @vimlint(EVL102, 0, l:true)
 " @vimlint(EVL102, 0, l:false)
 " @vimlint(EVL102, 0, l:null)
+
+call unite#custom_source('neobundle/search', 'sorters', 'sorters_stars')
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

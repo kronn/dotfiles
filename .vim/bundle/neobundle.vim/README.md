@@ -1,5 +1,9 @@
 [![Stories in Ready](https://badge.waffle.io/Shougo/neobundle.vim.png)](https://waffle.io/Shougo/neobundle.vim)
 
+**Note**: Active developement on NeoBundle has stopped. The only future changes will be bug fixes.
+
+Please see [Dein.vim](https://github.com/Shougo/dein.vim) -- A faster, well-tested plugin manager for Vim and Neovim. It can do everything NeoBundle does, including asynchronous installs.
+
 ## About
 
 NeoBundle is a next generation Vim plugin manager. This plugin is based on
@@ -27,6 +31,9 @@ Neobundle features: Early development (may break compatibility), very complex,
 good for plugin power users (for example, 50+ plugins and over 1000 lines
 .vimrc, ...)
 
+Note: Neobunle only accepts "https" or "ssh".
+https://glyph.twistedmatrix.com/2015/11/editor-malware.html
+
 ## How it works
 
 Plugins are defined in NeoBundle by calling `NeoBundle '<plugin repository
@@ -41,7 +48,6 @@ repositories, simply call `NeoBundleUpdate`.
 A few other useful commands:
 - `:NeoBundleList`          - list configured bundles
 - `:NeoBundleInstall(!)`    - install (update) bundles
-- `:NeoBundleClean(!)`      - confirm (or auto-approve) removal of unused bundles
 
 Refer to `:help neobundle` for more examples and for a full list of commands.
 
@@ -54,7 +60,8 @@ Refer to `:help neobundle` for more examples and for a full list of commands.
 1. Run below script.
 
      ```
-     $ curl https://raw.githubusercontent.com/Shougo/neobundle.vim/master/bin/install.sh | sh
+     $ curl https://raw.githubusercontent.com/Shougo/neobundle.vim/master/bin/install.sh > install.sh
+     $ sh ./install.sh
      ```
 Complete.
 
@@ -75,14 +82,12 @@ Complete.
      " Note: Skip initialization for vim-tiny or vim-small.
      if 0 | endif
 
-     if has('vim_starting')
-       if &compatible
-         set nocompatible               " Be iMproved
-       endif
-
-       " Required:
-       set runtimepath+=~/.vim/bundle/neobundle.vim/
+     if &compatible
+       set nocompatible               " Be iMproved
      endif
+
+     " Required:
+     set runtimepath^=~/.vim/bundle/neobundle.vim/
 
      " Required:
      call neobundle#begin(expand('~/.vim/bundle/'))

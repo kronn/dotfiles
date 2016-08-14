@@ -26,31 +26,33 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! neobundle#autoload#init()
+function! neobundle#autoload#init() abort "{{{
   let s:active_auto_source = 0
+  let s:loaded_path = 0
 
   augroup neobundle
     autocmd FileType *
-          \ call neobundle#autoload#filetype()
+          \ call s:on_filetype()
     autocmd FuncUndefined *
-          \ call neobundle#autoload#function()
-    autocmd BufNewFile,BufRead *
-          \ call neobundle#autoload#filename(expand('<afile>'))
+          \ call s:on_function()
     autocmd InsertEnter *
-          \ call neobundle#autoload#insert()
+          \ call s:on_insert()
   augroup END
 
   if has('patch-7.4.414')
     autocmd neobundle CmdUndefined *
-          \ call neobundle#autoload#command_prefix()
+          \ call s:on_command_prefix()
   endif
 
-  augroup neobundle-explorer
+  augroup neobundle-path
     autocmd!
   augroup END
-  for event in ['BufRead', 'BufCreate', 'BufEnter', 'BufWinEnter', 'BufNew', 'VimEnter']
-    execute 'autocmd neobundle-explorer' event "* call neobundle#autoload#explorer(
-          \ expand('<afile>'), ".string(event) . ")"
+  for event in [
+        \ 'BufRead', 'BufCreate', 'BufEnter',
+        \ 'BufWinEnter', 'BufNew', 'VimEnter'
+        \ ]
+    execute 'autocmd neobundle-path' event
+          \ "* call s:on_path(expand('<afile>'), ".string(event) . ")"
   endfor
 
   augroup neobundle-focus
@@ -58,57 +60,19 @@ function! neobundle#autoload#init()
     autocmd CursorHold * if s:active_auto_source
           \ | call s:source_focus()
           \ | endif
-    autocmd FocusLost * let s:active_auto_source = 1
+    autocmd FocusLost * let s:active_auto_source = 1 | call s:source_focus()
     autocmd FocusGained * let s:active_auto_source = 0
   augroup END
+endfunction"}}}
 
-  call neobundle#autoload#filename(bufname('%'))
-endfunction
-
-function! neobundle#autoload#filetype()
-  let bundles = filter(neobundle#config#get_autoload_bundles(),
-        \ "has_key(v:val.autoload, 'filetypes')")
-  for filetype in add(neobundle#util#get_filetypes(), 'all')
-    call neobundle#config#source_bundles(filter(copy(bundles),"
-          \ index(v:val.autoload.filetypes, filetype) >= 0"))
-  endfor
-endfunction
-
-function! neobundle#autoload#filename(filename)
-  let bundles = filter(neobundle#config#get_autoload_bundles(),
-        \ "has_key(v:val.autoload, 'filename_patterns')")
-  if !empty(bundles)
-    call neobundle#config#source_bundles(filter(copy(bundles),"
-          \ len(filter(copy(v:val.autoload.filename_patterns),
-          \  'a:filename =~? v:val')) > 0"))
-  endif
-endfunction
-
-function! neobundle#autoload#insert()
-  let bundles = filter(neobundle#config#get_autoload_bundles(),
-        \ "get(v:val.autoload, 'insert', 0)")
-  if !empty(bundles)
-    call neobundle#config#source_bundles(bundles)
-    doautocmd InsertEnter
-  endif
-endfunction
-
-function! neobundle#autoload#function()
-  let function = expand('<amatch>')
-  let function_prefix = get(split(function, '#'), 0, '') . '#'
-
-  let bundles = filter(neobundle#config#get_autoload_bundles(),
-        \ "get(v:val.autoload, 'function_prefix', '').'#' ==# function_prefix ||
-        \  (has_key(v:val.autoload, 'functions') &&
-        \    index(v:val.autoload.functions, function) >= 0)")
-  call neobundle#config#source_bundles(bundles)
-endfunction
-
-function! neobundle#autoload#command(command, name, args, bang, line1, line2)
-  " Delete dummy commands.
-  silent! execute 'delcommand' a:command
-
+function! neobundle#autoload#_command(command, name, args, bang, line1, line2) abort "{{{
   call neobundle#config#source(a:name)
+
+  if !exists(':' . a:command)
+    call neobundle#util#print_error(
+          \ printf('command %s is not found.', a:command))
+    return
+  endif
 
   let range = (a:line1 == a:line2) ? '' :
         \ (a:line1==line("'<") && a:line2==line("'>")) ?
@@ -120,19 +84,23 @@ function! neobundle#autoload#command(command, name, args, bang, line1, line2)
     " E481: No range allowed
     execute a:command.a:bang a:args
   endtry
-endfunction
+endfunction"}}}
 
-function! neobundle#autoload#command_prefix()
-  let command = expand('<afile>')
+function! neobundle#autoload#_command_dummy_complete(arglead, cmdline, cursorpos) abort "{{{
+  " Load plugins
+  let command = tolower(matchstr(a:cmdline, '\a\S*'))
 
   let bundles = filter(neobundle#config#get_autoload_bundles(),
-        \ "get(v:val.autoload, 'command_prefix', '') != '' &&
-        \  stridx(tolower(command),
-        \  tolower(get(v:val.autoload, 'command_prefix', ''))) == 0")
+        \ "!empty(filter(map(copy(v:val.pre_cmd), 'tolower(v:val)'),
+        \   'stridx(command, v:val) == 0'))")
   call neobundle#config#source_bundles(bundles)
-endfunction
 
-function! neobundle#autoload#mapping(mapping, name, mode)
+  " Print the candidates
+  call feedkeys("\<C-d>", 'n')
+  return ['']
+endfunction"}}}
+
+function! neobundle#autoload#_mapping(mapping, name, mode) abort "{{{
   let cnt = v:count > 0 ? v:count : ''
 
   let input = s:get_input()
@@ -145,8 +113,6 @@ function! neobundle#autoload#mapping(mapping, name, mode)
     " TODO: omap
     " v:prevcount?
     " Cancel waiting operator mode.
-    " call feedkeys("\<C-\\>\<C-n>", 'n')
-    call feedkeys("\<Esc>", 'n')
     call feedkeys(v:operator, 'm')
   endif
 
@@ -165,9 +131,74 @@ function! neobundle#autoload#mapping(mapping, name, mode)
   call feedkeys(mapping . input, 'm')
 
   return ''
-endfunction
+endfunction"}}}
 
-function! neobundle#autoload#explorer(path, event)
+function! neobundle#autoload#_source(bundle_name) abort "{{{
+  let bundles = filter(neobundle#config#get_autoload_bundles(),
+        \ "index(v:val.on_source, a:bundle_name) >= 0")
+  if !empty(bundles)
+    call neobundle#config#source_bundles(bundles)
+  endif
+endfunction"}}}
+
+function! neobundle#autoload#_set_function_prefixes(bundles) abort "{{{
+  for bundle in filter(copy(a:bundles), "empty(v:val.pre_func)")
+    let bundle.pre_func =
+          \ neobundle#util#uniq(map(split(globpath(
+          \  bundle.path, 'autoload/**/*.vim', 1), "\n"),
+          \  "substitute(matchstr(
+          \   neobundle#util#substitute_path_separator(
+          \         fnamemodify(v:val, ':r')),
+          \         '/autoload/\\zs.*$'), '/', '#', 'g').'#'"))
+  endfor
+endfunction"}}}
+
+function! s:on_filetype() abort "{{{
+  let bundles = filter(neobundle#config#get_autoload_bundles(),
+        \ "!empty(v:val.on_ft)")
+  for filetype in add(neobundle#util#get_filetypes(), 'all')
+    call neobundle#config#source_bundles(filter(copy(bundles),"
+          \ index(v:val.on_ft, filetype) >= 0"))
+  endfor
+endfunction"}}}
+
+function! s:on_insert() abort "{{{
+  let bundles = filter(neobundle#config#get_autoload_bundles(),
+        \ "v:val.on_i")
+  if !empty(bundles)
+    call neobundle#config#source_bundles(bundles)
+    doautocmd InsertEnter
+  endif
+endfunction"}}}
+
+function! s:on_function() abort "{{{
+  let function = expand('<amatch>')
+  let function_prefix = substitute(function, '[^#]*$', '', '')
+  if function_prefix =~# '^neobundle#'
+        \ || function_prefix ==# 'vital#'
+        \ || has('vim_starting')
+    return
+  endif
+
+  let bundles = neobundle#config#get_autoload_bundles()
+  call neobundle#autoload#_set_function_prefixes(bundles)
+
+  let bundles = filter(bundles,
+        \ "index(v:val.pre_func, function_prefix) >= 0
+        \ || (index(v:val.on_func, function) >= 0)")
+  call neobundle#config#source_bundles(bundles)
+endfunction"}}}
+
+function! s:on_command_prefix() abort "{{{
+  let command = tolower(expand('<afile>'))
+
+  let bundles = filter(neobundle#config#get_autoload_bundles(),
+        \ "!empty(filter(map(copy(v:val.pre_cmd), 'tolower(v:val)'),
+        \   'stridx(command, v:val) == 0'))")
+  call neobundle#config#source_bundles(bundles)
+endfunction"}}}
+
+function! s:on_path(path, event) abort "{{{
   if a:path == ''
     return
   endif
@@ -179,52 +210,27 @@ function! neobundle#autoload#explorer(path, event)
   endif
 
   let path = neobundle#util#expand(path)
-  if !(isdirectory(path) || (!filereadable(path) && path =~ '^\h\w\+://'))
-    return
-  endif
-
   let bundles = filter(neobundle#config#get_autoload_bundles(),
-        \ "get(v:val.autoload, 'explorer', 0)")
+        \ "len(filter(copy(v:val.on_path),
+          \  'path =~? v:val')) > 0")")
   if empty(bundles)
-    augroup neobundle-explorer
+    augroup neobundle-path
       autocmd!
     augroup END
   else
     call neobundle#config#source_bundles(bundles)
     execute 'doautocmd' a:event
-  endif
-endfunction
 
-function! neobundle#autoload#unite_sources(sources)
-  let bundles = []
-  let sources_bundles = filter(neobundle#config#get_autoload_bundles(),
-          \ "has_key(v:val.autoload, 'unite_sources')")
-  for source_name in a:sources
-    if source_name ==# 'source'
-      " In source source, load all sources.
-      let bundles += copy(sources_bundles)
-    else
-      let bundles += filter(copy(sources_bundles),
-            \ "!empty(filter(copy(v:val.autoload.unite_sources),
-            \    'stridx(source_name, v:val) >= 0'))")
+    if !s:loaded_path && has('vim_starting')
+          \ && neobundle#util#redir('filetype') =~# 'detection:ON'
+      " Force enable auto detection if path bundles are loaded
+      autocmd neobundle VimEnter * filetype detect
     endif
-  endfor
+    let s:loaded_path = 1
+  endif
+endfunction"}}}
 
-  call neobundle#config#source_bundles(neobundle#util#uniq(bundles))
-endfunction
-
-function! neobundle#autoload#get_unite_sources()
-  let _ = []
-  let sources_bundles = filter(neobundle#config#get_autoload_bundles(),
-          \ "has_key(v:val.autoload, 'unite_sources')")
-  for bundle in sources_bundles
-    let _ += bundle.autoload.unite_sources
-  endfor
-
-  return _
-endfunction
-
-function! s:source_focus()
+function! s:source_focus() abort "{{{
   let bundles = neobundle#util#sort_by(filter(
         \ neobundle#config#get_autoload_bundles(),
         \ "v:val.focus > 0"), 'v:val.focus')
@@ -237,19 +243,9 @@ function! s:source_focus()
 
   call neobundle#config#source_bundles([bundles[0]])
   call feedkeys("g\<ESC>", 'n')
-endfunction
+endfunction"}}}
 
-function! neobundle#autoload#source(bundle_name)
-  let bundles = filter(neobundle#config#get_neobundles(),
-        \ "has_key(v:val.autoload, 'on_source') &&
-        \   index(v:val.autoload.on_source, a:bundle_name) >= 0 &&
-        \   !v:val.sourced && v:val.lazy")
-  if !empty(bundles)
-    call neobundle#config#source_bundles(bundles)
-  endif
-endfunction
-
-function! s:get_input()
+function! s:get_input() abort "{{{
   let input = ''
   let termstr = "<M-_>"
 
@@ -258,7 +254,7 @@ function! s:get_input()
   let type_num = type(0)
   while 1
     let char = getchar()
-    let input .= type(char) == type_num ? nr2char(char) : char
+    let input .= (type(char) == type_num) ? nr2char(char) : char
 
     let idx = stridx(input, termstr)
     if idx >= 1
@@ -271,13 +267,12 @@ function! s:get_input()
   endwhile
 
   return input
-endfunction
+endfunction"}}}
 
-function! s:get_lazy_bundles()
+function! s:get_lazy_bundles() abort "{{{
   return filter(neobundle#config#get_neobundles(),
-        \ "!neobundle#config#is_sourced(v:val.name)
-        \ && v:val.rtp != '' && v:val.lazy")
-endfunction
+        \ "!v:val.sourced && v:val.rtp != '' && v:val.lazy")
+endfunction"}}}
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

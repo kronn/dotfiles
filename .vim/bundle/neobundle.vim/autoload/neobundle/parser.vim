@@ -27,7 +27,7 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! neobundle#parser#bundle(arg, ...) "{{{
+function! neobundle#parser#bundle(arg, ...) abort "{{{
   let bundle = s:parse_arg(a:arg)
   let is_parse_only = get(a:000, 0, 0)
   if !is_parse_only
@@ -36,7 +36,7 @@ function! neobundle#parser#bundle(arg, ...) "{{{
     if !neobundle#config#within_block()
           \ && !bundle.lazy && has('vim_starting')
       call neobundle#util#print_error(
-            \ '[neobundle] `NeoBundle` commands must be executed within' .
+            \ '`NeoBundle` commands must be executed within' .
             \ ' a neobundle#begin/end block.  Please check your usage.')
     endif
   endif
@@ -44,7 +44,7 @@ function! neobundle#parser#bundle(arg, ...) "{{{
   return bundle
 endfunction"}}}
 
-function! neobundle#parser#lazy(arg) "{{{
+function! neobundle#parser#lazy(arg) abort "{{{
   let bundle = s:parse_arg(a:arg)
   if empty(bundle)
     return {}
@@ -52,11 +52,9 @@ function! neobundle#parser#lazy(arg) "{{{
 
   " Update lazy flag.
   let bundle.lazy = 1
-  let bundle.resettable = 0
   let bundle.orig_opts.lazy = 1
   for depend in bundle.depends
     let depend.lazy = bundle.lazy
-    let depend.resettable = 0
   endfor
 
   call neobundle#config#add(bundle)
@@ -64,13 +62,14 @@ function! neobundle#parser#lazy(arg) "{{{
   return bundle
 endfunction"}}}
 
-function! neobundle#parser#fetch(arg) "{{{
+function! neobundle#parser#fetch(arg) abort "{{{
   let bundle = s:parse_arg(a:arg)
   if empty(bundle)
     return {}
   endif
 
   " Clear runtimepath.
+  let bundle.fetch = 1
   let bundle.rtp = ''
 
   call neobundle#config#add(bundle)
@@ -78,36 +77,7 @@ function! neobundle#parser#fetch(arg) "{{{
   return bundle
 endfunction"}}}
 
-function! neobundle#parser#recipe(arg) "{{{
-  " Parse args.
-  let arg = type(a:arg) == type([]) ?
-   \ string(a:arg) : '[' . a:arg . ']'
-  sandbox let args = eval(arg)
-  if empty(args)
-    return {}
-  endif
-
-  let recipe = args[0]
-  let recipe_bundle = neobundle#parser#_parse_recipe(recipe)
-  if empty(recipe_bundle)
-    return {}
-  endif
-
-  let bundle = neobundle#parser#_init_bundle(
-        \ recipe_bundle.path,
-        \ [extend(recipe_bundle, get(args, 1, {}))])
-  if empty(bundle)
-    return {}
-  endif
-
-  let bundle.orig_arg = copy(a:arg)
-
-  call neobundle#config#add(bundle)
-
-  return bundle
-endfunction"}}}
-
-function! neobundle#parser#direct(arg) "{{{
+function! neobundle#parser#direct(arg) abort "{{{
   let bundle = neobundle#parser#bundle(a:arg, 1)
 
   if empty(bundle)
@@ -130,7 +100,7 @@ function! neobundle#parser#direct(arg) "{{{
   return bundle
 endfunction"}}}
 
-function! s:parse_arg(arg) "{{{
+function! s:parse_arg(arg) abort "{{{
   let arg = type(a:arg) == type([]) ?
    \ string(a:arg) : '[' . a:arg . ']'
   sandbox let args = eval(arg)
@@ -149,21 +119,14 @@ function! s:parse_arg(arg) "{{{
   return bundle
 endfunction"}}}
 
-function! neobundle#parser#_init_bundle(name, opts) "{{{
+function! neobundle#parser#_init_bundle(name, opts) abort "{{{
   let path = substitute(a:name, "['".'"]\+', '', 'g')
   if path[0] == '~'
     let path = neobundle#util#expand(path)
   endif
   let opts = s:parse_options(a:opts)
-  if !has_key(opts, 'recipe')
-    let opts.recipe = ''
-  endif
   let bundle = extend(neobundle#parser#path(
         \ path, opts), opts)
-  if bundle.recipe != ''
-    call extend(bundle,
-          \ neobundle#parser#_parse_recipe(bundle.recipe), 'keep')
-  endif
 
   let bundle.orig_name = a:name
   let bundle.orig_path = path
@@ -175,7 +138,7 @@ function! neobundle#parser#_init_bundle(name, opts) "{{{
   return bundle
 endfunction"}}}
 
-function! neobundle#parser#local(localdir, options, includes) "{{{
+function! neobundle#parser#local(localdir, options, includes) abort "{{{
   let base = fnamemodify(neobundle#util#expand(a:localdir), ':p')
   let directories = []
   for glob in a:includes
@@ -184,56 +147,81 @@ function! neobundle#parser#local(localdir, options, includes) "{{{
           \ substitute(neobundle#util#substitute_path_separator(
           \   fnamemodify(v:val, ':p')), '/$', '', '')")
   endfor
+
   for dir in neobundle#util#uniq(directories)
     let options = extend({ 'local' : 1, 'base' : base }, a:options)
     let name = fnamemodify(dir, ':t')
     let bundle = neobundle#get(name)
-    if !empty(bundle)
+    if !empty(bundle) && !bundle.sourced
       call extend(options, copy(bundle.orig_opts))
       if bundle.lazy
         let options.lazy = 1
       endif
 
-      " Remove from lazy runtimepath
-      call filter(neobundle#config#get_lazy_rtp_bundles(),
-            \ "fnamemodify(v:val.rtp, ':h:t') != name")
+      call neobundle#config#rm(bundle)
     endif
 
     call neobundle#parser#bundle([dir, options])
   endfor
 endfunction"}}}
 
-function! neobundle#parser#load_toml(filename, default) "{{{
+function! neobundle#parser#load_toml(filename, default) abort "{{{
   try
     let toml = neobundle#TOML#parse_file(neobundle#util#expand(a:filename))
   catch /vital: Text.TOML:/
     call neobundle#util#print_error(
-          \ '[neobundle] Invalid toml format: ' . a:filename)
+          \ 'Invalid toml format: ' . a:filename)
     call neobundle#util#print_error(v:exception)
     return 1
   endtry
   if type(toml) != type({}) || !has_key(toml, 'plugins')
     call neobundle#util#print_error(
-          \ '[neobundle] Invalid toml file: ' . a:filename)
+          \ 'Invalid toml file: ' . a:filename)
     return 1
   endif
 
   " Parse.
   for plugin in toml.plugins
-    if !has_key(plugin, 'repository')
+    if has_key(plugin, 'repository')
+      let plugin.repo = plugin.repository
+    endif
+    if !has_key(plugin, 'repo')
       call neobundle#util#print_error(
-            \ '[neobundle] No repository plugin data: ' . a:filename)
+            \ 'No repository plugin data: ' . a:filename)
       return 1
     endif
 
+    if has_key(plugin, 'depends')
+      let _ = []
+      for depend in neobundle#util#convert2list(plugin.depends)
+        if type(depend) == type('') || type(depend) == type([])
+          call add(_, depend)
+        elseif type(depend) == type({})
+          if has_key(depend, 'repository')
+            let plugin.repo = plugin.repository
+          endif
+          if !has_key(depend, 'repo')
+            call neobundle#util#print_error(
+                  \ 'No repository plugin data: ' . a:filename)
+            return 1
+          endif
+
+          call add(_, [depend.repo, depend])
+        endif
+
+        unlet depend
+      endfor
+
+      let plugin.depends = _
+    endif
+
     let options = extend(plugin, a:default, 'keep')
-    " echomsg plugin.repository
     " echomsg string(options)
-    call neobundle#parser#bundle([plugin.repository, options])
+    call neobundle#parser#bundle([plugin.repo, options])
   endfor
 endfunction"}}}
 
-function! neobundle#parser#path(path, ...) "{{{
+function! neobundle#parser#path(path, ...) abort "{{{
   let opts = get(a:000, 0, {})
   let site = get(opts, 'site', g:neobundle#default_site)
   let path = substitute(a:path, '/$', '', '')
@@ -265,8 +253,8 @@ function! neobundle#parser#path(path, ...) "{{{
   endfor
 
   if empty(detect) && isdirectory(path)
-    " Detect nosync type.
-    return { 'uri' : path, 'type' : 'nosync' }
+    " Detect none type.
+    return { 'uri' : path, 'type' : 'none' }
   endif
 
   if !empty(detect) && !has_key(detect, 'name')
@@ -276,17 +264,7 @@ function! neobundle#parser#path(path, ...) "{{{
   return detect
 endfunction"}}}
 
-function! neobundle#parser#_function_prefix(name) "{{{
-  let function_prefix = tolower(fnamemodify(a:name, ':r'))
-  let function_prefix = substitute(function_prefix,
-        \'^vim-\|-vim$', '','')
-  let function_prefix = substitute(function_prefix,
-        \'^unite-', 'unite#sources#','')
-  let function_prefix = tr(function_prefix, '-', '_')
-  return function_prefix
-endfunction"}}}
-
-function! s:parse_options(opts) "{{{
+function! s:parse_options(opts) abort "{{{
   if empty(a:opts)
     return has_key(g:neobundle#default_options, '_') ?
           \ copy(g:neobundle#default_options['_']) : {}
@@ -328,62 +306,6 @@ function! s:parse_options(opts) "{{{
   endif
 
   return options
-endfunction"}}}
-
-function! neobundle#parser#_parse_recipe(recipe) "{{{
-  let recipe = a:recipe
-  if recipe !~ '\.vimrecipe$'
-    let recipe .= '.vimrecipe'
-  endif
-
-  if recipe !~ '^/\|^\w\+:'
-    " Search from runtimepath.
-    let path = get(split(globpath(&runtimepath,
-        \ 'recipes/' . recipe, 1), '\n'), 0, '')
-    if path == ''
-      " Use name conversion.
-      let recipe = neobundle#util#name_conversion(a:recipe)
-      if recipe !~ '\.vimrecipe$'
-        let recipe .= '.vimrecipe'
-      endif
-
-      let path = get(split(globpath(&runtimepath,
-            \ 'recipes/' . recipe, 1), '\n'), 0, '')
-    endif
-  else
-    let path = recipe
-  endif
-
-  if !filereadable(path)
-    call neobundle#util#print_error(printf(
-          \ '[neobundle] The recipe file "%s" is not found.', a:recipe))
-    return {}
-  endif
-
-  sandbox let data = eval(join(filter(readfile(path),
-          \ "v:val !~ '^\\s*\\%(#.*\\)\\?$'"), ''))
-
-  if !has_key(data, 'name') || !has_key(data, 'path')
-    call neobundle#util#print_error(
-          \ '[neobundle] ' . path)
-    call neobundle#util#print_error(
-          \ '[neobundle] The recipe file format is wrong.')
-    return {}
-  endif
-
-  let data.receipe_path = path
-
-  " Initialize.
-  let default = {
-        \ 'options' : {},
-        \ 'description' : '',
-        \ 'website' : '',
-        \ 'script_type' : '',
-        \ }
-
-  let data = extend(data, default, 'keep')
-
-  return data
 endfunction"}}}
 
 let &cpo = s:save_cpo

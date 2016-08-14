@@ -26,7 +26,7 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! unite#sources#neobundle#define() "{{{
+function! unite#sources#neobundle#define() abort "{{{
   return s:source
 endfunction"}}}
 
@@ -36,17 +36,19 @@ let s:source = {
       \ 'hooks' : {},
       \ }
 
-function! s:source.hooks.on_init(args, context) "{{{
+function! s:source.hooks.on_init(args, context) abort "{{{
   let bundle_names = filter(copy(a:args), 'v:val != "!"')
   let a:context.source__bang =
         \ index(a:args, '!') >= 0
-  let a:context.source__bundles = empty(bundle_names) ?
-        \ neobundle#config#get_neobundles() :
-        \ neobundle#config#search(bundle_names)
+  let a:context.source__bundles = neobundle#util#sort_by(
+        \  (empty(bundle_names) ?
+        \   neobundle#config#get_neobundles() :
+        \   neobundle#config#search(bundle_names)),
+        \ 'tolower(v:val.orig_name)')
 endfunction"}}}
 
 " Filters "{{{
-function! s:source.source__converter(candidates, context) "{{{
+function! s:source.source__converter(candidates, context) abort "{{{
   for candidate in a:candidates
     if candidate.source__uri =~
           \ '^\%(https\?\|git\)://github.com/'
@@ -64,7 +66,7 @@ endfunction"}}}
 let s:source.converters = s:source.source__converter
 "}}}
 
-function! s:source.gather_candidates(args, context) "{{{
+function! s:source.gather_candidates(args, context) abort "{{{
   let _ = map(copy(a:context.source__bundles), "{
         \ 'word' : substitute(v:val.orig_name,
         \  '^\%(https\?\|git\)://\%(github.com/\)\?', '', ''),
@@ -106,7 +108,7 @@ function! s:source.gather_candidates(args, context) "{{{
   return _
 endfunction"}}}
 
-function! s:get_commit_status(bundle) "{{{
+function! s:get_commit_status(bundle) abort "{{{
   if !isdirectory(a:bundle.path)
     return 'Not installed'
   endif

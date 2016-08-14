@@ -33,7 +33,7 @@ call neobundle#util#set_default(
       \ executable('md5sum') ? 'md5sum' : '')
 "}}}
 
-function! neobundle#types#raw#define() "{{{
+function! neobundle#types#raw#define() abort "{{{
   return s:type
 endfunction"}}}
 
@@ -41,19 +41,19 @@ let s:type = {
       \ 'name' : 'raw',
       \ }
 
-function! s:type.detect(path, opts) "{{{
+function! s:type.detect(path, opts) abort "{{{
   " No auto detect.
   let type = ''
   let name = ''
 
-  if a:path =~# '^https\?:.*\.vim$'
-    " HTTP/HTTPS
+  if a:path =~# '^https:.*\.vim$'
+    " HTTPS
 
     let name = neobundle#util#name_conversion(a:path)
 
     let type = 'raw'
   elseif a:path =~#
-        \ '^https\?://www\.vim\.org/scripts/download_script.php?src_id=\d\+$'
+        \ '^https://www\.vim\.org/scripts/download_script.php?src_id=\d\+$'
     " For www.vim.org
     let name = 'vim-scripts-' . matchstr(a:path, '\d\+$')
     let type = 'raw'
@@ -62,7 +62,7 @@ function! s:type.detect(path, opts) "{{{
   return type == '' ?  {} :
         \ { 'name': name, 'uri' : a:path, 'type' : type }
 endfunction"}}}
-function! s:type.get_sync_command(bundle) "{{{
+function! s:type.get_sync_command(bundle) abort "{{{
   if a:bundle.script_type == ''
     return 'E: script_type is not found.'
   endif
@@ -78,17 +78,11 @@ function! s:type.get_sync_command(bundle) "{{{
         \ 'type__filename', fnamemodify(a:bundle.uri, ':t'))
   let a:bundle.type__filepath = filename
 
-  if executable('curl')
-    let cmd = printf('curl --fail -s -o "%s" "%s"', filename, a:bundle.uri)
-  elseif executable('wget')
-    let cmd = printf('wget -q -O "%s" "%s", ', filename, a:bundle.uri)
-  else
-    return 'E: curl or wget command is not available!'
-  endif
+  let cmd = neobundle#util#wget(a:bundle.uri, filename)
 
   return cmd
 endfunction"}}}
-function! s:type.get_revision_number_command(bundle) "{{{
+function! s:type.get_revision_number_command(bundle) abort "{{{
   if g:neobundle#types#raw#calc_hash_command == ''
     return ''
   endif
@@ -103,7 +97,7 @@ function! s:type.get_revision_number_command(bundle) "{{{
         \ g:neobundle#types#raw#calc_hash_command,
         \ a:bundle.type__filepath)
 endfunction"}}}
-function! s:type.get_revision_lock_command(bundle) "{{{
+function! s:type.get_revision_lock_command(bundle) abort "{{{
   let new_rev = matchstr(a:bundle.new_rev, '^\S\+')
   if a:bundle.rev != '' && new_rev != '' &&
         \ new_rev !=# a:bundle.rev
