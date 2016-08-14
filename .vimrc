@@ -37,6 +37,8 @@ NeoBundle 'godlygeek/tabular'
 NeoBundle 'tpope/vim-ragtag'
 NeoBundle 'AndrewRadev/splitjoin.vim'
 NeoBundle 'tommcdo/vim-exchange'
+" NeoBundle 'tpope/vim-projectionist'
+" https://gist.github.com/AndrewRadev/3524ee46bca8ab349329 " ember projections
 
 " UI candy
 NeoBundle 'bling/vim-airline'
@@ -52,6 +54,7 @@ NeoBundle 'edsono/vim-dbext'
 NeoBundle 'TailMinusF'
 NeoBundle 'rking/vim-ruby-refactoring'
 NeoBundle 'ngmy/vim-rubocop'
+NeoBundle 'joker1007/vim-ruby-heredoc-syntax'
 " have a ruby-block text-object ( r )
 NeoBundle 'nelstrom/vim-textobj-rubyblock'
 NeoBundle 'kana/vim-textobj-user'
@@ -79,6 +82,7 @@ NeoBundle 'Keithbsmiley/rspec.vim'
 NeoBundle 'heartsentwined/vim-emblem'
 NeoBundle 'fatih/vim-go'
 NeoBundle 'ekalinin/Dockerfile.vim'
+" Neobundle 'AndrewRadev/ember_tools.vim'
 
 " not proud, just using sometimes
 " symfony is not that bad, after all…
@@ -88,9 +92,6 @@ NeoBundle 'evidens/vim-twig'
 " " snippets
 NeoBundle 'SirVer/ultisnips'
 NeoBundle 'honza/vim-snippets'
-
-" track time from within Vim
-NeoBundle 'wakatime/vim-wakatime'
 
 " colorschemes
 NeoBundle 'flazz/vim-colorschemes'
