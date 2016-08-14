@@ -104,8 +104,8 @@ pidginLayout = withIM imRatio (And (ClassName "Pidgin") (Role "buddy_list")) imL
 skypeLayout  = withIM imRatio (And (ClassName "Skype") (Title "der_kronn - Skype™")) imLayoutClasses
 
 -- imLayout = pidginLayout ||| skypeLayout ||| psiLayout
--- imLayout = pidginLayout ||| skypeLayout
-imLayout = pidginLayout
+imLayout = pidginLayout ||| skypeLayout
+-- imLayout = pidginLayout
 
 threeColLayout = ThreeColMid nmaster delta ratio
   where
