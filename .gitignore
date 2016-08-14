@@ -264,3 +264,4 @@ mysqlaccess.log
 pgadmin.log
 tmp/
 .bundle/cache/
+.goobookrc
